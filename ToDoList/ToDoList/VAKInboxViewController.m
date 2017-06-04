@@ -7,6 +7,7 @@
 //
 
 #import "VAKInboxViewController.h"
+#import "VAKAddTaskController.h"
 
 @interface VAKInboxViewController ()
 
@@ -22,6 +23,10 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+- (IBAction)addNewTask:(UIBarButtonItem *)sender {
+    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:@"VAKAddTaskController" bundle:nil];
+    [self.navigationController showViewController:addTaskController sender:nil];
 }
 
 /*
