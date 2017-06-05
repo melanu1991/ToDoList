@@ -10,6 +10,13 @@
 
 @implementation VAKInboxViewController
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    [self.tableViewOutlet deselectRowAtIndexPath:indexPath animated:YES];
+    
+    
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.taskService = [[VAKTaskService alloc]init];

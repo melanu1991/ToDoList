@@ -11,6 +11,7 @@
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:@"Done" style:UIBarButtonItemStyleDone target:self action:@selector(setSelectDate)];
     self.navigationItem.rightBarButtonItem = doneButton;
     self.datePicker.minimumDate = [NSDate date];
+    [self.navigationItem setTitle:@"Select date"];
     
 }
 

@@ -102,11 +102,11 @@
             </objects>
             <point key="canvasLocation" x="1542" y="-998"/>
         </scene>
-        <!--Inbox View Controller-->
+        <!--Inbox-->
         <scene sceneID="Mlk-k7-nIH">
             <objects>
                 <viewController id="9Ue-gH-jcB" customClass="VAKInboxViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="qfU-ab-YxH">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="qfU-ab-YxH">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -127,13 +127,17 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="FcO-mY-4vA" kind="show" identifier="detailSegue" id="Xoj-Jb-zpI"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="9Ue-gH-jcB" id="T6f-Wd-taQ"/>
+                            <outlet property="delegate" destination="9Ue-gH-jcB" id="Ce6-zl-GfW"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="kG4-kJ-4eU">
+                    <navigationItem key="navigationItem" title="Inbox" id="kG4-kJ-4eU">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="rRQ-VC-CM5">
                             <connections>
                                 <action selector="addNewTask:" destination="9Ue-gH-jcB" id="Kgt-DE-egZ"/>
@@ -147,6 +151,50 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4qm-wF-PYW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1535" y="-321"/>
+        </scene>
+        <!--Detail task-->
+        <scene sceneID="bUG-4I-pj0">
+            <objects>
+                <viewController id="FcO-mY-4vA" customClass="VAKDetailViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="42c-Fm-3Hq"/>
+                        <viewControllerLayoutGuide type="bottom" id="z9L-YV-BdV"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1wF-r5-wZj">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qh6-l0-inK">
+                                <rect key="frame" x="20" y="560" width="335" height="50"/>
+                                <color key="backgroundColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="Apy-af-0ip"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="Done"/>
+                                <connections>
+                                    <action selector="doneButtonPressed:" destination="FcO-mY-4vA" eventType="touchUpInside" id="t4f-zH-45A"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="z9L-YV-BdV" firstAttribute="top" secondItem="Qh6-l0-inK" secondAttribute="bottom" constant="8" symbolic="YES" id="EM3-BI-bD2"/>
+                            <constraint firstAttribute="trailing" secondItem="Qh6-l0-inK" secondAttribute="trailing" constant="20" symbolic="YES" id="Tc4-eW-HKr"/>
+                            <constraint firstItem="Qh6-l0-inK" firstAttribute="leading" secondItem="1wF-r5-wZj" secondAttribute="leading" constant="20" symbolic="YES" id="eP5-Ne-NOl"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Detail task" id="Xad-D3-QIe">
+                        <barButtonItem key="rightBarButtonItem" systemItem="edit" id="An8-GF-pPr">
+                            <connections>
+                                <action selector="editButtonPressed:" destination="FcO-mY-4vA" id="NNo-nR-ADE"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nHC-bn-Ggf" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2334" y="-321"/>
         </scene>
         <!--To Do List View Controller-->
         <scene sceneID="lLf-M7-eMu">

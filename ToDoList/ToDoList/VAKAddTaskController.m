@@ -26,6 +26,7 @@
     self.navigationItem.rightBarButtonItem = save;
     UITapGestureRecognizer *handleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleEndEditing)];
     [self.view addGestureRecognizer:handleTap];
+    [self.navigationItem setTitle:@"Add task"];
 }
 
 - (void)handleEndEditing {
