@@ -129,6 +129,9 @@
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="9Ue-gH-jcB" id="T6f-Wd-taQ"/>
+                        </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="kG4-kJ-4eU">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="rRQ-VC-CM5">
@@ -137,6 +140,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="tableViewOutlet" destination="qfU-ab-YxH" id="DQP-fZ-y1B"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4qm-wF-PYW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
