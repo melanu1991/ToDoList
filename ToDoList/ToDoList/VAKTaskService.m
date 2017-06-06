@@ -26,7 +26,7 @@
     
 }
 - (void)updateTask:(VAKTask *)task {
-    
+    NSLog(@"fdfds");
 }
 
 @end

@@ -1,5 +1,6 @@
 #import "VAKInboxViewController.h"
 #import "VAKAddTaskController.h"
+#import "VAKDetailViewController.h"
 #import "VAKTaskService.h"
 #import "VAKTask.h"
 
@@ -10,11 +11,30 @@
 
 @implementation VAKInboxViewController
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+- (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
+    for (int i = 0; i < self.taskService.tasks.count; i++) {
+        VAKTask *task = self.taskService.tasks[i];
+        if ([task.taskId isEqualToString:taskId]) {
+            task.completed = YES;
+            task.finishedAt = date;
+        }
+    }
+    [self.tableViewOutlet reloadData];
+}
 
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableViewOutlet deselectRowAtIndexPath:indexPath animated:YES];
-    
-    
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:@"detailSegue"])
+    {
+        NSIndexPath *index = [self.tableViewOutlet indexPathForCell:sender];
+        VAKTask *task = (VAKTask *)self.taskService.tasks[index.row];
+        VAKDetailViewController  *detailController = [segue destinationViewController];
+        detailController.delegate = self;
+        [detailController detailTaskWithTask:task];
+    }
 }
 
 - (void)viewDidLoad {

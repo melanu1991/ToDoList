@@ -11,8 +11,4 @@
     return self;
 }
 
-- (NSString *)description {
-    return [NSString stringWithFormat:@"%@ - %@",self.taskName, self.taskId];
-}
-
 @end

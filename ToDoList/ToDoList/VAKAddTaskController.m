@@ -40,7 +40,12 @@
 }
 
 - (void)saveTask {
-    VAKTask *newTask = [[VAKTask alloc]initTaskWithId:@"taskId" taskName:self.taskNameField.text];
+    NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
+    VAKTask *newTask = [[VAKTask alloc]initTaskWithId:taskId taskName:self.taskNameField.text];
+    NSDate *startDate = [self.formatter dateFromString:self.dateButton.titleLabel.text];
+    newTask.startedAt = startDate;
+    newTask.notes = self.taskNotesTextView.text;
+    newTask.finishedAt = nil;
     [self.delegate addNewTaskWithTask:newTask];
     [self.navigationController popViewControllerAnimated:YES];
 }
