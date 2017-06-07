@@ -1,9 +1,11 @@
 #import <UIKit/UIKit.h>
-#import "VAKDetailDelegate.h"
+#import "VAKAddTaskController.h"
+#import "VAKTask.h"
 #import "VAKFinishedTaskDelegate.h"
 
-@interface VAKDetailViewController : UIViewController<VAKDetailDelegate>
+@interface VAKDetailViewController : UIViewController
 
 @property (nonatomic, weak) id<VAKFinishedTaskDelegate> delegate;
+@property (nonatomic, strong) VAKTask *task;
 
 @end

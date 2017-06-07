@@ -1,11 +1,7 @@
 #import "VAKInboxViewController.h"
-#import "VAKAddTaskController.h"
-#import "VAKDetailViewController.h"
-#import "VAKTaskService.h"
-#import "VAKTask.h"
 
 @interface VAKInboxViewController ()
-@property (strong, nonatomic) IBOutlet UITableView *tableViewOutlet;
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) VAKTaskService *taskService;
 @end
 
@@ -19,21 +15,21 @@
             task.finishedAt = date;
         }
     }
-    [self.tableViewOutlet reloadData];
+    [self.tableView reloadData];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.tableViewOutlet deselectRowAtIndexPath:indexPath animated:YES];
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"detailSegue"])
     {
-        NSIndexPath *index = [self.tableViewOutlet indexPathForCell:sender];
+        NSIndexPath *index = [self.tableView indexPathForCell:sender];
         VAKTask *task = (VAKTask *)self.taskService.tasks[index.row];
         VAKDetailViewController  *detailController = [segue destinationViewController];
         detailController.delegate = self;
-        [detailController detailTaskWithTask:task];
+        detailController.task = task;
     }
 }
 
@@ -45,6 +41,7 @@
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:@"VAKAddTaskController" bundle:nil];
     addTaskController.delegate = self;
+    addTaskController.task = nil;
     [self.navigationController showViewController:addTaskController sender:nil];
 }
 
@@ -61,7 +58,7 @@
 
 - (void)addNewTaskWithTask:(VAKTask *)task {
     [self.taskService addTask:task];
-    [self.tableViewOutlet reloadData];
+    [self.tableView reloadData];
 }
 
 @end

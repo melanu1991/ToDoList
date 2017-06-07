@@ -1,13 +1,12 @@
 #import "VAKDetailViewController.h"
-#import "VAKAddTaskController.h"
-#import "VAKTask.h"
 
 @interface VAKDetailViewController ()
+
 @property (weak, nonatomic) IBOutlet UILabel *taskName;
 @property (weak, nonatomic) IBOutlet UILabel *startDate;
 @property (weak, nonatomic) IBOutlet UILabel *finishDate;
 @property (weak, nonatomic) IBOutlet UILabel *notes;
-@property (nonatomic, strong) VAKTask *task;
+
 @end
 
 @implementation VAKDetailViewController
@@ -23,8 +22,9 @@
 }
 
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
-    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:@"VAKAddTaskController" bundle:nil];
-    [self.navigationController pushViewController:addTaskController animated:YES];
+    VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc]initWithNibName:@"VAKAddTaskController" bundle:nil];
+    editTaskController.task = self.task;
+    [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
@@ -34,12 +34,5 @@
     [self.delegate finishedTaskById:self.task.taskId finishedDate:[formatter dateFromString:self.finishDate.text]];
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-- (void)detailTaskWithTask:(VAKTask *)task {
-    self.task = task;
-}
-
-
-
 
 @end
