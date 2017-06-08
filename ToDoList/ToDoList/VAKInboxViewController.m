@@ -11,14 +11,18 @@
 
 @implementation VAKInboxViewController
 
-//- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-//
-//    UINavigationController *myNavController = (UINavigationController *)viewController;
-//    VAKSearchViewController *myController = [[myNavController childViewControllers] firstObject];
-//    myController.tasks = [self.taskService.tasks copy];
-//    [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
-//    
-//}
+- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
+
+    UINavigationController *myNavController = (UINavigationController *)viewController;
+    
+    if ([self.tabBarController selectedIndex] == VAKIndexSearchView) {
+        self.searchViewController = [[myNavController childViewControllers] firstObject];
+        self.searchViewController.tasks = [self.taskService.tasks copy];
+    }
+
+    [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
+    
+}
 
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
     for (int i = 0; i < self.taskService.tasks.count; i++) {

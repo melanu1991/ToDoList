@@ -12,5 +12,10 @@ static NSString * const VAKDateTitle = @"Select date";
 static NSString * const VAKDoneTitle = @"Done";
 static NSString * const VAKDateController = @"VAKSelectDateController";
 static NSString * const VAKSaveTitle = @"Save";
+static NSUInteger const VAKIndexInboxView = 0;
+static NSUInteger const VAKIndexToDoListView = 1;
+static NSUInteger const VAKIndexSearchView = 2;
+static NSUInteger const VAKTodayView = 3;
+static NSString * const VAKSearchCell = @"searchCell";
 
 #endif
