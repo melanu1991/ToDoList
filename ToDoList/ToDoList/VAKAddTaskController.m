@@ -1,7 +1,5 @@
 #import "VAKAddTaskController.h"
-
-static NSString * const VAKAddTaskTitle = @"Add task";
-static NSString * const VAKEditTaskTitle = @"Edit task";
+#import "Constants.h"
 
 @interface VAKAddTaskController ()
 
@@ -25,7 +23,7 @@ static NSString * const VAKEditTaskTitle = @"Edit task";
     self.formatter = [[NSDateFormatter alloc]init];
     self.formatter.dateFormat = @"HH:mm dd.MMMM.yyyy";
     
-    UIBarButtonItem *save = [[UIBarButtonItem alloc]initWithTitle:@"Save" style:UIBarButtonItemStyleDone target:self action:@selector(saveTask)];
+    UIBarButtonItem *save = [[UIBarButtonItem alloc]initWithTitle:VAKSaveTitle style:UIBarButtonItemStyleDone target:self action:@selector(saveTask)];
     self.navigationItem.rightBarButtonItem = save;
     
     UITapGestureRecognizer *handleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleEndEditing)];
@@ -46,6 +44,7 @@ static NSString * const VAKEditTaskTitle = @"Edit task";
     
     [self.dateButton setTitle:[self.formatter stringFromDate:date] forState:UIControlStateNormal];
     [self.navigationItem setTitle:title];
+
 }
 
 - (void)handleEndEditing {
@@ -53,7 +52,7 @@ static NSString * const VAKEditTaskTitle = @"Edit task";
 }
 
 - (IBAction)selectDateButton:(UIButton *)sender {
-    VAKSelectDateController *selectDate = [[VAKSelectDateController alloc]initWithNibName:@"VAKSelectDateController" bundle:nil];
+    VAKSelectDateController *selectDate = [[VAKSelectDateController alloc]initWithNibName:VAKDateController bundle:nil];
     selectDate.delegate = self;
     [self showViewController:selectDate sender:nil];
 }
@@ -72,6 +71,7 @@ static NSString * const VAKEditTaskTitle = @"Edit task";
         self.task.taskName = self.taskNameField.text;
         self.task.notes = self.taskNotesTextView.text;
         self.task.startedAt = [self.formatter dateFromString:self.dateButton.titleLabel.text];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
     }
     [self.navigationController popViewControllerAnimated:YES];
 }

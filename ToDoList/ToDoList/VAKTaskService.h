@@ -3,7 +3,7 @@
 @class VAKTask;
 @interface VAKTaskService : NSObject
 
-@property (nonatomic, strong) NSArray *tasks;
+@property (nonatomic, strong) NSMutableArray *tasks;
 
 - (VAKTask *)taskById:(NSString *)taskId;
 - (void)addTask:(VAKTask *)task;

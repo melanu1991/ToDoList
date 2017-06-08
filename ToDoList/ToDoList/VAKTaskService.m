@@ -8,7 +8,7 @@
 
 - (NSArray *)tasks {
     if (!_tasks) {
-        _tasks = [[NSArray alloc]init];
+        _tasks = [[NSMutableArray alloc]init];
     }
     return _tasks;
 }
@@ -17,7 +17,7 @@
     return nil;
 }
 - (void)addTask:(VAKTask *)task {
-    self.tasks = [self.tasks arrayByAddingObject:task];
+    [self.tasks addObject:task];
     for (VAKTask *temp in self.tasks) {
         NSLog(@"task: %@",temp);
     }
