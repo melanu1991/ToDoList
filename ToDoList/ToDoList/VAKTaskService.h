@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
+#import "VAKTask.h"
 
-@class VAKTask;
 @interface VAKTaskService : NSObject
 
 @property (nonatomic, strong) NSMutableArray *tasks;
