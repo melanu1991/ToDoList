@@ -15,6 +15,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKSwitchingBetweenTabs object:nil];
+}
+
+- (void)reloadTable {
+    [self.tableView reloadData];
 }
 
 - (NSMutableArray *)filteredArray {
@@ -69,6 +74,10 @@
     
     self.lastCountCharacters = [searchText length];
     [self.tableView reloadData];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

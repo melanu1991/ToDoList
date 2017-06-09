@@ -21,6 +21,8 @@
 		5800382A1EE3EF7D00A19465 /* VAKAddTaskController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 580038281EE3EF7D00A19465 /* VAKAddTaskController.xib */; };
 		589586E21EE57CA0002B159A /* VAKDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 589586E11EE57CA0002B159A /* VAKDetailViewController.m */; };
 		5896F3A41EE5327400E64890 /* VAKTaskService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5896F3A31EE5327400E64890 /* VAKTaskService.m */; };
+		58BFD9021EEA74CA003897F4 /* VAKCustumCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 58BFD9001EEA74CA003897F4 /* VAKCustumCell.m */; };
+		58BFD9031EEA74CA003897F4 /* VAKCustumCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */; };
 		58C936D41EE44D5800970D40 /* VAKSelectDateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58C936D21EE44D5800970D40 /* VAKSelectDateController.m */; };
 		58C936D51EE44D5800970D40 /* VAKSelectDateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */; };
 /* End PBXBuildFile section */
@@ -54,6 +56,9 @@
 		5896F3A31EE5327400E64890 /* VAKTaskService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKTaskService.m; sourceTree = "<group>"; };
 		5896F3A51EE5410800E64890 /* VAKAddNewTaskDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKAddNewTaskDelegate.h; sourceTree = "<group>"; };
 		58B871101EE5EF98006CE46D /* VAKFinishedTaskDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKFinishedTaskDelegate.h; sourceTree = "<group>"; };
+		58BFD8FF1EEA74CA003897F4 /* VAKCustumCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKCustumCell.h; sourceTree = "<group>"; };
+		58BFD9001EEA74CA003897F4 /* VAKCustumCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKCustumCell.m; sourceTree = "<group>"; };
+		58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKCustumCell.xib; sourceTree = "<group>"; };
 		58C936D11EE44D5800970D40 /* VAKSelectDateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKSelectDateController.h; sourceTree = "<group>"; };
 		58C936D21EE44D5800970D40 /* VAKSelectDateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKSelectDateController.m; sourceTree = "<group>"; };
 		58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKSelectDateController.xib; sourceTree = "<group>"; };
@@ -151,6 +156,9 @@
 				58C936D11EE44D5800970D40 /* VAKSelectDateController.h */,
 				58C936D21EE44D5800970D40 /* VAKSelectDateController.m */,
 				58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */,
+				58BFD8FF1EEA74CA003897F4 /* VAKCustumCell.h */,
+				58BFD9001EEA74CA003897F4 /* VAKCustumCell.m */,
+				58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -235,6 +243,7 @@
 				58C936D51EE44D5800970D40 /* VAKSelectDateController.xib in Resources */,
 				580038081EE3E3B200A19465 /* LaunchScreen.storyboard in Resources */,
 				580038051EE3E3B200A19465 /* Assets.xcassets in Resources */,
+				58BFD9031EEA74CA003897F4 /* VAKCustumCell.xib in Resources */,
 				580038031EE3E3B200A19465 /* Main.storyboard in Resources */,
 				5800382A1EE3EF7D00A19465 /* VAKAddTaskController.xib in Resources */,
 			);
@@ -248,6 +257,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				580038111EE3E59A00A19465 /* VAKTask.m in Sources */,
+				58BFD9021EEA74CA003897F4 /* VAKCustumCell.m in Sources */,
 				5800381C1EE3E65700A19465 /* VAKToDoListViewController.m in Sources */,
 				5896F3A41EE5327400E64890 /* VAKTaskService.m in Sources */,
 				580038291EE3EF7D00A19465 /* VAKAddTaskController.m in Sources */,

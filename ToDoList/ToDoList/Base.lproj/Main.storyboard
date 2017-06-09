@@ -95,8 +95,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outlet property="dataSource" destination="JDv-1Y-BrH" id="2BM-QK-SSC"/>
+                            <outlet property="delegate" destination="JDv-1Y-BrH" id="gFf-3r-qnG"/>
+                        </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="5qK-wa-Ebh"/>
+                    <connections>
+                        <outlet property="tableView" destination="erZ-8y-FDD" id="0c9-Pb-FhJ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="kJo-GP-f7b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

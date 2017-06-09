@@ -6,6 +6,8 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) VAKTaskService *taskService;
 @property (nonatomic, strong) VAKSearchViewController *searchViewController;
+@property (nonatomic, strong) VAKTodayViewController *todayViewController;
+@property (nonatomic, strong) VAKToDoListViewController *toDoListViewController;
 
 @end
 
@@ -18,10 +20,17 @@
     if ([self.tabBarController selectedIndex] == VAKIndexSearchView) {
         self.searchViewController = [[myNavController childViewControllers] firstObject];
         self.searchViewController.tasks = [self.taskService.tasks copy];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKSwitchingBetweenTabs object:nil];
+    }
+    else if ([self.tabBarController selectedIndex] == VAKIndexTodayView) {
+        self.todayViewController = [[myNavController childViewControllers] firstObject];
+        
+    }
+    else if ([self.tabBarController selectedIndex] == VAKIndexToDoListView) {
+        self.toDoListViewController = [[myNavController childViewControllers] firstObject];
     }
 
     [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
-    
 }
 
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{

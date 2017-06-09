@@ -15,7 +15,10 @@ static NSString * const VAKSaveTitle = @"Save";
 static NSUInteger const VAKIndexInboxView = 0;
 static NSUInteger const VAKIndexToDoListView = 1;
 static NSUInteger const VAKIndexSearchView = 2;
-static NSUInteger const VAKTodayView = 3;
+static NSUInteger const VAKIndexTodayView = 3;
 static NSString * const VAKSearchCell = @"searchCell";
+static NSString * const VAKSwitchingBetweenTabs = @"VAKSwitchingBetweenTabs";
+static NSString * const VAKTodayCell = @"todayCell";
+static NSString * const VAKCustumCellNib = @"VAKCustumCell";
 
 #endif

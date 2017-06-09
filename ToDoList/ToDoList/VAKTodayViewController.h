@@ -1,13 +1,11 @@
-//
-//  VAKTodayViewController.h
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
+#import "VAKCustumCell.h"
+#import "VAKTaskService.h"
+#import "VAKTask.h"
+#import "Constants.h"
 
-@interface VAKTodayViewController : UIViewController
+@interface VAKTodayViewController : UIViewController <UITableViewDataSource>
+
+@property (strong, nonatomic) VAKTaskService *taskService;
 
 @end
