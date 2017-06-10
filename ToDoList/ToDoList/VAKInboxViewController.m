@@ -13,25 +13,25 @@
 
 @implementation VAKInboxViewController
 
-- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-
-    UINavigationController *myNavController = (UINavigationController *)viewController;
-    
-    if ([self.tabBarController selectedIndex] == VAKIndexSearchView) {
-        self.searchViewController = [[myNavController childViewControllers] firstObject];
-        self.searchViewController.tasks = [self.taskService.tasks copy];
-        [[NSNotificationCenter defaultCenter] postNotificationName:VAKSwitchingBetweenTabs object:nil];
-    }
-    else if ([self.tabBarController selectedIndex] == VAKIndexTodayView) {
-        self.todayViewController = [[myNavController childViewControllers] firstObject];
-        
-    }
-    else if ([self.tabBarController selectedIndex] == VAKIndexToDoListView) {
-        self.toDoListViewController = [[myNavController childViewControllers] firstObject];
-    }
-
-    [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
-}
+//- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
+//
+//    UINavigationController *myNavController = (UINavigationController *)viewController;
+//    
+//    if ([self.tabBarController selectedIndex] == VAKIndexSearchView) {
+//        self.searchViewController = [[myNavController childViewControllers] firstObject];
+//        self.searchViewController.tasks = [self.taskService.tasks copy];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:VAKSwitchingBetweenTabs object:nil];
+//    }
+//    else if ([self.tabBarController selectedIndex] == VAKIndexTodayView) {
+//        self.todayViewController = [[myNavController childViewControllers] firstObject];
+//        
+//    }
+//    else if ([self.tabBarController selectedIndex] == VAKIndexToDoListView) {
+//        self.toDoListViewController = [[myNavController childViewControllers] firstObject];
+//    }
+//
+//    [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
+//}
 
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
     for (int i = 0; i < self.taskService.tasks.count; i++) {

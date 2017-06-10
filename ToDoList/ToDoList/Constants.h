@@ -20,5 +20,6 @@ static NSString * const VAKSearchCell = @"searchCell";
 static NSString * const VAKSwitchingBetweenTabs = @"VAKSwitchingBetweenTabs";
 static NSString * const VAKTodayCell = @"todayCell";
 static NSString * const VAKCustumCellNib = @"VAKCustumCell";
+static NSString * const VAKTitleForHeaderCompleted = @"Completed";
 
 #endif
