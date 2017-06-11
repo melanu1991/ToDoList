@@ -33,38 +33,32 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     UITableViewCell *cell = nil;
-    NSString *identifier = nil;
     
     if (indexPath.section == 0) {
-        identifier = VAKTaskNameCellIdentifier;
+        cell = [self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
     }
     else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            identifier = VAKRemindCellIdentifier;
+            cell = [self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
         }
         else {
-            identifier = VAKDateCellIdentifier;
-            if (self.selectDate) {
-                [self.tableView registerNib:[UINib nibWithNibName:identifier bundle:nil] forCellReuseIdentifier:identifier];
-                cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-                cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
-                return cell;
-            }
+            cell = [self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
+            cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
         }
     }
     else if (indexPath.section == 2) {
-        identifier = VAKPriorityCellIdentifier;
-        if (self.selectPriority) {
-            [self.tableView registerNib:[UINib nibWithNibName:identifier bundle:nil] forCellReuseIdentifier:identifier];
-            cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-            cell.detailTextLabel.text = self.selectPriority;
-            return cell;
-        }
+        cell = [self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
+        cell.detailTextLabel.text = self.selectPriority;
     }
     else {
-        identifier = VAKNotesCellIdentifier;
+        cell = [self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
     }
-    
+
+    return cell;
+}
+
+- (UITableViewCell *)cellForIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
+    UITableViewCell *cell = nil;
     [self.tableView registerNib:[UINib nibWithNibName:identifier bundle:nil] forCellReuseIdentifier:identifier];
     cell = [tableView dequeueReusableCellWithIdentifier:identifier];
     return cell;
@@ -101,6 +95,9 @@
     [super viewDidLoad];
     self.formatter = [[NSDateFormatter alloc]init];
     self.formatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
+    
+    self.selectPriority = @"None";
+    self.selectDate = [NSDate date];
     
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
     self.navigationItem.rightBarButtonItem = doneButton;
