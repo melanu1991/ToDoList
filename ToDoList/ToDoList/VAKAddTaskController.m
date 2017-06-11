@@ -20,30 +20,33 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.formatter = [[NSDateFormatter alloc]init];
-    self.formatter.dateFormat = @"HH:mm dd.MMMM.yyyy";
+//    self.formatter = [[NSDateFormatter alloc]init];
+//    self.formatter.dateFormat = @"HH:mm dd.MMMM.yyyy";
     
-    UIBarButtonItem *save = [[UIBarButtonItem alloc]initWithTitle:VAKSaveTitle style:UIBarButtonItemStyleDone target:self action:@selector(saveTask)];
-    self.navigationItem.rightBarButtonItem = save;
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.navigationItem.rightBarButtonItem = doneButton;
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelTitle style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.leftBarButtonItem = cancelButton;
     
     UITapGestureRecognizer *handleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleEndEditing)];
     [self.view addGestureRecognizer:handleTap];
     
-    NSDate *date = nil;
-    NSString *title = nil;
-    if (!self.task) {
-        date = [NSDate date];
-        title = VAKAddTaskTitle;
-    }
-    else {
-        date = self.task.startedAt;
-        title = VAKEditTaskTitle;
-        self.taskNameField.text = self.task.taskName;
-        self.taskNotesTextView.text = self.task.notes;
-    }
-    
-    [self.dateButton setTitle:[self.formatter stringFromDate:date] forState:UIControlStateNormal];
-    [self.navigationItem setTitle:title];
+//    NSDate *date = nil;
+//    NSString *title = nil;
+//    if (!self.task) {
+//        date = [NSDate date];
+//        title = VAKAddTaskTitle;
+//    }
+//    else {
+//        date = self.task.startedAt;
+//        title = VAKEditTaskTitle;
+//        self.taskNameField.text = self.task.taskName;
+//        self.taskNotesTextView.text = self.task.notes;
+//    }
+//    
+//    [self.dateButton setTitle:[self.formatter stringFromDate:date] forState:UIControlStateNormal];
+//    [self.navigationItem setTitle:title];
 
 }
 
@@ -57,7 +60,11 @@
     [self showViewController:selectDate sender:nil];
 }
 
-- (void)saveTask {
+- (void)cancelButtonPressed {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)doneButtonPressed {
     if (!self.task) {
         NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
         VAKTask *newTask = [[VAKTask alloc]initTaskWithId:taskId taskName:self.taskNameField.text];

@@ -2,7 +2,7 @@
 #define Constants_h
 
 static NSString * const VAKTaskWasChanged = @"TaskWasChanged";
-static NSString * const VAKAddTaskTitle = @"Add task";
+static NSString * const VAKAddTaskTitle = @"Add Item";
 static NSString * const VAKEditTaskTitle = @"Edit task";
 static NSString * const VAKInboxCell = @"inboxCell";
 static NSString * const VAKAddController = @"VAKAddTaskController";
@@ -23,5 +23,6 @@ static NSString * const VAKCustumCellNib = @"VAKCustumCell";
 static NSString * const VAKTitleForHeaderCompleted = @"Completed";
 static NSString * const VAKEditButton = @"Edit";
 static NSString * const VAKDoneButton = @"Done";
+static NSString * const VAKCancelTitle = @"Cancel";
 
 #endif
