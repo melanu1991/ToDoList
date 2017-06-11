@@ -19,10 +19,21 @@ static NSUInteger const VAKIndexTodayView = 3;
 static NSString * const VAKSearchCell = @"searchCell";
 static NSString * const VAKSwitchingBetweenTabs = @"VAKSwitchingBetweenTabs";
 static NSString * const VAKTodayCell = @"todayCell";
-static NSString * const VAKCustumCellNib = @"VAKCustumCell";
 static NSString * const VAKTitleForHeaderCompleted = @"Completed";
 static NSString * const VAKEditButton = @"Edit";
 static NSString * const VAKDoneButton = @"Done";
 static NSString * const VAKCancelTitle = @"Cancel";
+
+static NSString * const VAKTaskNameCellIdentifier = @"VAKTaskNameCell";
+static NSString * const VAKRemindCellIdentifier = @"VAKRemindCell";
+static NSString * const VAKDateCellIdentifier = @"VAKDateCell";
+static NSString * const VAKNotesCellIdentifier = @"VAKNotesCell";
+static NSString * const VAKCustumCellNib = @"VAKCustumCell";
+static NSString * const VAKPriorityCellIdentifier = @"VAKPriorityCell";
+
+static NSString * const VAKTaskTitle = @"TASK";
+static NSString * const VAKRemindTitle = @"REMIND";
+static NSString * const VAKPriorityTitle = @"PRIORITY";
+static NSString * const VAKNotesTitle = @"NOTES";
 
 #endif

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="VAKNotesCell" rowHeight="200" id="KGk-i7-Jjw" customClass="VAKNotesCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="200"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="320" height="199.5"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="LxP-VV-al6">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="199.5"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    </textView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="LxP-VV-al6" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="2Ur-iO-IhS"/>
+                    <constraint firstItem="LxP-VV-al6" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="FS1-kc-ROP"/>
+                    <constraint firstAttribute="trailing" secondItem="LxP-VV-al6" secondAttribute="trailing" id="lgF-EL-5wy"/>
+                    <constraint firstAttribute="bottom" secondItem="LxP-VV-al6" secondAttribute="bottom" id="tou-Sw-aqw"/>
+                </constraints>
+            </tableViewCellContentView>
+            <connections>
+                <outlet property="notes" destination="LxP-VV-al6" id="DbN-8u-bH4"/>
+            </connections>
+            <point key="canvasLocation" x="34" y="-16.5"/>
+        </tableViewCell>
+    </objects>
+</document>

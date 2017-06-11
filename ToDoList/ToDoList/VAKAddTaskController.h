@@ -4,7 +4,7 @@
 #import "VAKChangedDateDelegate.h"
 #import "VAKAddNewTaskDelegate.h"
 
-@interface VAKAddTaskController : UIViewController <VAKChangedDateDelegate>
+@interface VAKAddTaskController : UIViewController <VAKChangedDateDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, weak) id<VAKAddNewTaskDelegate> delegate;
 @property (nonatomic, retain) VAKTask *task;
