@@ -21,16 +21,30 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="FqA-4V-NjZ">
-                    <rect key="frame" x="27.5" y="225.5" width="320" height="216"/>
+                    <rect key="frame" x="0.0" y="367" width="375" height="300"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="300" id="eNU-oU-dbt"/>
+                    </constraints>
                     <date key="date" timeIntervalSinceReferenceDate="518278517.749219">
                         <!--2017-06-04 14:15:17 +0000-->
                     </date>
                 </datePicker>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VUF-CI-zWR">
+                    <rect key="frame" x="0.0" y="100" width="375" height="117"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="FqA-4V-NjZ" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="QfX-N1-gPs"/>
-                <constraint firstItem="FqA-4V-NjZ" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="YeG-3E-fwT"/>
+                <constraint firstAttribute="trailing" secondItem="VUF-CI-zWR" secondAttribute="trailing" id="LQ8-Tp-b9i"/>
+                <constraint firstAttribute="trailing" secondItem="FqA-4V-NjZ" secondAttribute="trailing" id="T0G-mh-91X"/>
+                <constraint firstItem="VUF-CI-zWR" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="UlO-Qp-Klh"/>
+                <constraint firstItem="FqA-4V-NjZ" firstAttribute="top" secondItem="VUF-CI-zWR" secondAttribute="bottom" constant="150" id="baJ-f8-tVw"/>
+                <constraint firstAttribute="bottom" secondItem="FqA-4V-NjZ" secondAttribute="bottom" id="e1i-PJ-bAp"/>
+                <constraint firstItem="FqA-4V-NjZ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="mDT-LD-40U"/>
+                <constraint firstItem="VUF-CI-zWR" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="100" id="sKo-eW-pux"/>
             </constraints>
             <point key="canvasLocation" x="34.5" y="54.5"/>
         </view>
