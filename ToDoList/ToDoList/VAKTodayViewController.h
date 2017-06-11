@@ -4,7 +4,7 @@
 #import "VAKTask.h"
 #import "Constants.h"
 
-@interface VAKTodayViewController : UIViewController <UITableViewDataSource>
+@interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) VAKTaskService *taskService;
 

@@ -1,4 +1,5 @@
 #import "VAKTodayViewController.h"
+#import "VAKAddTaskController.h"
 
 @interface VAKTodayViewController ()
 
@@ -17,24 +18,25 @@
     self.formatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
     self.taskService = [VAKTaskService initDefaultTaskService];
     self.navigationItem.title = @"Today";
-    self.editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonSystemItemEdit target:self action:@selector(editButtonPressed)];
+    self.editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
-    self.addButton = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonSystemItemAdd target:self action:@selector(addButtonPressed)];
+    self.addButton = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
 }
 
-- (void)addButtonPressed {
-   
+- (void)addTaskButtonPressed {
+    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
+    [self.navigationController pushViewController:addTaskController animated:YES];
 }
 
-- (void)editButtonPressed {
-    if ([self.editButton.title isEqualToString:@"Edit"]) {
-        self.editButton.title = @"Done";
+- (void)editTaskButtonPressed {
+    if ([self.editButton.title isEqualToString:VAKEditButton]) {
+        self.editButton.title = VAKDoneButton;
     }
     else {
-        self.editButton.title = @"Edit";
+        self.editButton.title = VAKEditButton;
     }
-    
+    [self.tableView setEditing:!self.tableView.editing];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -42,34 +44,13 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-//    NSLog(@"section %ld",section);
-    if (section == 1) {
-        NSInteger countCompletedTask = 0;
-        for (int i = 0; i < [self.taskService.tasks count]; i++) {
-            VAKTask *completedTask = self.taskService.tasks[i];
-            if (completedTask.isCompleted) {
-                countCompletedTask++;
-                [self.taskService.groupCompletedTasks addObject:completedTask];
-            }
-        }
-//        NSLog(@"countCompleted: %ld",countCompletedTask);
-        return countCompletedTask;
+    if (section == 0) {
+        return [self.taskService.groupNotCompletedTasks count];
     }
-    else {
-        NSInteger countNotCompletedTask = 0;
-        for (VAKTask *notCompletedtask in self.taskService.tasks) {
-            if (!notCompletedtask.isCompleted) {
-                countNotCompletedTask++;
-                [self.taskService.groupNotCompletedTasks addObject:notCompletedtask];
-            }
-        }
-//        NSLog(@"countCompleted: %ld",countNotCompletedTask);
-        return countNotCompletedTask;
-    }
+    return [self.taskService.groupCompletedTasks count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    NSLog(@"section %ld and row %ld", indexPath.section, indexPath.row);
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKTodayCell];
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKTodayCell];
@@ -100,20 +81,44 @@
     return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete)
-    {
-        [self.taskService.tasks removeObjectAtIndex:indexPath.row];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-    }
-    if (editingStyle == UITableViewCellEditingStyleInsert) {
-        
-    }
-}
-
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     [super setEditing:editing animated:animated];
     [self.tableView setEditing:editing animated:animated];
+}
+
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Delete task" message:@"Are you sure you want remove this item?" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if (indexPath.section == 0)
+        {
+            [self.taskService.groupNotCompletedTasks removeObjectAtIndex:indexPath.row];
+        }
+        else {
+            [self.taskService.groupCompletedTasks removeObjectAtIndex:indexPath.row];
+        }
+        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    [alertController addAction:okAction];
+    [alertController addAction:cancelAction];
+    
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Done" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        if (indexPath.section == 0) {
+            [self.taskService.groupCompletedTasks addObject:self.taskService.groupNotCompletedTasks[indexPath.row]];
+            [self.taskService.groupNotCompletedTasks removeObjectAtIndex:indexPath.row];
+            [self.tableView reloadData];
+        }
+    }];
+    doneAction.backgroundColor = [UIColor blueColor];
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        [self presentViewController:alertController animated:YES completion:nil];
+    }];
+    deleteAction.backgroundColor = [UIColor redColor];
+    return @[deleteAction, doneAction];
 }
 
 @end

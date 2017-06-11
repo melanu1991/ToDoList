@@ -21,5 +21,7 @@ static NSString * const VAKSwitchingBetweenTabs = @"VAKSwitchingBetweenTabs";
 static NSString * const VAKTodayCell = @"todayCell";
 static NSString * const VAKCustumCellNib = @"VAKCustumCell";
 static NSString * const VAKTitleForHeaderCompleted = @"Completed";
+static NSString * const VAKEditButton = @"Edit";
+static NSString * const VAKDoneButton = @"Done";
 
 #endif

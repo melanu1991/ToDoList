@@ -10,6 +10,7 @@
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     formatter.dateFormat = @"EEEE, dd MMMM yyyy г., HH:mm";
     VAKTaskService *taskService = [[VAKTaskService alloc] init];
+    taskService.tasks = [NSMutableArray array];
     VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
     task1.startedAt = [formatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
     task1.notes = @"My new task!";
@@ -33,7 +34,13 @@
     VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
     task7.startedAt = [formatter dateFromString:@"Wednesday, 07 June 2017 г., 12:57"];
     task7.notes = @"My new task!";
-    taskService.tasks = [[NSMutableArray alloc] initWithObjects:task1,task2,task3,task4,task5,task6,task7, nil];
+    [taskService addTask:task1];
+    [taskService addTask:task2];
+    [taskService addTask:task3];
+    [taskService addTask:task4];
+    [taskService addTask:task5];
+    [taskService addTask:task6];
+    [taskService addTask:task7];
     return taskService;
 }
 
@@ -68,8 +75,15 @@
     return nil;
 }
 
+//при добавлении таска сразу выбирается его группа Completed/Not Completed
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
+    if (task.isCompleted) {
+        [self.groupCompletedTasks addObject:task];
+    }
+    else {
+        [self.groupNotCompletedTasks addObject:task];
+    }
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -81,8 +95,9 @@
     }
 }
 
+//При изменении таска также происходит обновление его полей и перевод в другую группу если она изменилась
 - (void)updateTask:(VAKTask *)task {
-    //не совсем понял что подразумевается под апдейтом таска
+
 }
 
 @end
