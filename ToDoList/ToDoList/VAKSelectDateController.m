@@ -4,6 +4,7 @@
 @interface VAKSelectDateController ()
 
 @property (weak, nonatomic) IBOutlet UIDatePicker *datePicker;
+@property (weak, nonatomic) IBOutlet UILabel *currentDate;
 
 @end
 
@@ -17,6 +18,9 @@
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.datePicker.minimumDate = [NSDate date];
     [self.navigationItem setTitle:VAKDateTitle];
+    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    formatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
+    self.currentDate.text = [formatter stringFromDate:[NSDate date]];
 }
 
 - (void)setSelectDate {

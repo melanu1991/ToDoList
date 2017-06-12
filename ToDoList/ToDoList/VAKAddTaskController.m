@@ -12,6 +12,10 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSDate *selectDate;
 @property (strong, nonatomic) NSString *selectPriority;
+@property (strong, nonatomic) NSString *taskName;
+@property (strong, nonatomic) NSString *taskNotes;
+@property (assign, nonatomic, getter=isRemindMeOnADay) BOOL remindMeOnADay;
+@property (strong, nonatomic) UIBarButtonItem *doneButton;
 
 @end
 
@@ -32,29 +36,34 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UITableViewCell *cell = nil;
-    
     if (indexPath.section == 0) {
-        cell = [self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
+        VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
+        cell.textField.delegate = self;
+        return cell;
     }
     else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
-            cell = [self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
+            VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
+            [cell.remindSwitch addTarget:self action:@selector(switchAction) forControlEvents:UIControlEventValueChanged];
+            return cell;
         }
         else {
-            cell = [self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
+            VAKDateCell *cell = (VAKDateCell *)[self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
             cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
+            return cell;
         }
     }
     else if (indexPath.section == 2) {
-        cell = [self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
+        VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
         cell.detailTextLabel.text = self.selectPriority;
+        return cell;
     }
     else {
-        cell = [self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
+        VAKNotesCell *cell = (VAKNotesCell *)[self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
+        cell.notes.delegate = self;
+        return cell;
     }
-
-    return cell;
+    
 }
 
 - (UITableViewCell *)cellForIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
@@ -88,7 +97,9 @@
 
 - (void)setNewDateWithDate:(NSDate *)date {
     self.selectDate = date;
-    [self.tableView reloadData];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:1];
+    NSArray *rowToReload = [NSArray arrayWithObjects:indexPath, nil];
+    [self.tableView reloadRowsAtIndexPaths:rowToReload withRowAnimation:UITableViewRowAnimationRight];
 }
 
 - (void)viewDidLoad {
@@ -99,8 +110,9 @@
     self.selectPriority = @"None";
     self.selectDate = [NSDate date];
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
-    self.navigationItem.rightBarButtonItem = doneButton;
+    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.navigationItem.rightBarButtonItem = self.doneButton;
+    self.doneButton.enabled = NO;
     
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelTitle style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
     self.navigationItem.leftBarButtonItem = cancelButton;
@@ -114,7 +126,7 @@
     }
 
     [self.navigationItem setTitle:title];
-
+    
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -128,19 +140,19 @@
         UIAlertController *priorityAlertController = [UIAlertController alertControllerWithTitle:@"Select Priority" message:nil preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *noneAction = [UIAlertAction actionWithTitle:@"None" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.selectPriority = @"None";
-            [self.tableView reloadData];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         UIAlertAction *lowAction = [UIAlertAction actionWithTitle:@"Low" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.selectPriority = @"Low";
-            [self.tableView reloadData];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         UIAlertAction *mediumAction = [UIAlertAction actionWithTitle:@"Medium" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.selectPriority = @"Medium";
-            [self.tableView reloadData];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         UIAlertAction *highAction = [UIAlertAction actionWithTitle:@"High" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             self.selectPriority = @"High";
-            [self.tableView reloadData];
+            [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             return;
@@ -154,23 +166,61 @@
     }
 }
 
+- (void)textFieldDidEndEditing:(UITextField *)textField {
+    self.taskName = textField.text;
+    if ([textField.text length] > 0) {
+        self.doneButton.enabled = YES;
+    }
+    else {
+        self.doneButton.enabled = NO;
+    }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView {
+    self.taskNotes = textView.text;
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range  replacementText:(NSString *)text
+{
+    if([text isEqualToString:@"\n"]) {
+        [textView resignFirstResponder];
+        return NO;
+    }
+    return YES;
+}
+
+- (void)switchAction {
+    self.remindMeOnADay = !self.remindMeOnADay;
+}
+
 - (void)cancelButtonPressed {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-//- (void)doneButtonPressed {
-//    if (!self.task) {
-//        NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
-//        VAKTask *newTask = [[VAKTask alloc]initTaskWithId:taskId taskName:self.taskNameField.text];
-//
-//        [self.delegate addNewTaskWithTask:newTask];
-//    }
-//    else {
-//        self.task.taskName = self.taskNameField.text;
-//        self.task.notes = self.taskNotesTextView.text;
-//        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
-//    }
-//    [self.navigationController popViewControllerAnimated:YES];
-//}
+- (void)doneButtonPressed {
+    if (!self.task) {
+        NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
+        VAKTask *newTask = [[VAKTask alloc]initTaskWithId:taskId taskName:self.taskName];
+        newTask.priority = self.selectPriority;
+        newTask.remindMeOnADay = self.remindMeOnADay;
+        newTask.notes = self.taskNotes;
+        newTask.startedAt = self.selectDate;
+        [self.delegate addNewTaskWithTask:newTask];
+    }
+    else {
+        self.task.taskName = self.taskName;
+        self.task.priority = self.selectPriority;
+        self.task.remindMeOnADay = self.remindMeOnADay;
+        self.task.startedAt = self.selectDate;
+        self.task.notes = self.taskNotes;
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
+}
 
 @end

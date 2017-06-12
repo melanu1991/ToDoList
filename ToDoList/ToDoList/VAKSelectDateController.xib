@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VAKSelectDateController">
             <connections>
+                <outlet property="currentDate" destination="VUF-CI-zWR" id="kxE-Vq-cPg"/>
                 <outlet property="datePicker" destination="FqA-4V-NjZ" id="Vv7-Yh-IEO"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>

@@ -7,6 +7,8 @@
 @property (nonatomic, strong) NSDate *startedAt;
 @property (nonatomic, strong) NSDate *finishedAt;
 @property (nonatomic, copy) NSString *notes;
+@property (copy, nonatomic) NSString *priority;
+@property (assign, nonatomic, getter=isRemindMeOnADay) BOOL remindMeOnADay;
 @property (nonatomic, assign, getter=isCompleted) BOOL completed;
 
 - (instancetype)initTaskWithId:(NSString *)taskId taskName:(NSString *)taskName;
