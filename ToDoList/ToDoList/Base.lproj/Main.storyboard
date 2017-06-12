@@ -397,6 +397,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="Odu-p2-CTq"/>
                     <connections>
+                        <outlet property="chooseActiveOrCompletedTasks" destination="Bnt-al-kPF" id="HjW-rE-Ld3"/>
                         <outlet property="noResultLabel" destination="j9k-br-55p" id="roA-Gz-WoQ"/>
                         <outlet property="tableView" destination="yLC-zi-uBz" id="bqW-P4-vQz"/>
                     </connections>
