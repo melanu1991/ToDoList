@@ -399,6 +399,7 @@
                     <connections>
                         <outlet property="chooseActiveOrCompletedTasks" destination="Bnt-al-kPF" id="HjW-rE-Ld3"/>
                         <outlet property="noResultLabel" destination="j9k-br-55p" id="roA-Gz-WoQ"/>
+                        <outlet property="searchBar" destination="j5c-8M-v25" id="Ezi-qr-ArH"/>
                         <outlet property="tableView" destination="yLC-zi-uBz" id="bqW-P4-vQz"/>
                     </connections>
                 </viewController>
