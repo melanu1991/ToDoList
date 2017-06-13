@@ -10,6 +10,7 @@
 @property (copy, nonatomic) NSString *priority;
 @property (assign, nonatomic, getter=isRemindMeOnADay) BOOL remindMeOnADay;
 @property (nonatomic, assign, getter=isCompleted) BOOL completed;
+@property (copy, nonatomic) NSString *currentGroup;
 
 - (instancetype)initTaskWithId:(NSString *)taskId taskName:(NSString *)taskName;
 

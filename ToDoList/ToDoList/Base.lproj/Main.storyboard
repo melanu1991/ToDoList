@@ -130,6 +130,9 @@
                                     <segment title="Date"/>
                                     <segment title="Group"/>
                                 </segments>
+                                <connections>
+                                    <action selector="changeSegmentedControl:" destination="9Ue-gH-jcB" eventType="valueChanged" id="8Qc-b1-UQS"/>
+                                </connections>
                             </segmentedControl>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Usu-Bx-QB1">
                                 <rect key="frame" x="0.0" y="144" width="375" height="474"/>
