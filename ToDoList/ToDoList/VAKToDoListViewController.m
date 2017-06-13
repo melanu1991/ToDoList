@@ -1,11 +1,16 @@
 #import "VAKToDoListViewController.h"
 #import "VAKAddProjectViewController.h"
 #import "VAKAddProject.h"
+#import "VAKTaskService.h"
+#import "VAKTask.h"
+#import "VAKPriorityCell.h"
+#import "Constants.h"
 
 @interface VAKToDoListViewController () <VAKAddProject>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
+@property (strong, nonatomic) VAKTaskService *taskService;
 
 @end
 
@@ -16,6 +21,10 @@
     
     self.addProjectButton.target = self;
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
+    
+    self.taskService = [VAKTaskService initDefaultTaskService];
+    
+    
 //    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(addProjectButtonPressed)];
 //    self.navigationItem.rightBarButtonItem = addItem;
     
@@ -28,7 +37,7 @@
 }
 
 - (void)addNewProjectWithName:(NSString *)name {
-    
+
     [self.tableView reloadData];
 }
 
@@ -41,13 +50,19 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *identifier = @"myCell";
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
-    cell.textLabel.text = @"my cell";
+    [self.tableView registerNib:[UINib nibWithNibName:VAKPriorityCellIdentifier bundle:nil] forCellReuseIdentifier:VAKPriorityCellIdentifier];
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
+    cell.textLabel.text = @"myGroup";
+    cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",1+indexPath.row];
     
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 @end

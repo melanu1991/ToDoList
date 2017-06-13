@@ -48,6 +48,7 @@
     [taskService addTask:task5];
     [taskService addTask:task6];
     [taskService addTask:task7];
+    
     return taskService;
 }
 
@@ -82,7 +83,7 @@
     return nil;
 }
 
-//при добавлении таска сразу выбирается его группа Completed/Not Completed
+//при добавлении таска сразу выбирается его группа Completed/Not Completed and All Group ToDoList
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
     if (task.isCompleted) {
@@ -102,7 +103,6 @@
     }
 }
 
-//При изменении таска также происходит обновление его полей и перевод в другую группу если она изменилась
 - (void)updateTask:(VAKTask *)task {
 
 }
