@@ -307,16 +307,105 @@
         <scene sceneID="lLf-M7-eMu">
             <objects>
                 <viewController id="kCv-xM-fEy" customClass="VAKToDoListViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="NwW-Nt-VOa">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="NwW-Nt-VOa">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="myCell" id="iLL-8x-e1D">
+                                <rect key="frame" x="0.0" y="55.5" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="iLL-8x-e1D" id="LNf-58-WaR">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="kCv-xM-fEy" id="1ne-JB-9QC"/>
+                            <outlet property="delegate" destination="kCv-xM-fEy" id="7ga-bK-oLa"/>
+                        </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="jbR-Jg-xNX"/>
+                    <navigationItem key="navigationItem" id="jbR-Jg-xNX">
+                        <barButtonItem key="leftBarButtonItem" systemItem="edit" id="NiU-Ag-kGc"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="WKf-Hp-igO">
+                            <connections>
+                                <action selector="addProjectButtonPressed:" destination="kCv-xM-fEy" id="5qw-TV-fIA"/>
+                                <segue destination="LRO-YU-svL" kind="show" identifier="" id="m6V-vQ-R01"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="addProjectButton" destination="WKf-Hp-igO" id="tel-lJ-asH"/>
+                        <outlet property="tableView" destination="NwW-Nt-VOa" id="Tg2-nj-ryW"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f9q-9D-p7n" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1534" y="359"/>
+        </scene>
+        <!--Add Project-->
+        <scene sceneID="w9Z-2e-n7I">
+            <objects>
+                <viewController storyboardIdentifier="addProject" id="LRO-YU-svL" customClass="VAKAddProjectViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="S8N-ef-ejZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="LiT-XM-VER"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1na-IE-x7w">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="  Project" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F8Q-fx-hyW">
+                                <rect key="frame" x="0.0" y="79" width="375" height="50"/>
+                                <color key="backgroundColor" white="0.90163845486111116" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="g5W-v4-OUa"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="26"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter the name of the group" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mL4-Hx-qpe">
+                                <rect key="frame" x="0.0" y="129" width="375" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="jCc-Sz-1LP"/>
+                                </constraints>
+                                <nil key="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="mL4-Hx-qpe" firstAttribute="leading" secondItem="1na-IE-x7w" secondAttribute="leading" id="9Z9-r8-zfS"/>
+                            <constraint firstItem="F8Q-fx-hyW" firstAttribute="top" secondItem="S8N-ef-ejZ" secondAttribute="bottom" constant="15" id="EiB-tC-tX1"/>
+                            <constraint firstItem="mL4-Hx-qpe" firstAttribute="top" secondItem="F8Q-fx-hyW" secondAttribute="bottom" id="e8h-8w-aV2"/>
+                            <constraint firstAttribute="trailing" secondItem="mL4-Hx-qpe" secondAttribute="trailing" id="inq-sX-Z9R"/>
+                            <constraint firstItem="F8Q-fx-hyW" firstAttribute="leading" secondItem="1na-IE-x7w" secondAttribute="leading" id="mts-uD-x5V"/>
+                            <constraint firstAttribute="trailing" secondItem="F8Q-fx-hyW" secondAttribute="trailing" id="oW2-hI-B17"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Add Project" id="sOZ-2E-xYf">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="brJ-Mn-c6C">
+                            <connections>
+                                <action selector="cancelButtonPressed:" destination="LRO-YU-svL" id="29D-b8-0Ir"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="eqH-5t-orW">
+                            <connections>
+                                <action selector="doneButtonPressed:" destination="LRO-YU-svL" id="gxC-i3-eYi"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="nameProjectField" destination="mL4-Hx-qpe" id="fD1-XB-6RY"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Lys-mc-uYL" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2326" y="359"/>
         </scene>
         <!--Search-->
         <scene sceneID="1yW-Zz-LSY">

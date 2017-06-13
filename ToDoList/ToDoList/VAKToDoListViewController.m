@@ -1,14 +1,11 @@
-//
-//  VAKToDoListViewController.m
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import "VAKToDoListViewController.h"
+#import "VAKAddProjectViewController.h"
+#import "VAKAddProject.h"
 
-@interface VAKToDoListViewController ()
+@interface VAKToDoListViewController () <VAKAddProject>
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
 
 @end
 
@@ -16,22 +13,41 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    self.addProjectButton.target = self;
+    self.addProjectButton.action = @selector(addProjectButtonPressed:);
+//    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(addProjectButtonPressed)];
+//    self.navigationItem.rightBarButtonItem = addItem;
+    
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (IBAction)addProjectButtonPressed:(id)sender {
+    VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"addProject"];
+    addProjectViewController.delegate = self;
+    [self.navigationController pushViewController:addProjectViewController animated:YES];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)addNewProjectWithName:(NSString *)name {
+    
+    [self.tableView reloadData];
 }
-*/
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 2;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *identifier = @"myCell";
+    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+    cell.textLabel.text = @"my cell";
+    
+    
+    return cell;
+}
 
 @end
