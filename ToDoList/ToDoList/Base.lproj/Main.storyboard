@@ -113,37 +113,44 @@
         <scene sceneID="Mlk-k7-nIH">
             <objects>
                 <viewController id="9Ue-gH-jcB" customClass="VAKInboxViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="qfU-ab-YxH">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="w9U-x8-MNc"/>
+                        <viewControllerLayoutGuide type="bottom" id="UMD-bu-lYy"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Do6-pD-PdM">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="inboxCell" textLabel="IPr-So-QAB" style="IBUITableViewCellStyleDefault" id="FdA-ia-AyR">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="FdA-ia-AyR" id="9pd-dL-dlo">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="IPr-So-QAB">
-                                            <rect key="frame" x="15" y="0.0" width="345" height="43.5"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                    </subviews>
-                                </tableViewCellContentView>
+                        <subviews>
+                            <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="py2-Pc-ZVE">
+                                <rect key="frame" x="15" y="79" width="345" height="51"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="rvX-LL-ckH"/>
+                                </constraints>
+                                <segments>
+                                    <segment title="Date"/>
+                                    <segment title="Group"/>
+                                </segments>
+                            </segmentedControl>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Usu-Bx-QB1">
+                                <rect key="frame" x="0.0" y="144" width="375" height="474"/>
+                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                                 <connections>
-                                    <segue destination="FcO-mY-4vA" kind="show" identifier="detailSegue" id="Xoj-Jb-zpI"/>
+                                    <outlet property="dataSource" destination="9Ue-gH-jcB" id="hqi-Os-1Kc"/>
+                                    <outlet property="delegate" destination="9Ue-gH-jcB" id="Vm0-UH-lfn"/>
                                 </connections>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="9Ue-gH-jcB" id="T6f-Wd-taQ"/>
-                            <outlet property="delegate" destination="9Ue-gH-jcB" id="Ce6-zl-GfW"/>
-                        </connections>
-                    </tableView>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="py2-Pc-ZVE" secondAttribute="trailing" constant="15" id="4Cy-tE-ELB"/>
+                            <constraint firstItem="UMD-bu-lYy" firstAttribute="top" secondItem="Usu-Bx-QB1" secondAttribute="bottom" id="7Lv-c9-nbY"/>
+                            <constraint firstItem="py2-Pc-ZVE" firstAttribute="top" secondItem="w9U-x8-MNc" secondAttribute="bottom" constant="15" id="8Jt-rm-osu"/>
+                            <constraint firstItem="py2-Pc-ZVE" firstAttribute="leading" secondItem="Do6-pD-PdM" secondAttribute="leading" constant="15" id="8jA-YB-uS4"/>
+                            <constraint firstItem="Usu-Bx-QB1" firstAttribute="leading" secondItem="Do6-pD-PdM" secondAttribute="leading" id="KBI-A0-FEC"/>
+                            <constraint firstItem="Usu-Bx-QB1" firstAttribute="top" secondItem="py2-Pc-ZVE" secondAttribute="bottom" constant="15" id="ejT-za-GHw"/>
+                            <constraint firstAttribute="trailing" secondItem="Usu-Bx-QB1" secondAttribute="trailing" id="hC1-HJ-VPs"/>
+                        </constraints>
+                    </view>
                     <navigationItem key="navigationItem" title="Inbox" id="kG4-kJ-4eU">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="rRQ-VC-CM5">
                             <connections>
@@ -152,7 +159,8 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="tableView" destination="qfU-ab-YxH" id="NLE-sb-xne"/>
+                        <outlet property="chooseDateOrGroupSorted" destination="py2-Pc-ZVE" id="kLc-Yp-TaY"/>
+                        <outlet property="tableView" destination="Usu-Bx-QB1" id="8O7-zC-F2P"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4qm-wF-PYW" userLabel="First Responder" sceneMemberID="firstResponder"/>
