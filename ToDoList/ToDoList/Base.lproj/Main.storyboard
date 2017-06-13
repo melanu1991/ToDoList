@@ -164,6 +164,7 @@
                     <connections>
                         <outlet property="chooseDateOrGroupSorted" destination="py2-Pc-ZVE" id="kLc-Yp-TaY"/>
                         <outlet property="tableView" destination="Usu-Bx-QB1" id="8O7-zC-F2P"/>
+                        <segue destination="FcO-mY-4vA" kind="show" identifier="detailSegue" id="y4H-Xw-OE7"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4qm-wF-PYW" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -300,7 +301,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHC-bn-Ggf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2333.5999999999999" y="-321.58920539730138"/>
+            <point key="canvasLocation" x="2327" y="-321"/>
         </scene>
         <!--To Do List View Controller-->
         <scene sceneID="lLf-M7-eMu">

@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSArray *arrayKeysDate;
 @property (strong, nonatomic) NSArray *arrayKeysGroup;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
+@property (strong, nonatomic) UIBarButtonItem *editButton;
 
 @end
 
@@ -53,10 +54,6 @@
         }
     }
     [self.tableView reloadData];
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -110,7 +107,12 @@
             [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:currentGroup];
         }
         
+
+        
     }
+    
+    self.editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
+    self.navigationItem.leftBarButtonItem = self.editButton;
     
     NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
     arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
@@ -139,6 +141,17 @@
     
     
     
+}
+
+- (void)editButtonPressed {
+    if ([self.editButton.title isEqualToString:@"Edit"]) {
+        self.editButton.title = @"Done";
+        self.tableView.editing = YES;
+    }
+    else {
+        self.editButton.title = @"Edit";
+        self.tableView.editing = NO;
+    }
 }
 
 - (void)taskWasChanged {
@@ -176,6 +189,40 @@
     }
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    
+    VAKDetailViewController *detailController = [self.storyboard instantiateViewControllerWithIdentifier:@"detailView"];
+    detailController.delegate = self;
+    
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+        
+        NSArray *temp = self.dictionaryDate[self.arrayKeysDate[indexPath.section]];
+        VAKTask *task = temp[indexPath.row];
+        detailController.task = task;
+    
+    }
+    else {
+        
+        NSArray *temp = self.dictionaryGroup[self.arrayKeysGroup[indexPath.section]];
+        VAKTask *task = temp[indexPath.row];
+        detailController.task = task;
+        
+    }
+    
+    
+    
+
+
+    [self.navigationController pushViewController:detailController animated:YES];
+    
+//    VAKDetailViewController  *detailController = [[VAKDetailViewController alloc] init];
+//    detailController.delegate = self;
+//    detailController.task = task;
+//    [self.navigationController pushViewController:detailController animated:YES];
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {

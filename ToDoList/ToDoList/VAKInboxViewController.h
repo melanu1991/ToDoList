@@ -9,6 +9,6 @@
 #import "VAKTodayViewController.h"
 #import "VAKToDoListViewController.h"
 
-@interface VAKInboxViewController : UIViewController <UITableViewDataSource,VAKAddNewTaskDelegate,VAKFinishedTaskDelegate, UITabBarControllerDelegate>
+@interface VAKInboxViewController : UIViewController <UITableViewDataSource,VAKAddNewTaskDelegate,VAKFinishedTaskDelegate, UITabBarControllerDelegate, UITableViewDelegate>
 
 @end
