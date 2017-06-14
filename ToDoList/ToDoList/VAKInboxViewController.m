@@ -157,6 +157,32 @@
     [self.navigationController pushViewController:detailController animated:YES];
 }
 
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+            [arrayObjectForDate removeObjectAtIndex:indexPath.row];
+            if ([arrayObjectForDate count] == 0) {
+                [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
+                [self.taskService sortArrayKeysDate];
+                [self.tableView reloadData];
+                return;
+            }
+        }
+        else {
+            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
+            [arrayObjectForGroup removeObjectAtIndex:indexPath.row];
+            if ([arrayObjectForGroup count] == 0) {
+                [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
+                [self.taskService sortArrayKeysGroup];
+                [self.tableView reloadData];
+                return;
+            }
+        }
+    }
+    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+}
+
 #pragma mark - implemented deallocate
 
 - (void)dealloc {
