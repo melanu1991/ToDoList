@@ -31,6 +31,14 @@
     
     [self.taskService sortArrayKeysDate];
     [self.taskService sortArrayKeysGroup];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged) name:VAKTaskWasChanged object:nil];
+}
+
+#pragma mark - Notification detailWasChanged
+
+- (void)detailWasChanged {
+    [self.tableView reloadData];
 }
 
 #pragma mark - action
@@ -152,7 +160,7 @@
 #pragma mark - implemented deallocate
 
 - (void)dealloc {
-//    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
