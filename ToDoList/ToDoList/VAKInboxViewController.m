@@ -161,7 +161,13 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
             NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
-            [arrayObjectForDate removeObjectAtIndex:indexPath.row];
+            VAKTask *task = arrayObjectForDate[indexPath.row];
+            //нужно еще удалить из словаря групп
+            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[task.currentGroup];
+            [arrayObjectForGroup removeObject:task];
+            [arrayObjectForDate removeObject:task];
+            [self.taskService removeTaskById:task.taskId];
+            
             if ([arrayObjectForDate count] == 0) {
                 [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
                 [self.taskService sortArrayKeysDate];
@@ -171,7 +177,14 @@
         }
         else {
             NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
-            [arrayObjectForGroup removeObjectAtIndex:indexPath.row];
+            VAKTask *task = arrayObjectForGroup[indexPath.row];
+            
+            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
+            
+            [arrayObjectForGroup removeObject:task];
+            [arrayObjectForDate removeObject:task];
+            [self.taskService removeTaskById:task.taskId];
+
             if ([arrayObjectForGroup count] == 0) {
                 [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
                 [self.taskService sortArrayKeysGroup];
