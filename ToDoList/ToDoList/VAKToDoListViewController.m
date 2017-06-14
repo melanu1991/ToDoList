@@ -37,6 +37,7 @@
 
 - (void)addNewProjectWithName:(NSString *)name {
     [self.taskService addGroup:name];
+    [self.taskService sortArrayKeys];
     [self.tableView reloadData];
 }
 
