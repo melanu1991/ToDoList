@@ -22,6 +22,7 @@
         self.finishDate.text = [NSString stringWithFormat:@"%@",self.task.finishedAt];
     }
     self.notes.text = self.task.notes;
+    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged) name:VAKTaskWasChanged object:nil];
 }
 

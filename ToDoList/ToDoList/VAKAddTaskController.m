@@ -43,6 +43,11 @@
     }
     else {
         title = VAKEditTaskTitle;
+        self.selectPriority = self.task.priority;
+        self.selectDate = self.task.startedAt;
+        self.remindMeOnADay = self.task.remindMeOnADay;
+        self.taskName = self.task.taskName;
+        self.taskNotes = self.task.notes;
         self.doneButton.enabled = YES;
     }
     
@@ -69,46 +74,32 @@
     if (indexPath.section == 0) {
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
-        if (self.task) {
-            cell.textField.text = self.task.taskName;
-        }
+        cell.textField.text = self.task.taskName;
         return cell;
     }
     else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
             VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
             [cell.remindSwitch addTarget:self action:@selector(switchAction) forControlEvents:UIControlEventValueChanged];
-            if (self.task && self.task.isRemindMeOnADay) {
+            if (self.remindMeOnADay) {
                 [cell.remindSwitch setOn:YES animated:YES];
             }
             return cell;
         }
         else {
             VAKDateCell *cell = (VAKDateCell *)[self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
-            if (self.task) {//тут нада подумать! как менять дату!
-                cell.textLabel.text = [self.formatter stringFromDate:self.task.startedAt];
-            }
-            else {
-                cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
-            }
+            cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
             return cell;
         }
     }
     else if (indexPath.section == 2) {
         VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
-        if (self.task) {
-            cell.detailTextLabel.text = self.task.priority;
-        }
-        else {
-            cell.detailTextLabel.text = self.selectPriority;
-        }
+        cell.detailTextLabel.text = self.selectPriority;
         return cell;
     }
     else {
         VAKNotesCell *cell = (VAKNotesCell *)[self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
-        if (self.task) {
-            cell.notes.text = self.task.notes;
-        }
+        cell.notes.text = self.task.notes;
         cell.notes.delegate = self;
         return cell;
     }

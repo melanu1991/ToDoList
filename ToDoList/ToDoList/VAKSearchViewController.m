@@ -17,6 +17,22 @@
 
 @implementation VAKSearchViewController
 
+#pragma mark - delegate finished task
+
+- (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date {
+    for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
+        if ([task.taskId isEqualToString:taskId]) {
+            task.completed = YES;
+            task.finishedAt = date;
+            [self.taskService.groupCompletedTasks addObject:task];
+            [self.taskService.groupNotCompletedTasks removeObject:task];
+            [self searchBar:self.searchBar textDidChange:self.searchBar.text];
+            [self.tableView reloadData];
+            return;
+        }
+    }
+}
+
 #pragma mark - life cycle view controller
 
 - (void)viewDidLoad {
@@ -25,7 +41,15 @@
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataInTable) name:VAKTaskWasChanged object:nil];
+    
     self.taskService = [VAKTaskService initDefaultTaskService];
+}
+
+#pragma mark - Notification
+
+- (void)reloadDataInTable {
+    [self.tableView reloadData];
 }
 
 #pragma mark - implemented UITableViewDataSource
@@ -99,8 +123,15 @@
     
     VAKTask *currentTask = self.filteredArray[indexPath.row];
     detailViewController.task = currentTask;
+    detailViewController.delegate = self;
     
     [self.navigationController pushViewController:detailViewController animated:YES];
+}
+
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

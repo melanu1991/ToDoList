@@ -7,6 +7,6 @@
 @interface VAKAddTaskController : UIViewController <VAKChangedDateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, weak) id<VAKAddNewTaskDelegate> delegate;
-@property (nonatomic, retain) VAKTask *task;
+@property (nonatomic, strong) VAKTask *task;
 
 @end

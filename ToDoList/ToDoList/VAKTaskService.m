@@ -151,6 +151,13 @@
 
 - (void)updateTask:(VAKTask *)task {
     //не совсем понятно что тут апдейтить и когда его вызывать!
+    //выбор группы для таска complited/not complited
+    if (task.isCompleted) {
+        [self.groupCompletedTasks addObject:task];
+    }
+    else {
+        [self.groupNotCompletedTasks addObject:task];
+    }
 }
 
 - (void)addGroup:(NSString *)group {

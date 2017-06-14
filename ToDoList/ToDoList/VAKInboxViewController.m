@@ -20,8 +20,6 @@
     [super viewDidLoad];
     
     self.tabBarController.delegate = self;
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChanged) name:VAKTaskWasChanged object:nil];
 
     self.taskService = [VAKTaskService initDefaultTaskService];
     
@@ -41,6 +39,7 @@
     [self.tableView reloadData];
 }
 
+//переделать алгоритм!!!
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
     for (int i = 0; i < self.taskService.tasks.count; i++) {
         VAKTask *task = self.taskService.tasks[i];
@@ -60,10 +59,6 @@
         self.editButton.title = VAKEditButton;
         self.tableView.editing = NO;
     }
-}
-
-- (void)taskWasChanged {
-    [self.tableView reloadData];
 }
 
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
@@ -157,7 +152,7 @@
 #pragma mark - implemented deallocate
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+//    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
