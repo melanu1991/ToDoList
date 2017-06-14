@@ -13,6 +13,7 @@
 
 - (VAKTask *)taskById:(NSString *)taskId;
 - (void)addTask:(VAKTask *)task;
+- (void)addGroup:(NSString *)group;
 - (void)removeTaskById:(NSString *)taskId;
 - (void)updateTask:(VAKTask *)task;
 - (void)sortArrayKeys;

@@ -149,6 +149,13 @@
 
 }
 
+- (void)addGroup:(NSString *)group {
+    if (self.dictionaryGroup[group] == nil) {
+        [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:group];
+    }
+}
+
+//сортировка ключей для отображения в нужном порядке по датам/группам
 - (void)sortArrayKeys {
     NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
     arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {

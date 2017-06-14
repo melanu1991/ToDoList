@@ -24,6 +24,8 @@
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
     self.taskService = [VAKTaskService initDefaultTaskService];
+    
+    [self.taskService sortArrayKeys];
   
 }
 
@@ -34,7 +36,7 @@
 }
 
 - (void)addNewProjectWithName:(NSString *)name {
-
+    [self.taskService addGroup:name];
     [self.tableView reloadData];
 }
 
@@ -54,18 +56,33 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    if (section == 0) {
+        return 1;
+    }
+    else {
+        return [self.taskService.arrayKeysGroup count] - 1;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     [self.tableView registerNib:[UINib nibWithNibName:VAKPriorityCellIdentifier bundle:nil] forCellReuseIdentifier:VAKPriorityCellIdentifier];
     
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
-    cell.textLabel.text = @"myGroup";
-    cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",1+indexPath.row];
+    VAKPriorityCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
     
-    
+    if (indexPath.section == 0) {
+        NSUInteger countTasks = [self.taskService.dictionaryGroup[@"Inbox"] count];
+        cell.textLabel.text = @"Inbox";
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
+    }
+    else {
+        NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+        [arrayGroupWithoutInbox removeObject:@"Inbox"];
+        NSUInteger countTasks = [self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row]] count];
+        cell.textLabel.text = arrayGroupWithoutInbox[indexPath.row];
+        cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
+    }
+
     return cell;
 }
 
@@ -75,6 +92,9 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+    }
+    if (editingStyle == UITableViewCellEditingStyleInsert) {
         
     }
 }
