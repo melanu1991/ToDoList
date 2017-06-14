@@ -10,18 +10,23 @@
 
 @implementation VAKSelectDateController
 
+#pragma mark - life cycle view controller
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(setSelectDate)];
     self.navigationItem.rightBarButtonItem = doneButton;
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelTitle style:UIBarButtonItemStyleDone target:self action:@selector(cancelSelectDate)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelSelectDate)];
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.datePicker.minimumDate = [NSDate date];
     [self.navigationItem setTitle:VAKDateTitle];
     NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
+    formatter.dateFormat = VAKDateFormatWithHourAndMinute;
     self.currentDate.text = [formatter stringFromDate:[NSDate date]];
 }
+
+#pragma mark - action
 
 - (void)setSelectDate {
     [self.delegate setNewDateWithDate:[self.datePicker date]];

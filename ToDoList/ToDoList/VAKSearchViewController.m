@@ -22,7 +22,7 @@
     [super viewDidLoad];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
-    self.dateFormatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
+    self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
     
     self.taskService = [VAKTaskService initDefaultTaskService];
 }

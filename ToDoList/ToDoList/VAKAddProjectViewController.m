@@ -8,10 +8,14 @@
 
 @implementation VAKAddProjectViewController
 
+#pragma mark - life cycle view controller
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.nameProjectField.delegate = self;
 }
+
+#pragma mark - action
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self.nameProjectField resignFirstResponder];
@@ -26,7 +30,5 @@
 - (IBAction)cancelButtonPressed:(UIBarButtonItem *)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-
 
 @end

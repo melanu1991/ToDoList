@@ -26,7 +26,7 @@
     self.taskService = [VAKTaskService initDefaultTaskService];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
-    self.dateFormatter.dateFormat = @"dd.MM.YYYY";
+    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
 
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;

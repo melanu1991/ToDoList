@@ -12,15 +12,21 @@
 
 @implementation VAKTodayViewController
 
+#pragma mark - life cycle view controller
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.formatter = [[NSDateFormatter alloc] init];
-    self.formatter.dateFormat = @"EEEE, dd MMMM yyyy г., H:m";
+    self.formatter.dateFormat = VAKDateFormatWithHourAndMinute;
+    
     self.taskService = [VAKTaskService initDefaultTaskService];
-    self.navigationItem.title = @"Today";
-    self.editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
+    
+    self.navigationItem.title = VAKToday;
+    
+    self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
-    self.addButton = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
+    self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
 }
 
@@ -88,8 +94,8 @@
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Delete task" message:@"Are you sure you want remove this item?" preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (indexPath.section == 0)
         {
             [self.taskService.groupNotCompletedTasks removeObjectAtIndex:indexPath.row];
@@ -99,13 +105,13 @@
         }
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
     }];
     [alertController addAction:okAction];
     [alertController addAction:cancelAction];
     
-    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Done" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         if (indexPath.section == 0) {
             [self.taskService.groupCompletedTasks addObject:self.taskService.groupNotCompletedTasks[indexPath.row]];
             [self.taskService.groupNotCompletedTasks removeObjectAtIndex:indexPath.row];
@@ -114,7 +120,7 @@
     }];
     doneAction.backgroundColor = [UIColor blueColor];
     
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         [self presentViewController:alertController animated:YES completion:nil];
     }];
     deleteAction.backgroundColor = [UIColor redColor];
