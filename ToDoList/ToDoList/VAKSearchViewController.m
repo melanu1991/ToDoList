@@ -1,4 +1,5 @@
 #import "VAKSearchViewController.h"
+#import "VAKDetailViewController.h"
 #import "Constants.h"
 #import "VAKCustumCell.h"
 
@@ -87,6 +88,19 @@
 - (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
     [self searchBar:self.searchBar textDidChange:self.searchBar.text];
     [self.tableView reloadData];
+}
+
+#pragma mark - implemented UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    VAKDetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierDetailTask];
+    
+    VAKTask *currentTask = self.filteredArray[indexPath.row];
+    detailViewController.task = currentTask;
+    
+    [self.navigationController pushViewController:detailViewController animated:YES];
 }
 
 @end

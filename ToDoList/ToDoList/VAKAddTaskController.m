@@ -21,6 +21,34 @@
 
 @implementation VAKAddTaskController
 
+#pragma mark - life cycle view controller
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.formatter = [[NSDateFormatter alloc]init];
+    self.formatter.dateFormat = VAKDateFormatWithHourAndMinute;
+    
+    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.navigationItem.rightBarButtonItem = self.doneButton;
+    
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
+    self.navigationItem.leftBarButtonItem = cancelButton;
+    
+    NSString *title = nil;
+    if (!self.task) {
+        title = VAKAddTaskTitle;
+        self.selectPriority = VAKNone;
+        self.selectDate = [NSDate date];
+        self.doneButton.enabled = NO;
+    }
+    else {
+        title = VAKEditTaskTitle;
+        self.doneButton.enabled = YES;
+    }
+    
+    [self.navigationItem setTitle:title];
+}
+
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -41,31 +69,49 @@
     if (indexPath.section == 0) {
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
+        if (self.task) {
+            cell.textField.text = self.task.taskName;
+        }
         return cell;
     }
     else if (indexPath.section == 1) {
         if (indexPath.row == 0) {
             VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
             [cell.remindSwitch addTarget:self action:@selector(switchAction) forControlEvents:UIControlEventValueChanged];
+            if (self.task && self.task.isRemindMeOnADay) {
+                [cell.remindSwitch setOn:YES animated:YES];
+            }
             return cell;
         }
         else {
             VAKDateCell *cell = (VAKDateCell *)[self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
-            cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
+            if (self.task) {//тут нада подумать! как менять дату!
+                cell.textLabel.text = [self.formatter stringFromDate:self.task.startedAt];
+            }
+            else {
+                cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
+            }
             return cell;
         }
     }
     else if (indexPath.section == 2) {
         VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
-        cell.detailTextLabel.text = self.selectPriority;
+        if (self.task) {
+            cell.detailTextLabel.text = self.task.priority;
+        }
+        else {
+            cell.detailTextLabel.text = self.selectPriority;
+        }
         return cell;
     }
     else {
         VAKNotesCell *cell = (VAKNotesCell *)[self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
+        if (self.task) {
+            cell.notes.text = self.task.notes;
+        }
         cell.notes.delegate = self;
         return cell;
     }
-    
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
@@ -134,34 +180,6 @@
         [priorityAlertController addAction:cancelAction];
         [self presentViewController:priorityAlertController animated:YES completion:nil];
     }
-}
-
-#pragma mark - life cycle view controller
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.formatter = [[NSDateFormatter alloc]init];
-    self.formatter.dateFormat = VAKDateFormatWithHourAndMinute;
-    
-    self.selectPriority = VAKNone;
-    self.selectDate = [NSDate date];
-    
-    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
-    self.navigationItem.rightBarButtonItem = self.doneButton;
-    self.doneButton.enabled = NO;
-    
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
-    self.navigationItem.leftBarButtonItem = cancelButton;
-    
-    NSString *title = nil;
-    if (!self.task) {
-        title = VAKAddTaskTitle;
-    }
-    else {
-        title = VAKEditTaskTitle;
-    }
-
-    [self.navigationItem setTitle:title];
 }
 
 #pragma mark - implemented UITextFieldDelegate
