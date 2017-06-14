@@ -51,9 +51,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKTodayCell];
+    [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     
-    VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKTodayCell];
+    VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
     if (indexPath.section == 0) {
         VAKTask *notCompletedTask = self.taskService.groupNotCompletedTasks[indexPath.row];

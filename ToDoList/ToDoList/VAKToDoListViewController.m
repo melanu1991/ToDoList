@@ -10,12 +10,14 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
-@property (strong, nonatomic) VAKTaskService *taskService;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editButton;
+@property (strong, nonatomic) VAKTaskService *taskService;
 
 @end
 
 @implementation VAKToDoListViewController
+
+#pragma mark - life cycle view controller
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -24,33 +26,35 @@
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
     self.taskService = [VAKTaskService initDefaultTaskService];
-    
-    [self.taskService sortArrayKeys];
-  
+    [self.taskService sortArrayKeysGroup];
 }
 
+#pragma mark - action
+
 - (IBAction)addProjectButtonPressed:(id)sender {
-    VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"addProject"];
+    VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
     addProjectViewController.delegate = self;
     [self.navigationController pushViewController:addProjectViewController animated:YES];
 }
 
 - (void)addNewProjectWithName:(NSString *)name {
     [self.taskService addGroup:name];
-    [self.taskService sortArrayKeys];
+    [self.taskService sortArrayKeysGroup];
     [self.tableView reloadData];
 }
 
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
-    if ([self.editButton.title isEqualToString:@"Edit"]) {
-        self.editButton.title = @"Done";
+    if ([self.editButton.title isEqualToString:VAKEditButton]) {
+        self.editButton.title = VAKDoneButton;
         self.tableView.editing = YES;
     }
     else {
-        self.editButton.title = @"Edit";
+        self.editButton.title = VAKEditButton;
         self.tableView.editing = NO;
     }
 }
+
+#pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2;
@@ -72,13 +76,13 @@
     VAKPriorityCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
     
     if (indexPath.section == 0) {
-        NSUInteger countTasks = [self.taskService.dictionaryGroup[@"Inbox"] count];
-        cell.textLabel.text = @"Inbox";
+        NSUInteger countTasks = [self.taskService.dictionaryGroup[VAKInbox] count];
+        cell.textLabel.text = VAKInbox;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
     }
     else {
         NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-        [arrayGroupWithoutInbox removeObject:@"Inbox"];
+        [arrayGroupWithoutInbox removeObject:VAKInbox];
         NSUInteger countTasks = [self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row]] count];
         cell.textLabel.text = arrayGroupWithoutInbox[indexPath.row];
         cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
@@ -86,6 +90,8 @@
 
     return cell;
 }
+
+#pragma mark - implemented UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -95,14 +101,11 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         if (indexPath.section != 0) {
             NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-            [arrayGroupWithoutInbox removeObject:@"Inbox"];
+            [arrayGroupWithoutInbox removeObject:VAKInbox];
             [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row]];
-            [self.taskService sortArrayKeys];
+            [self.taskService sortArrayKeysGroup];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
-    }
-    if (editingStyle == UITableViewCellEditingStyleInsert) {
-        
     }
 }
 

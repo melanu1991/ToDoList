@@ -9,7 +9,6 @@ static NSString * const VAKAddController = @"VAKAddTaskController";
 static NSString * const VAKDetailSegue = @"detailSegue";
 static NSString * const VAKKeySort = @"taskName";
 static NSString * const VAKDateTitle = @"Choose date";
-static NSString * const VAKDoneTitle = @"Done";
 static NSString * const VAKDateController = @"VAKSelectDateController";
 static NSString * const VAKSaveTitle = @"Save";
 static NSUInteger const VAKIndexInboxView = 0;
@@ -18,7 +17,7 @@ static NSUInteger const VAKIndexSearchView = 2;
 static NSUInteger const VAKIndexTodayView = 3;
 static NSString * const VAKSearchCell = @"searchCell";
 static NSString * const VAKSwitchingBetweenTabs = @"VAKSwitchingBetweenTabs";
-static NSString * const VAKTodayCell = @"todayCell";
+static NSString * const VAKCustumCellIdentifier = @"custumCell";
 static NSString * const VAKTitleForHeaderCompleted = @"Completed";
 static NSString * const VAKEditButton = @"Edit";
 static NSString * const VAKDoneButton = @"Done";
@@ -35,5 +34,9 @@ static NSString * const VAKTaskTitle = @"TASK";
 static NSString * const VAKRemindTitle = @"REMIND";
 static NSString * const VAKPriorityTitle = @"PRIORITY";
 static NSString * const VAKNotesTitle = @"NOTES";
+
+static NSString * const VAKAddProject = @"addProject";
+static NSString * const VAKInbox = @"Inbox";
+static NSString * const VAKStoriboardIdentifierDetailTask = @"detailView";
 
 #endif

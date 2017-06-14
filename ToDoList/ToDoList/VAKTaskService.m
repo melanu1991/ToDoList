@@ -16,6 +16,7 @@
     task1.notes = @"My new task!";
     task1.completed = YES;
     task1.currentGroup = @"Inbox";
+    task1.remindMeOnADay = YES;
     VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
     task2.startedAt = [formatter dateFromString:@"Sunday, 07 June 2017 г., 12:57"];
     task2.notes = @"My new task!";
@@ -41,6 +42,8 @@
     task7.startedAt = [formatter dateFromString:@"Wednesday, 07 June 2017 г., 12:57"];
     task7.notes = @"My new task!";
     task7.currentGroup = @"My";
+    task7.remindMeOnADay = YES;
+    
     [taskService addTask:task1];
     [taskService addTask:task2];
     [taskService addTask:task3];
@@ -133,7 +136,6 @@
         NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
         [tempArrayGroup addObject:task];
     }
-    
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -146,7 +148,7 @@
 }
 
 - (void)updateTask:(VAKTask *)task {
-
+    //не совсем понятно что тут апдейтить и когда его вызывать!
 }
 
 - (void)addGroup:(NSString *)group {
@@ -156,19 +158,20 @@
 }
 
 //сортировка ключей для отображения в нужном порядке по датам/группам
-- (void)sortArrayKeys {
-    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
-    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        return [obj1 compare:obj2];
-    }];
-    
+- (void)sortArrayKeysGroup {
     NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
     arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
         return [obj1 compare:obj2];
     }];
-    
-    self.arrayKeysDate = arrayKeysDate;
     self.arrayKeysGroup = arrayKeysGroup;
+}
+
+- (void)sortArrayKeysDate {
+    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
+    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        return [obj1 compare:obj2];
+    }];
+    self.arrayKeysDate = arrayKeysDate;
 }
 
 @end

@@ -16,7 +16,9 @@
 - (void)addGroup:(NSString *)group;
 - (void)removeTaskById:(NSString *)taskId;
 - (void)updateTask:(VAKTask *)task;
-- (void)sortArrayKeys;
+
+- (void)sortArrayKeysGroup;
+- (void)sortArrayKeysDate;
 
 + (instancetype)initDefaultTaskService;
 

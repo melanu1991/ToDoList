@@ -110,7 +110,7 @@
     self.selectPriority = @"None";
     self.selectDate = [NSDate date];
     
-    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneTitle style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.doneButton;
     self.doneButton.enabled = NO;
     
