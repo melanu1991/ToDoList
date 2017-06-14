@@ -93,7 +93,13 @@
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        
+        if (indexPath.section != 0) {
+            NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+            [arrayGroupWithoutInbox removeObject:@"Inbox"];
+            [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row]];
+            [self.taskService sortArrayKeys];
+            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        }
     }
     if (editingStyle == UITableViewCellEditingStyleInsert) {
         
