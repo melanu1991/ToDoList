@@ -73,6 +73,20 @@
     return _tasks;
 }
 
+- (NSDictionary *)dictionaryDate {
+    if (!_dictionaryDate) {
+        _dictionaryDate = [NSMutableDictionary dictionary];
+    }
+    return _dictionaryDate;
+}
+
+- (NSDictionary *)dictionaryGroup {
+    if (!_dictionaryGroup) {
+        _dictionaryGroup = [NSMutableDictionary dictionary];
+    }
+    return _dictionaryGroup;
+}
+
 - (VAKTask *)taskById:(NSString *)taskId {
     for (int i = 0; i < self.tasks.count; i++) {
         VAKTask *task = self.tasks[i];
@@ -83,15 +97,43 @@
     return nil;
 }
 
-//при добавлении таска сразу выбирается его группа Completed/Not Completed and All Group ToDoList
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
+    //выбор группы для таска complited/not complited
     if (task.isCompleted) {
         [self.groupCompletedTasks addObject:task];
     }
     else {
         [self.groupNotCompletedTasks addObject:task];
     }
+    
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    dateFormatter.dateFormat = @"dd.MM.YYYY";
+    
+    NSString *currentDate = [dateFormatter stringFromDate:task.startedAt];
+    NSString *currentGroup = task.currentGroup;
+    
+    //если небыло массива с такой датой/группой то создаем и добавляем в него таск, если был то просто добавляем таск
+    if (self.dictionaryDate[currentDate] == nil) {
+        [self.dictionaryDate setObject:[[NSMutableArray alloc] init] forKey:currentDate];
+        NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];
+        [tempArrayDate addObject:task];
+    }
+    else {
+        NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];
+        [tempArrayDate addObject:task];
+    }
+    
+    if (self.dictionaryGroup[currentGroup] == nil) {
+        [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:currentGroup];
+        NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
+        [tempArrayGroup addObject:task];
+    }
+    else {
+        NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
+        [tempArrayGroup addObject:task];
+    }
+    
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -105,6 +147,21 @@
 
 - (void)updateTask:(VAKTask *)task {
 
+}
+
+- (void)sortArrayKeys {
+    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
+    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        return [obj1 compare:obj2];
+    }];
+    
+    NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
+    arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        return [obj1 compare:obj2];
+    }];
+    
+    self.arrayKeysDate = arrayKeysDate;
+    self.arrayKeysGroup = arrayKeysGroup;
 }
 
 @end

@@ -11,6 +11,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
 @property (strong, nonatomic) VAKTaskService *taskService;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *editButton;
 
 @end
 
@@ -23,11 +24,7 @@
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
     self.taskService = [VAKTaskService initDefaultTaskService];
-    
-    
-//    UIBarButtonItem *addItem = [[UIBarButtonItem alloc] initWithTitle:@"+" style:UIBarButtonItemStylePlain target:self action:@selector(addProjectButtonPressed)];
-//    self.navigationItem.rightBarButtonItem = addItem;
-    
+  
 }
 
 - (IBAction)addProjectButtonPressed:(id)sender {
@@ -39,6 +36,17 @@
 - (void)addNewProjectWithName:(NSString *)name {
 
     [self.tableView reloadData];
+}
+
+- (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
+    if ([self.editButton.title isEqualToString:@"Edit"]) {
+        self.editButton.title = @"Done";
+        self.tableView.editing = YES;
+    }
+    else {
+        self.editButton.title = @"Edit";
+        self.tableView.editing = NO;
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -63,6 +71,12 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        
+    }
 }
 
 @end

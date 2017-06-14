@@ -7,13 +7,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseDateOrGroupSorted;
 @property (nonatomic, strong) VAKTaskService *taskService;
-@property (nonatomic, strong) VAKSearchViewController *searchViewController;
-@property (nonatomic, strong) VAKTodayViewController *todayViewController;
-@property (nonatomic, strong) VAKToDoListViewController *toDoListViewController;
-@property (strong, nonatomic) NSMutableDictionary *dictionaryDate;
-@property (strong, nonatomic) NSMutableDictionary *dictionaryGroup;
-@property (strong, nonatomic) NSArray *arrayKeysDate;
-@property (strong, nonatomic) NSArray *arrayKeysGroup;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 
@@ -67,74 +60,60 @@
     }
 }
 
-- (NSDictionary *)dictionaryDate {
-    if (!_dictionaryDate) {
-        _dictionaryDate = [NSMutableDictionary dictionary];
-    }
-    return _dictionaryDate;
-}
-
-- (NSDictionary *)dictionaryGroup {
-    if (!_dictionaryGroup) {
-        _dictionaryGroup = [NSMutableDictionary dictionary];
-    }
-    return _dictionaryGroup;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.taskService = [[VAKTaskService alloc]init];
     self.tabBarController.delegate = self;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChanged) name:VAKTaskWasChanged object:nil];
-    
-//    NSCalendar *currentCalendar = [NSCalendar currentCalendar];
-//    NSDateComponents *dateComponents = [currentCalendar components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
 
     self.taskService = [VAKTaskService initDefaultTaskService];
+    
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = @"dd.MM.YYYY";
     
-    for (int i = 0; i < [self.taskService.tasks count]; i++) {
-        VAKTask *currentTask = self.taskService.tasks[i];
-        NSString *currentDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
-        NSString *currentGroup = currentTask.currentGroup;
-        
-        if (self.dictionaryDate[currentDate] == nil) {
-            [self.dictionaryDate setObject:[[NSMutableArray alloc] init] forKey:currentDate];
-        }
-        
-        if (self.dictionaryGroup[currentGroup] == nil) {
-            [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:currentGroup];
-        }
-        
-
-        
-    }
+//    for (int i = 0; i < [self.taskService.tasks count]; i++) {
+//        VAKTask *currentTask = self.taskService.tasks[i];
+//        NSString *currentDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
+//        NSString *currentGroup = currentTask.currentGroup;
+//        
+//        if (self.dictionaryDate[currentDate] == nil) {
+//            [self.dictionaryDate setObject:[[NSMutableArray alloc] init] forKey:currentDate];
+//        }
+//        
+//        if (self.dictionaryGroup[currentGroup] == nil) {
+//            [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:currentGroup];
+//        }
+//        
+//
+//        
+//    }
     
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:@"Edit" style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     
-    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
-    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        return [obj1 compare:obj2];
-    }];
+    [self.taskService sortArrayKeys];
     
-    NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
-    arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        return [obj1 compare:obj2];
-    }];
+//    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
+//    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+//        return [obj1 compare:obj2];
+//    }];
+//    
+//    NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
+//    arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+//        return [obj1 compare:obj2];
+//    }];
+//    
+//    self.arrayKeysDate = arrayKeysDate;
+//    self.arrayKeysGroup = arrayKeysGroup;
     
-    self.arrayKeysDate = arrayKeysDate;
-    self.arrayKeysGroup = arrayKeysGroup;
-    
-    for (VAKTask *task in self.taskService.tasks) {
-        NSString *taskDate = [self.dateFormatter stringFromDate:task.startedAt];
-        NSString *taskGroup = task.currentGroup;
-        NSMutableArray *arrayDate = [self.dictionaryDate objectForKey:taskDate];
-        [arrayDate addObject:task];
-        NSMutableArray *arrayGroup = [self.dictionaryGroup objectForKey:taskGroup];
-        [arrayGroup addObject:task];
-    }
+//    for (VAKTask *task in self.taskService.tasks) {
+//        NSString *taskDate = [self.dateFormatter stringFromDate:task.startedAt];
+//        NSString *taskGroup = task.currentGroup;
+//        NSMutableArray *arrayDate = [self.dictionaryDate objectForKey:taskDate];
+//        [arrayDate addObject:task];
+//        NSMutableArray *arrayGroup = [self.dictionaryGroup objectForKey:taskGroup];
+//        [arrayGroup addObject:task];
+//    }
     
     
 //    NSLog(@"%@",self.dictionaryDate);
@@ -174,14 +153,14 @@
 //    cell.textLabel.text = temp.taskName;
     
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        NSArray *arrayCurrentSection = [self.dictionaryDate objectForKey:self.arrayKeysDate[indexPath.section]];
+        NSArray *arrayCurrentSection = [self.taskService.dictionaryDate objectForKey:self.taskService.arrayKeysDate[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
         cell.taskStartDateLabel.text = [self.dateFormatter stringFromDate:task.startedAt];
     }
     else {
-        NSArray *arrayCurrentSection = [self.dictionaryGroup objectForKey:self.arrayKeysGroup[indexPath.section]];
+        NSArray *arrayCurrentSection = [self.taskService.dictionaryGroup objectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
@@ -200,14 +179,14 @@
     
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
         
-        NSArray *temp = self.dictionaryDate[self.arrayKeysDate[indexPath.section]];
+        NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         detailController.task = task;
     
     }
     else {
         
-        NSArray *temp = self.dictionaryGroup[self.arrayKeysGroup[indexPath.section]];
+        NSArray *temp = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         detailController.task = task;
         
@@ -227,20 +206,20 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        return self.arrayKeysDate[section];
+        return self.taskService.arrayKeysDate[section];
     }
     else {
-        return self.arrayKeysGroup[section];
+        return self.taskService.arrayKeysGroup[section];
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
 //        NSLog(@"%ld",[self.dictionaryDate[self.arrayKeys[section]] count]);
-        return [self.dictionaryDate[self.arrayKeysDate[section]] count];
+        return [self.taskService.dictionaryDate[self.taskService.arrayKeysDate[section]] count];
     }
     else {
-        return [self.dictionaryGroup[self.arrayKeysGroup[section]] count];
+        return [self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[section]] count];
     }
 //    return [self.taskService.tasks count];
 }
@@ -248,10 +227,10 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
 //        NSLog(@"%ld",[self.dictionaryDate count]);
-        return [self.dictionaryDate count];
+        return [self.taskService.dictionaryDate count];
     }
     else {
-        return [self.dictionaryGroup count];
+        return [self.taskService.dictionaryGroup count];
     }
 }
 
