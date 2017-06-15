@@ -8,5 +8,6 @@
 
 @property (nonatomic, weak) id<VAKAddNewTaskDelegate> delegate;
 @property (nonatomic, strong) VAKTask *task;
+@property (strong, nonatomic) NSString *currentGroup;
 
 @end

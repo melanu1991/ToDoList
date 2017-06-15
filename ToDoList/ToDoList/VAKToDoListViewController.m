@@ -28,6 +28,14 @@
     
     self.taskService = [VAKTaskService initDefaultTaskService];
     [self.taskService sortArrayKeysGroup];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKAddTaskForGroup object:nil];
+}
+
+#pragma mark - reload table
+
+- (void)reloadTable {
+    [self.tableView reloadData];
 }
 
 #pragma mark - action
@@ -101,11 +109,13 @@
     if (indexPath.section == 0) {
         NSMutableArray *arrayInbox = self.taskService.dictionaryGroup[VAKInbox];
         todayViewController.arrayOfTasksForSelectedGroup = [arrayInbox copy];
+        todayViewController.currentGroup = VAKInbox;
     }
     else {
         NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
         [arrayWithoutInbox removeObject:VAKInbox];
         todayViewController.arrayOfTasksForSelectedGroup = self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row]];
+        todayViewController.currentGroup = arrayWithoutInbox[indexPath.row];
     }
     [self.navigationController pushViewController:todayViewController animated:YES];
     
@@ -121,6 +131,12 @@
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
     }
+}
+
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

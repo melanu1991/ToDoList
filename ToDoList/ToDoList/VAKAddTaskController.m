@@ -223,6 +223,7 @@
         newTask.remindMeOnADay = self.remindMeOnADay;
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
+        newTask.currentGroup = @"Inbox";
         [self.delegate addNewTaskWithTask:newTask];
     }
     else {

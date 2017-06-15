@@ -39,6 +39,7 @@
     
     self.formatter = [[NSDateFormatter alloc] init];
     self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+    
     NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
     
     if (self.arrayOfTasksForSelectedGroup) {
@@ -62,12 +63,15 @@
         self.navigationItem.title = VAKToday;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
-        for (VAKTask *task in self.taskService.tasks) {
+        for (VAKTask *task in self.taskService.groupCompletedTasks) {
             NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
             if (task.isCompleted && [taskDate isEqualToString:currentDate]) {
                 [self.arrayTodayTaskCompleted addObject:task];
             }
-            else if (!task.isCompleted && [taskDate isEqualToString:currentDate]) {
+        }
+        for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
+            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
+            if (!task.isCompleted && [taskDate isEqualToString:currentDate]) {
                 [self.arrayTodayTaskNotCompleted addObject:task];
             }
         }
@@ -75,7 +79,6 @@
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
-   
 }
 
 #pragma mark - action
@@ -87,6 +90,7 @@
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
     addTaskController.delegate = self;
+    addTaskController.currentGroup = self.currentGroup;
     [self.navigationController pushViewController:addTaskController animated:YES];
 }
 
@@ -234,6 +238,7 @@
         [self.arrayTodayTaskNotCompleted addObject:task];
     }
     [self.tableView reloadData];
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddTaskForGroup object:nil];
 }
 
 @end
