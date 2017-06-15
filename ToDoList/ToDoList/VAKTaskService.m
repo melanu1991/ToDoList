@@ -19,9 +19,10 @@
     task1.priority = @"Low";
     task1.remindMeOnADay = YES;
     VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-    task2.startedAt = [formatter dateFromString:@"Sunday, 07 June 2017 г., 12:57"];
+    task2.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
     task2.notes = @"My new task!";
     task2.currentGroup = @"Inbox";
+    task2.completed = YES;
     VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
     task3.startedAt = [formatter dateFromString:@"Monday, 09 June 2017 г., 12:57"];
     task3.notes = @"My new task!";
@@ -41,7 +42,7 @@
     task6.currentGroup = @"Building";
     task6.priority = @"None";
     VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-    task7.startedAt = [formatter dateFromString:@"Wednesday, 07 June 2017 г., 12:57"];
+    task7.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
     task7.notes = @"My new task!";
     task7.currentGroup = @"My";
     task7.remindMeOnADay = YES;

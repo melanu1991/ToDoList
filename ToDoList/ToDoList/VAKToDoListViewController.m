@@ -5,6 +5,7 @@
 #import "VAKTask.h"
 #import "VAKPriorityCell.h"
 #import "Constants.h"
+#import "VAKTodayViewController.h"
 
 @interface VAKToDoListViewController () <VAKAddProject>
 
@@ -95,6 +96,19 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
+    if (indexPath.section == 0) {
+        NSMutableArray *arrayInbox = self.taskService.dictionaryGroup[VAKInbox];
+        todayViewController.arrayOfTasksForSelectedGroup = [arrayInbox copy];
+    }
+    else {
+        NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+        [arrayWithoutInbox removeObject:VAKInbox];
+        todayViewController.arrayOfTasksForSelectedGroup = self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row]];
+    }
+    [self.navigationController pushViewController:todayViewController animated:YES];
+    
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

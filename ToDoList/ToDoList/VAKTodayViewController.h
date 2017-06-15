@@ -7,5 +7,6 @@
 @interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) VAKTaskService *taskService;
+@property (strong, nonatomic) NSArray *arrayOfTasksForSelectedGroup;
 
 @end

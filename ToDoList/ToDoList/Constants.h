@@ -23,6 +23,7 @@ static NSString * const VAKTitleForHeaderCompleted = @"Completed";
 static NSString * const VAKEditButton = @"Edit";
 static NSString * const VAKDoneButton = @"Done";
 static NSString * const VAKCancelButton = @"Cancel";
+static NSString * const VAKBackButton = @"Back";
 static NSString * const VAKAddButton = @"+";
 static NSString * const VAKDelete = @"Delete";
 static NSString * const VAKOkButton = @"OK";
@@ -56,5 +57,8 @@ static NSString * const VAKStoriboardIdentifierDetailTask = @"detailView";
 
 static NSString * const VAKDateFormatWithHourAndMinute = @"EEEE, dd MMMM yyyy г., H:m";
 static NSString * const VAKDateFormatWithoutHourAndMinute = @"dd.MM.YYYY";
+
+static NSString * const VAKStoriboardIdentifierTodayViewController = @"VAKStoriboardIdentifierTodayViewController";
+static NSString * const VAKTaskOfSelectedGroup = @"Tasks Of Selected Group";
 
 #endif
