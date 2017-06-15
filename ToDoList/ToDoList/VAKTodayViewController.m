@@ -86,6 +86,7 @@
 
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
+    addTaskController.delegate = self;
     [self.navigationController pushViewController:addTaskController animated:YES];
 }
 
@@ -148,6 +149,24 @@
     [self.tableView setEditing:editing animated:animated];
 }
 
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
+    
+    //пока в пределах одной секции
+    if (sourceIndexPath.section == destinationIndexPath.section) {
+        if (sourceIndexPath.section == 0) {
+            [self.arrayTodayTaskNotCompleted exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+        }
+        else {
+            [self.arrayTodayTaskCompleted exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+        }
+    }
+
+}
+
 #pragma mark - implemented UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -186,8 +205,10 @@
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         if (indexPath.section == 0) {
+            VAKTask *task = self.arrayTodayTaskNotCompleted[indexPath.row];
             [self.arrayTodayTaskCompleted addObject:self.arrayTodayTaskNotCompleted[indexPath.row]];
             [self.arrayTodayTaskNotCompleted removeObjectAtIndex:indexPath.row];
+            task.completed = YES;
             [self.tableView reloadData];
         }
     }];
@@ -198,6 +219,21 @@
     }];
     deleteAction.backgroundColor = [UIColor redColor];
     return @[deleteAction, doneAction];
+}
+
+#pragma mark - delegate add task
+
+- (void)addNewTaskWithTask:(VAKTask *)task {
+    [self.taskService addTask:task];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:VAKKeySort ascending:YES];
+    [self.taskService.tasks sortUsingDescriptors:@[sortDescriptor]];
+    if (task.isCompleted) {
+        [self.arrayTodayTaskCompleted addObject:task];
+    }
+    else {
+        [self.arrayTodayTaskNotCompleted addObject:task];
+    }
+    [self.tableView reloadData];
 }
 
 @end
