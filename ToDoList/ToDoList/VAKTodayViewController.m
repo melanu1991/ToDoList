@@ -61,21 +61,21 @@
         }
     }
     else {
-        self.navigationItem.title = VAKToday;
-        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
-        self.navigationItem.leftBarButtonItem = self.editButton;
-        for (VAKTask *task in self.taskService.groupCompletedTasks) {
-            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
-            if (task.isCompleted && [taskDate isEqualToString:currentDate]) {
-                [self.arrayTodayTaskCompleted addObject:task];
-            }
-        }
-        for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
-            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
-            if (!task.isCompleted && [taskDate isEqualToString:currentDate]) {
-                [self.arrayTodayTaskNotCompleted addObject:task];
-            }
-        }
+//        self.navigationItem.title = VAKToday;
+//        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
+//        self.navigationItem.leftBarButtonItem = self.editButton;
+//        for (VAKTask *task in self.taskService.groupCompletedTasks) {
+//            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
+//            if (task.isCompleted && [taskDate isEqualToString:currentDate]) {
+//                [self.arrayTodayTaskCompleted addObject:task];
+//            }
+//        }
+//        for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
+//            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
+//            if (!task.isCompleted && [taskDate isEqualToString:currentDate]) {
+//                [self.arrayTodayTaskNotCompleted addObject:task];
+//            }
+//        }
     }
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
@@ -202,9 +202,7 @@
         }
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
     [alertController addAction:okAction];
     [alertController addAction:cancelAction];
     

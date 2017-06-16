@@ -162,42 +162,93 @@
     [self.navigationController pushViewController:detailController animated:YES];
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
-            VAKTask *task = arrayObjectForDate[indexPath.row];
-            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[task.currentGroup];
-            [arrayObjectForGroup removeObject:task];
-            [arrayObjectForDate removeObject:task];
-            [self.taskService removeTaskById:task.taskId];
-            
-            if ([arrayObjectForDate count] == 0) {
-                [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
-                [self.taskService sortArrayKeysDate:self.isReverseOrder];
-                [self.tableView reloadData];
-                return;
-            }
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+        [self.taskService removeTaskById:currentTask.taskId];
+        [self.tableView reloadData];
+        //такой вариант имеет право на жизнь только в случае, когда в группе/дате есть хотя бы 1 таск, а иначе краш приложения
+        //можно конечно возвращать булевское значение и если оно YES тогда перегружать только строчку, иначе таблицу
+//        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:okAction];
+    [alertController addAction:cancelAction];
+    
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+        if (!currentTask.isCompleted) {
+            currentTask.completed = YES;
+            currentTask.finishedAt = [NSDate date];
         }
-        else {
-            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
-            VAKTask *task = arrayObjectForGroup[indexPath.row];
-            
-            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
-            
-            [arrayObjectForGroup removeObject:task];
-            [arrayObjectForDate removeObject:task];
-            [self.taskService removeTaskById:task.taskId];
+        
+    }];
+    doneAction.backgroundColor = [UIColor blueColor];
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+       [self presentViewController:alertController animated:YES completion:nil];
+    }];
+    deleteAction.backgroundColor = [UIColor redColor];
+    
+    return @[deleteAction, doneAction];
+}
 
-            if ([arrayObjectForGroup count] == 0) {
-                [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
-                [self.taskService sortArrayKeysGroup:self.isReverseOrder];
-                [self.tableView reloadData];
-                return;
-            }
-        }
+//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+//    if (editingStyle == UITableViewCellEditingStyleDelete) {
+//        if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+//            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+//            VAKTask *task = arrayObjectForDate[indexPath.row];
+//            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[task.currentGroup];
+//            [arrayObjectForGroup removeObject:task];
+//            [arrayObjectForDate removeObject:task];
+//            [self.taskService removeTaskById:task.taskId];
+//            
+//            if ([arrayObjectForDate count] == 0) {
+//                [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
+//                [self.taskService sortArrayKeysDate:self.isReverseOrder];
+//                [self.tableView reloadData];
+//                return;
+//            }
+//        }
+//        else {
+//            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
+//            VAKTask *task = arrayObjectForGroup[indexPath.row];
+//            
+//            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
+//            
+//            [arrayObjectForGroup removeObject:task];
+//            [arrayObjectForDate removeObject:task];
+//            [self.taskService removeTaskById:task.taskId];
+//
+//            if ([arrayObjectForGroup count] == 0) {
+//                [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
+//                [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+//                [self.tableView reloadData];
+//                return;
+//            }
+//        }
+//    }
+//    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+//}
+
+#pragma mark - helper methods
+
+- (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
+    VAKTask *currentTask = nil;
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+        NSMutableArray *arrayDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+        currentTask = arrayDate[indexPath.row];
     }
-    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    else {
+        NSMutableArray *arrayGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
+        currentTask = arrayGroup[indexPath.row];
+    }
+    return currentTask;
 }
 
 #pragma mark - implemented deallocate

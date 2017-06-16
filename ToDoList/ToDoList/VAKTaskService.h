@@ -4,8 +4,6 @@
 @interface VAKTaskService : NSObject
 
 @property (strong, nonatomic) NSMutableArray *tasks;
-@property (strong, nonatomic) NSMutableArray *groupCompletedTasks;
-@property (strong, nonatomic) NSMutableArray *groupNotCompletedTasks;
 @property (strong, nonatomic) NSMutableDictionary *dictionaryDate;
 @property (strong, nonatomic) NSMutableDictionary *dictionaryGroup;
 @property (strong, nonatomic) NSArray *arrayKeysDate;
@@ -21,5 +19,7 @@
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder;
 
 + (VAKTaskService *)sharedVAKTaskService;
+
+@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 
 @end

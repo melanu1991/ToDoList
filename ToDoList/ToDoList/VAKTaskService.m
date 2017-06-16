@@ -3,6 +3,8 @@
 
 @interface VAKTaskService ()
 
+@property (assign, nonatomic, getter=isReverseOrdered) BOOL reverseOrdered;
+
 @end
 
 @implementation VAKTaskService
@@ -20,41 +22,41 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-        formatter.dateFormat = @"EEEE, dd MMMM yyyy г., HH:mm";
+        self.dateFormatter = [[NSDateFormatter alloc] init];
+        self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
         self.tasks = [NSMutableArray array];
         VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
-        task1.startedAt = [formatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
+        task1.startedAt = [self.dateFormatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
         task1.notes = @"My new task!";
         task1.completed = YES;
         task1.currentGroup = @"Inbox";
         task1.priority = @"Low";
         task1.remindMeOnADay = YES;
         VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-        task2.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task2.startedAt = [self.dateFormatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
         task2.notes = @"My new task!";
         task2.currentGroup = @"Inbox";
         task2.completed = YES;
         VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
-        task3.startedAt = [formatter dateFromString:@"Monday, 09 June 2017 г., 12:57"];
+        task3.startedAt = [self.dateFormatter dateFromString:@"Monday, 09 June 2017 г., 12:57"];
         task3.notes = @"My new task!";
         task3.completed = YES;
         task3.currentGroup = @"Work";
         VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
-        task4.startedAt = [formatter dateFromString:@"Sunday, 08 June 2017 г., 12:57"];
+        task4.startedAt = [self.dateFormatter dateFromString:@"Sunday, 08 June 2017 г., 12:57"];
         task4.notes = @"My new task!";
         task4.currentGroup = @"Building";
         VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
-        task5.startedAt = [formatter dateFromString:@"Tuesday, 10 June 2017 г., 12:57"];
+        task5.startedAt = [self.dateFormatter dateFromString:@"Tuesday, 10 June 2017 г., 12:57"];
         task5.notes = @"My new task!";
         task5.currentGroup = @"Inbox";
         VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
-        task6.startedAt = [formatter dateFromString:@"Tuesday, 11 June 2017 г., 12:57"];
+        task6.startedAt = [self.dateFormatter dateFromString:@"Tuesday, 11 June 2017 г., 12:57"];
         task6.notes = @"My new task!";
         task6.currentGroup = @"Building";
         task6.priority = @"None";
         VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-        task7.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task7.startedAt = [self.dateFormatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
         task7.notes = @"My new task!";
         task7.currentGroup = @"My";
         task7.remindMeOnADay = YES;
@@ -70,20 +72,6 @@
 }
 
 #pragma mark - lazy getters
-
-- (NSMutableArray *)groupCompletedTasks {
-    if (!_groupCompletedTasks) {
-        _groupCompletedTasks = [[NSMutableArray alloc] init];
-    }
-    return _groupCompletedTasks;
-}
-
-- (NSMutableArray *)groupNotCompletedTasks {
-    if (!_groupNotCompletedTasks) {
-        _groupNotCompletedTasks = [[NSMutableArray alloc] init];
-    }
-    return _groupNotCompletedTasks;
-}
 
 - (NSArray *)tasks {
     if (!_tasks) {
@@ -120,18 +108,10 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
-    //выбор группы для таска complited/not complited
-    if (task.isCompleted) {
-        [self.groupCompletedTasks addObject:task];
-    }
-    else {
-        [self.groupNotCompletedTasks addObject:task];
-    }
+
+    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
     
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
-    
-    NSString *currentDate = [dateFormatter stringFromDate:task.startedAt];
+    NSString *currentDate = [self.dateFormatter stringFromDate:task.startedAt];
     NSString *currentGroup = task.currentGroup;
     
     //если небыло массива с такой датой/группой то создаем и добавляем в него таск, если был то просто добавляем таск
@@ -157,10 +137,25 @@
 }
 
 - (void)removeTaskById:(NSString *)taskId {
-    for (int i = 0; i < self.tasks.count; i++) {
-        VAKTask *task = (VAKTask *)self.tasks[i];
+    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+    
+    for (VAKTask *task in self.tasks) {
         if ([task.taskId isEqualToString:taskId]) {
+            NSString *currentDate = [self.dateFormatter stringFromDate:task.startedAt];
             [self.tasks removeObject:task];
+            NSMutableArray *arrayDate = self.dictionaryDate[currentDate];
+            NSMutableArray *arrayGroup = self.dictionaryGroup[task.currentGroup];
+            [arrayDate removeObject:task];
+            [arrayGroup removeObject:task];
+            if ([arrayGroup count] == 0) {
+                [self.dictionaryGroup removeObjectForKey:task.currentGroup];
+                [self sortArrayKeysGroup:self.isReverseOrdered];
+            }
+            if ([arrayDate count] == 0) {
+                [self.dictionaryDate removeObjectForKey:currentDate];
+                [self sortArrayKeysDate:self.isReverseOrdered];
+            }
+            return;
         }
     }
 }
@@ -180,6 +175,7 @@
 
 //сортировка ключей для отображения в нужном порядке по датам/группам
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder {
+    self.reverseOrdered = isReverseOrder;
     NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
     arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
         if (isReverseOrder) {
@@ -194,6 +190,7 @@
 
 //подумать как реализовать алгоритм с учетом еще времени, а не только даты!
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder {
+    self.reverseOrdered = isReverseOrder;
     NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
     arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
         if (isReverseOrder) {
