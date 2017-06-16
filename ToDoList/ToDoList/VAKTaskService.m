@@ -94,6 +94,13 @@
     return _dictionaryGroup;
 }
 
+- (NSDictionary *)dictionaryCompletedOrNotCompletedTasks {
+    if (!_dictionaryCompletedOrNotCompletedTasks) {
+        _dictionaryCompletedOrNotCompletedTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
+    }
+    return _dictionaryCompletedOrNotCompletedTasks;
+}
+
 #pragma mark - work on tasks
 
 - (VAKTask *)taskById:(NSString *)taskId {
@@ -114,7 +121,15 @@
     NSString *currentDate = [self.dateFormatter stringFromDate:task.startedAt];
     NSString *currentGroup = task.currentGroup;
     
-    //если небыло массива с такой датой/группой то создаем и добавляем в него таск, если был то просто добавляем таск
+    if (task.isCompleted) {
+        NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+        [arrayCompletedTasks addObject:task];
+    }
+    else {
+        NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+        [arrayNotCompletedTasks addObject:task];
+    }
+    
     if (self.dictionaryDate[currentDate] == nil) {
         [self.dictionaryDate setObject:[[NSMutableArray alloc] init] forKey:currentDate];
         NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];

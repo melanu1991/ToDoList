@@ -6,6 +6,7 @@
 @property (strong, nonatomic) NSMutableArray *tasks;
 @property (strong, nonatomic) NSMutableDictionary *dictionaryDate;
 @property (strong, nonatomic) NSMutableDictionary *dictionaryGroup;
+@property (strong, nonatomic) NSDictionary *dictionaryCompletedOrNotCompletedTasks;
 @property (strong, nonatomic) NSArray *arrayKeysDate;
 @property (strong, nonatomic) NSArray *arrayKeysGroup;
 

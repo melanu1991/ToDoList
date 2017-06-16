@@ -89,12 +89,12 @@
     
     self.criteria = [NSPredicate predicateWithFormat:@"taskName contains[cd] %@", searchText];
 
-//    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
-//        self.filteredArray = [self.taskService.groupNotCompletedTasks mutableCopy];
-//    }
-//    else {
-//        self.filteredArray = [self.taskService.groupCompletedTasks mutableCopy];
-//    }
+    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"] mutableCopy];
+    }
+    else {
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"] mutableCopy];
+    }
 
     [self.filteredArray filterUsingPredicate:self.criteria];
     
