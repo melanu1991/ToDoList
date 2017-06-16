@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -87,10 +88,10 @@
             </objects>
             <point key="canvasLocation" x="749.60000000000002" y="359.37031484257875"/>
         </scene>
-        <!--Today View Controller-->
+        <!--Today-->
         <scene sceneID="JeX-Lz-IWP">
             <objects>
-                <viewController storyboardIdentifier="VAKStoriboardIdentifierTodayViewController" id="JDv-1Y-BrH" customClass="VAKTodayViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VAKStoriboardIdentifierTodayViewController" title="Today" id="JDv-1Y-BrH" customClass="VAKTodayViewController" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="erZ-8y-FDD">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -155,11 +156,18 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Inbox" id="kG4-kJ-4eU">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="rRQ-VC-CM5">
-                            <connections>
-                                <action selector="addNewTask:" destination="9Ue-gH-jcB" id="Kgt-DE-egZ"/>
-                            </connections>
-                        </barButtonItem>
+                        <rightBarButtonItems>
+                            <barButtonItem systemItem="add" id="rRQ-VC-CM5">
+                                <connections>
+                                    <action selector="addNewTask:" destination="9Ue-gH-jcB" id="Kgt-DE-egZ"/>
+                                </connections>
+                            </barButtonItem>
+                            <barButtonItem image="favicon-2" id="f0c-fL-fdm">
+                                <connections>
+                                    <action selector="sortDateOrGroup:" destination="9Ue-gH-jcB" id="qC7-71-0sB"/>
+                                </connections>
+                            </barButtonItem>
+                        </rightBarButtonItems>
                     </navigationItem>
                     <connections>
                         <outlet property="chooseDateOrGroupSorted" destination="py2-Pc-ZVE" id="kLc-Yp-TaY"/>
@@ -505,7 +513,10 @@
             <point key="canvasLocation" x="1543" y="1227"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="favicon-2" width="64" height="64"/>
+    </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="NF3-zJ-1Vm"/>
+        <segue reference="y4H-Xw-OE7"/>
     </inferredMetricsTieBreakers>
 </document>

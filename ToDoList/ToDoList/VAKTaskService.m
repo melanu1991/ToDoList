@@ -1,10 +1,13 @@
 #import "VAKTaskService.h"
+#import "Constants.h"
 
 @interface VAKTaskService ()
 
 @end
 
 @implementation VAKTaskService
+
+#pragma mark - initialize
 
 + (VAKTaskService *)sharedVAKTaskService {
     static VAKTaskService *sharedVAKTaskService = nil;
@@ -66,6 +69,8 @@
     return self;
 }
 
+#pragma mark - lazy getters
+
 - (NSMutableArray *)groupCompletedTasks {
     if (!_groupCompletedTasks) {
         _groupCompletedTasks = [[NSMutableArray alloc] init];
@@ -101,6 +106,8 @@
     return _dictionaryGroup;
 }
 
+#pragma mark - work on tasks
+
 - (VAKTask *)taskById:(NSString *)taskId {
     for (int i = 0; i < self.tasks.count; i++) {
         VAKTask *task = self.tasks[i];
@@ -122,7 +129,7 @@
     }
     
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    dateFormatter.dateFormat = @"dd.MM.YYYY";
+    dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
     
     NSString *currentDate = [dateFormatter stringFromDate:task.startedAt];
     NSString *currentGroup = task.currentGroup;
@@ -164,6 +171,7 @@
 
 }
 
+//Добавление новой группы ToDoList
 - (void)addGroup:(NSString *)group {
     if (self.dictionaryGroup[group] == nil) {
         [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:group];
@@ -171,18 +179,29 @@
 }
 
 //сортировка ключей для отображения в нужном порядке по датам/группам
-- (void)sortArrayKeysGroup {
+- (void)sortArrayKeysGroup:(BOOL)isReverseOrder {
     NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
     arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        return [obj1 compare:obj2];
+        if (isReverseOrder) {
+            return -[obj1 compare:obj2];
+        }
+        else {
+            return [obj1 compare:obj2];
+        }
     }];
     self.arrayKeysGroup = arrayKeysGroup;
 }
 
-- (void)sortArrayKeysDate {
+//подумать как реализовать алгоритм с учетом еще времени, а не только даты!
+- (void)sortArrayKeysDate:(BOOL)isReverseOrder {
     NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
     arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
-        return [obj1 compare:obj2];
+        if (isReverseOrder) {
+            return -[obj1 compare:obj2];
+        }
+        else {
+            return [obj1 compare:obj2];
+        }
     }];
     self.arrayKeysDate = arrayKeysDate;
 }

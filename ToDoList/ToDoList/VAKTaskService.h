@@ -17,8 +17,8 @@
 - (void)removeTaskById:(NSString *)taskId;
 - (void)updateTask:(VAKTask *)task;
 
-- (void)sortArrayKeysGroup;
-- (void)sortArrayKeysDate;
+- (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
+- (void)sortArrayKeysDate:(BOOL)isReverseOrder;
 
 + (VAKTaskService *)sharedVAKTaskService;
 

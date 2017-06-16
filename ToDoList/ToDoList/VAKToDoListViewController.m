@@ -27,7 +27,7 @@
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
-    [self.taskService sortArrayKeysGroup];
+    [self.taskService sortArrayKeysGroup:NO];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKAddTaskForGroup object:nil];
 }
@@ -48,7 +48,7 @@
 
 - (void)addNewProjectWithName:(NSString *)name {
     [self.taskService addGroup:name];
-    [self.taskService sortArrayKeysGroup];
+    [self.taskService sortArrayKeysGroup:NO];
     [self.tableView reloadData];
 }
 
@@ -127,7 +127,7 @@
             NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
             [arrayGroupWithoutInbox removeObject:VAKInbox];
             [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row]];
-            [self.taskService sortArrayKeysGroup];
+            [self.taskService sortArrayKeysGroup:NO];
             [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         }
     }

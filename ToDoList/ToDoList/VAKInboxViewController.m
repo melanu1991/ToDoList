@@ -9,6 +9,7 @@
 @property (nonatomic, strong) VAKTaskService *taskService;
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
+@property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
 
 @end
 
@@ -22,15 +23,14 @@
     self.tabBarController.delegate = self;
 
     self.taskService = [VAKTaskService sharedVAKTaskService];
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
+    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
 
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
-    
-    [self.taskService sortArrayKeysDate];
-    [self.taskService sortArrayKeysGroup];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged) name:VAKTaskWasChanged object:nil];
 }
@@ -47,10 +47,8 @@
     [self.tableView reloadData];
 }
 
-//переделать алгоритм!!!
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
-    for (int i = 0; i < self.taskService.tasks.count; i++) {
-        VAKTask *task = self.taskService.tasks[i];
+    for (VAKTask *task in self.taskService.tasks) {
         if ([task.taskId isEqualToString:taskId]) {
             task.completed = YES;
             task.finishedAt = date;
@@ -69,6 +67,13 @@
     }
 }
 
+- (IBAction)sortDateOrGroup:(UIBarButtonItem *)sender {
+    self.reverseOrder = !self.reverseOrder;
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
+    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+    [self.tableView reloadData];
+}
+
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:VAKAddController bundle:nil];
     addTaskController.delegate = self;
@@ -78,8 +83,8 @@
 
 - (void)addNewTaskWithTask:(VAKTask *)task {
     [self.taskService addTask:task];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:VAKKeySort ascending:YES];
-    [self.taskService.tasks sortUsingDescriptors:@[sortDescriptor]];
+    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
@@ -162,7 +167,6 @@
         if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
             NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
             VAKTask *task = arrayObjectForDate[indexPath.row];
-            //нужно еще удалить из словаря групп
             NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[task.currentGroup];
             [arrayObjectForGroup removeObject:task];
             [arrayObjectForDate removeObject:task];
@@ -170,7 +174,7 @@
             
             if ([arrayObjectForDate count] == 0) {
                 [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
-                [self.taskService sortArrayKeysDate];
+                [self.taskService sortArrayKeysDate:self.isReverseOrder];
                 [self.tableView reloadData];
                 return;
             }
@@ -187,7 +191,7 @@
 
             if ([arrayObjectForGroup count] == 0) {
                 [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
-                [self.taskService sortArrayKeysGroup];
+                [self.taskService sortArrayKeysGroup:self.isReverseOrder];
                 [self.tableView reloadData];
                 return;
             }
