@@ -20,6 +20,6 @@
 - (void)sortArrayKeysGroup;
 - (void)sortArrayKeysDate;
 
-+ (instancetype)initDefaultTaskService;
++ (VAKTaskService *)sharedVAKTaskService;
 
 @end

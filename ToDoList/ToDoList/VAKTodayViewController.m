@@ -42,6 +42,8 @@
     
     NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
     
+    self.taskService = [VAKTaskService sharedVAKTaskService];
+    
     if (self.arrayOfTasksForSelectedGroup) {
         self.navigationItem.title = VAKTaskOfSelectedGroup;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
@@ -59,7 +61,6 @@
         }
     }
     else {
-        self.taskService = [VAKTaskService initDefaultTaskService];
         self.navigationItem.title = VAKToday;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;

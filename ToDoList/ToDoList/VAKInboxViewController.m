@@ -21,7 +21,7 @@
     
     self.tabBarController.delegate = self;
 
-    self.taskService = [VAKTaskService initDefaultTaskService];
+    self.taskService = [VAKTaskService sharedVAKTaskService];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;

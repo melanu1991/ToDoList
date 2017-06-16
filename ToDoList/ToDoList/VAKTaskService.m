@@ -6,56 +6,64 @@
 
 @implementation VAKTaskService
 
-+ (instancetype)initDefaultTaskService {
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    formatter.dateFormat = @"EEEE, dd MMMM yyyy г., HH:mm";
-    VAKTaskService *taskService = [[VAKTaskService alloc] init];
-    taskService.tasks = [NSMutableArray array];
-    VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
-    task1.startedAt = [formatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
-    task1.notes = @"My new task!";
-    task1.completed = YES;
-    task1.currentGroup = @"Inbox";
-    task1.priority = @"Low";
-    task1.remindMeOnADay = YES;
-    VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-    task2.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
-    task2.notes = @"My new task!";
-    task2.currentGroup = @"Inbox";
-    task2.completed = YES;
-    VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
-    task3.startedAt = [formatter dateFromString:@"Monday, 09 June 2017 г., 12:57"];
-    task3.notes = @"My new task!";
-    task3.completed = YES;
-    task3.currentGroup = @"Work";
-    VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
-    task4.startedAt = [formatter dateFromString:@"Sunday, 08 June 2017 г., 12:57"];
-    task4.notes = @"My new task!";
-    task4.currentGroup = @"Building";
-    VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
-    task5.startedAt = [formatter dateFromString:@"Tuesday, 10 June 2017 г., 12:57"];
-    task5.notes = @"My new task!";
-    task5.currentGroup = @"Inbox";
-    VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
-    task6.startedAt = [formatter dateFromString:@"Tuesday, 11 June 2017 г., 12:57"];
-    task6.notes = @"My new task!";
-    task6.currentGroup = @"Building";
-    task6.priority = @"None";
-    VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-    task7.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
-    task7.notes = @"My new task!";
-    task7.currentGroup = @"My";
-    task7.remindMeOnADay = YES;
-    
-    [taskService addTask:task1];
-    [taskService addTask:task2];
-    [taskService addTask:task3];
-    [taskService addTask:task4];
-    [taskService addTask:task5];
-    [taskService addTask:task6];
-    [taskService addTask:task7];
-    
-    return taskService;
++ (VAKTaskService *)sharedVAKTaskService {
+    static VAKTaskService *sharedVAKTaskService = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedVAKTaskService = [[self alloc] init];
+    });
+    return sharedVAKTaskService;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        formatter.dateFormat = @"EEEE, dd MMMM yyyy г., HH:mm";
+        self.tasks = [NSMutableArray array];
+        VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
+        task1.startedAt = [formatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
+        task1.notes = @"My new task!";
+        task1.completed = YES;
+        task1.currentGroup = @"Inbox";
+        task1.priority = @"Low";
+        task1.remindMeOnADay = YES;
+        VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
+        task2.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task2.notes = @"My new task!";
+        task2.currentGroup = @"Inbox";
+        task2.completed = YES;
+        VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
+        task3.startedAt = [formatter dateFromString:@"Monday, 09 June 2017 г., 12:57"];
+        task3.notes = @"My new task!";
+        task3.completed = YES;
+        task3.currentGroup = @"Work";
+        VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
+        task4.startedAt = [formatter dateFromString:@"Sunday, 08 June 2017 г., 12:57"];
+        task4.notes = @"My new task!";
+        task4.currentGroup = @"Building";
+        VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
+        task5.startedAt = [formatter dateFromString:@"Tuesday, 10 June 2017 г., 12:57"];
+        task5.notes = @"My new task!";
+        task5.currentGroup = @"Inbox";
+        VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
+        task6.startedAt = [formatter dateFromString:@"Tuesday, 11 June 2017 г., 12:57"];
+        task6.notes = @"My new task!";
+        task6.currentGroup = @"Building";
+        task6.priority = @"None";
+        VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
+        task7.startedAt = [formatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task7.notes = @"My new task!";
+        task7.currentGroup = @"My";
+        task7.remindMeOnADay = YES;
+        [self addTask:task1];
+        [self addTask:task2];
+        [self addTask:task3];
+        [self addTask:task4];
+        [self addTask:task5];
+        [self addTask:task6];
+        [self addTask:task7];
+    }
+    return self;
 }
 
 - (NSMutableArray *)groupCompletedTasks {
@@ -153,12 +161,7 @@
 - (void)updateTask:(VAKTask *)task {
     //не совсем понятно что тут апдейтить и когда его вызывать!
     //выбор группы для таска complited/not complited
-    if (task.isCompleted) {
-        [self.groupCompletedTasks addObject:task];
-    }
-    else {
-        [self.groupNotCompletedTasks addObject:task];
-    }
+
 }
 
 - (void)addGroup:(NSString *)group {

@@ -43,7 +43,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataInTable) name:VAKTaskWasChanged object:nil];
     
-    self.taskService = [VAKTaskService initDefaultTaskService];
+    self.taskService = [VAKTaskService sharedVAKTaskService];
 }
 
 #pragma mark - Notification

@@ -26,7 +26,7 @@
     self.addProjectButton.target = self;
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
-    self.taskService = [VAKTaskService initDefaultTaskService];
+    self.taskService = [VAKTaskService sharedVAKTaskService];
     [self.taskService sortArrayKeysGroup];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKAddTaskForGroup object:nil];
