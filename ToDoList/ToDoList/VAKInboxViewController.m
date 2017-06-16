@@ -1,6 +1,4 @@
 #import "VAKInboxViewController.h"
-#import "Constants.h"
-#import "VAKCustumCell.h"
 
 @interface VAKInboxViewController ()
 
@@ -32,12 +30,17 @@
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged) name:VAKTaskWasChanged object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged:) name:VAKTaskWasChanged object:nil];
 }
 
 #pragma mark - Notification detailWasChanged
 
-- (void)detailWasChanged {
+- (void)detailWasChanged:(NSNotification *)notification {
+    VAKTask *currentTask = [notification.userInfo objectForKey:@"currentObject"];
+    [self.taskService removeTaskById:currentTask.taskId];
+    [self.taskService addTask:currentTask];
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
+    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
@@ -145,21 +148,21 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    VAKDetailViewController *detailController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierDetailTask];
-    detailController.delegate = self;
+    VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
+    editTaskController.delegate = self;
     
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
         NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
-        detailController.task = task;
+        editTaskController.task = task;
     }
     else {
         NSArray *temp = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
-        detailController.task = task;
+        editTaskController.task = task;
     }
     
-    [self.navigationController pushViewController:detailController animated:YES];
+    [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {

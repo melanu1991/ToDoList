@@ -3,6 +3,12 @@
 #import "VAKTask.h"
 #import "VAKChangedDateDelegate.h"
 #import "VAKAddNewTaskDelegate.h"
+#import "VAKRemindCell.h"
+#import "VAKDateCell.h"
+#import "VAKTaskNameCell.h"
+#import "VAKNotesCell.h"
+#import "VAKPriorityCell.h"
+#import "Constants.h"
 
 @interface VAKAddTaskController : UIViewController <VAKChangedDateDelegate, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 

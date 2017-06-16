@@ -1,10 +1,4 @@
 #import "VAKAddTaskController.h"
-#import "VAKRemindCell.h"
-#import "VAKDateCell.h"
-#import "VAKTaskNameCell.h"
-#import "VAKNotesCell.h"
-#import "VAKPriorityCell.h"
-#import "Constants.h"
 
 @interface VAKAddTaskController ()
 
@@ -230,9 +224,17 @@
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         self.task.remindMeOnADay = self.remindMeOnADay;
-        self.task.startedAt = self.selectDate;
         self.task.notes = self.taskNotes;
-        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
+        NSString *taskDate = [self.formatter stringFromDate:self.task.startedAt];
+        NSString *selectedDate = [self.formatter stringFromDate:self.selectDate];
+        if ([taskDate isEqualToString:selectedDate]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
+        }
+        else {
+            self.task.startedAt = self.selectDate;
+            NSDictionary *dictionaryCurrentObject = [NSDictionary dictionaryWithObject:self.task forKey:@"currentObject"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil userInfo:dictionaryCurrentObject];
+        }
     }
     [self.navigationController popViewControllerAnimated:YES];
 }
