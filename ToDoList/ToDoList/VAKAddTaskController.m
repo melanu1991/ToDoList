@@ -221,6 +221,7 @@
         [self.delegate addNewTaskWithTask:newTask];
     }
     else {
+        self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         self.task.remindMeOnADay = self.remindMeOnADay;
@@ -231,8 +232,8 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
         }
         else {
+            NSDictionary *dictionaryCurrentObject = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"currentObject", [self.formatter stringFromDate:self.task.startedAt], @"lastDate", nil];
             self.task.startedAt = self.selectDate;
-            NSDictionary *dictionaryCurrentObject = [NSDictionary dictionaryWithObject:self.task forKey:@"currentObject"];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil userInfo:dictionaryCurrentObject];
         }
     }

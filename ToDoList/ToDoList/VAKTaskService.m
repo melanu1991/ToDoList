@@ -160,9 +160,22 @@
     }
 }
 
-- (void)updateTask:(VAKTask *)task {
-    //не совсем понятно что тут апдейтить и когда его вызывать!
-    //выбор группы для таска complited/not complited
+- (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate {
+    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+    NSMutableArray *arrayDate = self.dictionaryDate[lastDate];
+    [arrayDate removeObject:task];
+    if ([arrayDate count] == 0) {
+        [self.dictionaryDate removeObjectForKey:lastDate];
+    }
+    arrayDate = self.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
+    if (arrayDate == nil) {
+        arrayDate = [[NSMutableArray alloc] initWithObjects:task, nil];
+    }
+    else {
+        [arrayDate addObject:task];
+    }
+    [self.dictionaryDate setObject:arrayDate forKey:[self.dateFormatter stringFromDate:task.startedAt]];
+    [self sortArrayKeysDate:self.isReverseOrdered];
 
 }
 

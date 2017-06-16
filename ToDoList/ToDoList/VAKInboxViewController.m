@@ -37,10 +37,8 @@
 
 - (void)detailWasChanged:(NSNotification *)notification {
     VAKTask *currentTask = [notification.userInfo objectForKey:@"currentObject"];
-    [self.taskService removeTaskById:currentTask.taskId];
-    [self.taskService addTask:currentTask];
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+    NSString *lastDate = [notification.userInfo objectForKey:@"lastDate"];
+    [self.taskService updateTask:currentTask lastDate:lastDate];
     [self.tableView reloadData];
 }
 

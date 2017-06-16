@@ -13,7 +13,7 @@
 - (void)addTask:(VAKTask *)task;
 - (void)addGroup:(NSString *)group;
 - (void)removeTaskById:(NSString *)taskId;
-- (void)updateTask:(VAKTask *)task;
+- (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate;
 
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder;
