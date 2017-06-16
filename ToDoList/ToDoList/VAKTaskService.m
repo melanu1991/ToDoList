@@ -160,6 +160,14 @@
             [self.tasks removeObject:task];
             NSMutableArray *arrayDate = self.dictionaryDate[currentDate];
             NSMutableArray *arrayGroup = self.dictionaryGroup[task.currentGroup];
+            if (task.isCompleted) {
+                NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+                [arrayCompletedTasks removeObject:task];
+            }
+            else {
+                NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+                [arrayNotCompletedTasks removeObject:task];
+            }
             [arrayDate removeObject:task];
             [arrayGroup removeObject:task];
             if ([arrayGroup count] == 0) {
@@ -192,6 +200,13 @@
     [self.dictionaryDate setObject:arrayDate forKey:[self.dateFormatter stringFromDate:task.startedAt]];
     [self sortArrayKeysDate:self.isReverseOrdered];
 
+}
+
+- (void)updateTaskForCompleted:(VAKTask *)task {
+    NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+    [arrayTasks removeObject:task];
+    arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+    [arrayTasks addObject:task];
 }
 
 //Добавление новой группы ToDoList

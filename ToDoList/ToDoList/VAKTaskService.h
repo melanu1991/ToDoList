@@ -15,6 +15,7 @@
 - (void)addGroup:(NSString *)group;
 - (void)removeTaskById:(NSString *)taskId;
 - (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate;
+- (void)updateTaskForCompleted:(VAKTask *)task;
 
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder;

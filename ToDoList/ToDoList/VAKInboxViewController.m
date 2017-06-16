@@ -165,10 +165,11 @@
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
         [self.taskService removeTaskById:currentTask.taskId];
         [self.tableView reloadData];
         //такой вариант имеет право на жизнь только в случае, когда в группе/дате есть хотя бы 1 таск, а иначе краш приложения
@@ -186,10 +187,17 @@
         if (!currentTask.isCompleted) {
             currentTask.completed = YES;
             currentTask.finishedAt = [NSDate date];
+            [self.taskService updateTaskForCompleted:currentTask];
         }
         
     }];
-    doneAction.backgroundColor = [UIColor blueColor];
+    
+    if (currentTask.isCompleted) {
+        doneAction.backgroundColor = [UIColor grayColor];
+    }
+    else {
+        doneAction.backgroundColor = [UIColor blueColor];
+    }
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
        [self presentViewController:alertController animated:YES completion:nil];

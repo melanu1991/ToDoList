@@ -119,13 +119,18 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    VAKDetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierDetailTask];
+    VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
     VAKTask *currentTask = self.filteredArray[indexPath.row];
-    detailViewController.task = currentTask;
-    detailViewController.delegate = self;
+    editTaskController.task = currentTask;
     
-    [self.navigationController pushViewController:detailViewController animated:YES];
+    [self.navigationController pushViewController:editTaskController animated:YES];
+}
+
+#pragma mark - processing button search UISearchBarDelegate
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
 }
 
 #pragma mark - deallocate
