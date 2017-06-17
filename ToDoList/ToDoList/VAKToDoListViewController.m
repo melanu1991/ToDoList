@@ -30,6 +30,7 @@
     [self.taskService sortArrayKeysGroup:NO];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKAddTaskForGroup object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKDeleteTaskToDoList object:nil];
 }
 
 #pragma mark - reload table
@@ -106,19 +107,34 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
+    NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
     if (indexPath.section == 0) {
-        NSMutableArray *arrayInbox = self.taskService.dictionaryGroup[VAKInbox];
-        todayViewController.arrayOfTasksForSelectedGroup = [arrayInbox copy];
+        for (VAKTask *task in self.taskService.dictionaryGroup[VAKInbox]) {
+            if (!task.isCompleted) {
+                [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
+            }
+            else {
+                [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
+            }
+        }
+        todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
         todayViewController.currentGroup = VAKInbox;
     }
     else {
         NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
         [arrayWithoutInbox removeObject:VAKInbox];
-        todayViewController.arrayOfTasksForSelectedGroup = self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row]];
+        for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row]]) {
+            if (!task.isCompleted) {
+                [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
+            }
+            else {
+                [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
+            }
+        }
+        todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
         todayViewController.currentGroup = arrayWithoutInbox[indexPath.row];
     }
     [self.navigationController pushViewController:todayViewController animated:YES];
-    
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

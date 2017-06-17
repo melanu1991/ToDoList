@@ -32,6 +32,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged:) name:VAKTaskWasChanged object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewTask) name:VAKAddNewTask object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteTaskToDoList) name:VAKDeleteTaskToDoList object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteTask) name:VAKDeleteTask object:nil];
 }
 
@@ -46,6 +47,11 @@
 
 - (void)addNewTask {
     [self.taskService sortArrayKeysDate:self.isReverseOrder];
+    [self.tableView reloadData];
+}
+
+- (void)deleteTaskToDoList {
+    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
     [self.tableView reloadData];
 }
 

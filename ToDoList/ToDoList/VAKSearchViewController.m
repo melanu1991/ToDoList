@@ -1,5 +1,4 @@
 #import "VAKSearchViewController.h"
-#import "VAKDetailViewController.h"
 #import "Constants.h"
 #import "VAKCustumCell.h"
 
