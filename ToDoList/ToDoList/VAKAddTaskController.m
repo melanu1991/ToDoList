@@ -34,6 +34,7 @@
         self.selectPriority = VAKNone;
         self.selectDate = [NSDate date];
         self.doneButton.enabled = NO;
+        self.currentGroup = VAKInbox;
     }
     else {
         title = VAKEditTaskTitle;
@@ -212,7 +213,7 @@
 - (void)doneButtonPressed {
     if (!self.task) {
         NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
-        VAKTask *newTask = [[VAKTask alloc]initTaskWithId:taskId taskName:self.taskName];
+        VAKTask *newTask = [[VAKTask alloc] initTaskWithId:taskId taskName:self.taskName];
         newTask.priority = self.selectPriority;
         newTask.remindMeOnADay = self.remindMeOnADay;
         newTask.notes = self.taskNotes;

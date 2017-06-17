@@ -184,6 +184,14 @@
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    VAKTask *currentTask = nil;
+    if (indexPath.section == 0) {
+        currentTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
+    }
+    else {
+        currentTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
+    }
+    
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (indexPath.section == 0)
@@ -193,6 +201,8 @@
         else {
             [self.dictionaryTasksToday[@"completedTasks"] removeObjectAtIndex:indexPath.row];
         }
+        [self.taskService removeTaskById:currentTask.taskId];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKDeleteTask object:nil];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
@@ -201,14 +211,19 @@
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         if (indexPath.section == 0) {
-            VAKTask *task = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
             [self.dictionaryTasksToday[@"completedTasks"] addObject:self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row]];
             [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
-            task.completed = YES;
+            currentTask.completed = YES;
             [self.tableView reloadData];
         }
     }];
-    doneAction.backgroundColor = [UIColor blueColor];
+    
+    if (currentTask.isCompleted) {
+        doneAction.backgroundColor = [UIColor grayColor];
+    }
+    else {
+        doneAction.backgroundColor = [UIColor blueColor];
+    }
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         [self presentViewController:alertController animated:YES completion:nil];
@@ -221,11 +236,14 @@
 
 - (void)addNewTaskWithTask:(VAKTask *)task {
     [self.taskService addTask:task];
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:VAKKeySort ascending:YES];
-    [self.taskService.tasks sortUsingDescriptors:@[sortDescriptor]];
-
+    if (task.isCompleted) {
+        [self.dictionaryTasksToday[@"completedTasks"] addObject:task];
+    }
+    else {
+        [self.dictionaryTasksToday[@"notCompletedTasks"] addObject:task];
+    }
     [self.tableView reloadData];
-    [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddTaskForGroup object:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddNewTask object:nil];
 }
 
 @end

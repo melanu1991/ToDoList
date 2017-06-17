@@ -29,6 +29,8 @@ static NSString * const VAKDelete = @"Delete";
 static NSString * const VAKOkButton = @"OK";
 static NSString * const VAKWarningDeleteMessage = @"Are you sure you want remove this item?";
 static NSString * const VAKDeleteTaskTitle = @"Delete task";
+static NSString * const VAKAddNewTask = @"VAKAddNewTask";
+static NSString * const VAKDeleteTask = @"VAKDeleteTask";
 
 static NSString * const VAKSelectPriority = @"Select Priority";
 static NSString * const VAKNone = @"None";

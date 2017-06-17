@@ -31,14 +31,26 @@
     self.navigationItem.leftBarButtonItem = self.editButton;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged:) name:VAKTaskWasChanged object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewTask) name:VAKAddNewTask object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteTask) name:VAKDeleteTask object:nil];
 }
 
-#pragma mark - Notification detailWasChanged
+#pragma mark - Notification
 
 - (void)detailWasChanged:(NSNotification *)notification {
     VAKTask *currentTask = [notification.userInfo objectForKey:@"currentObject"];
     NSString *lastDate = [notification.userInfo objectForKey:@"lastDate"];
     [self.taskService updateTask:currentTask lastDate:lastDate];
+    [self.tableView reloadData];
+}
+
+- (void)addNewTask {
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
+    [self.tableView reloadData];
+}
+
+- (void)deleteTask {
+    [self.taskService sortArrayKeysDate:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
@@ -206,44 +218,6 @@
     
     return @[deleteAction, doneAction];
 }
-
-//- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (editingStyle == UITableViewCellEditingStyleDelete) {
-//        if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-//            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
-//            VAKTask *task = arrayObjectForDate[indexPath.row];
-//            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[task.currentGroup];
-//            [arrayObjectForGroup removeObject:task];
-//            [arrayObjectForDate removeObject:task];
-//            [self.taskService removeTaskById:task.taskId];
-//            
-//            if ([arrayObjectForDate count] == 0) {
-//                [self.taskService.dictionaryDate removeObjectForKey:self.taskService.arrayKeysDate[indexPath.section]];
-//                [self.taskService sortArrayKeysDate:self.isReverseOrder];
-//                [self.tableView reloadData];
-//                return;
-//            }
-//        }
-//        else {
-//            NSMutableArray *arrayObjectForGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
-//            VAKTask *task = arrayObjectForGroup[indexPath.row];
-//            
-//            NSMutableArray *arrayObjectForDate = self.taskService.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
-//            
-//            [arrayObjectForGroup removeObject:task];
-//            [arrayObjectForDate removeObject:task];
-//            [self.taskService removeTaskById:task.taskId];
-//
-//            if ([arrayObjectForGroup count] == 0) {
-//                [self.taskService.dictionaryGroup removeObjectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
-//                [self.taskService sortArrayKeysGroup:self.isReverseOrder];
-//                [self.tableView reloadData];
-//                return;
-//            }
-//        }
-//    }
-//    [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//}
 
 #pragma mark - helper methods
 
