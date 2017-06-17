@@ -1,6 +1,4 @@
 #import "VAKTodayViewController.h"
-#import "VAKAddTaskController.h"
-#import "VAKDetailViewController.h"
 
 @interface VAKTodayViewController ()
 
@@ -9,6 +7,7 @@
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
+@property (strong, nonatomic) NSDictionary *dictionaryTasksToday;
 
 @end
 
@@ -22,9 +21,8 @@
     self.formatter = [[NSDateFormatter alloc] init];
     self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
     
-    NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
-    
     self.taskService = [VAKTaskService sharedVAKTaskService];
+    [self arrayTasksToday];
     
     if (self.arrayOfTasksForSelectedGroup) {
         self.navigationItem.title = VAKTaskOfSelectedGroup;
@@ -33,35 +31,48 @@
         self.backButton = [[UIBarButtonItem alloc] initWithTitle:VAKBackButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
         NSArray *arrayLeftButton = [NSArray arrayWithObjects:self.editButton, self.backButton, nil];
         self.navigationItem.leftBarButtonItems = arrayLeftButton;
-//        for (VAKTask *task in self.arrayOfTasksForSelectedGroup) {
-//            if (task.isCompleted) {
-//                [self.arrayTodayTaskCompleted addObject:task];
-//            }
-//            else {
-//                [self.arrayTodayTaskNotCompleted addObject:task];
-//            }
-//        }
     }
     else {
-//        self.navigationItem.title = VAKToday;
-//        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
-//        self.navigationItem.leftBarButtonItem = self.editButton;
-//        for (VAKTask *task in self.taskService.groupCompletedTasks) {
-//            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
-//            if (task.isCompleted && [taskDate isEqualToString:currentDate]) {
-//                [self.arrayTodayTaskCompleted addObject:task];
-//            }
-//        }
-//        for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
-//            NSString *taskDate = [self.formatter stringFromDate:task.startedAt];
-//            if (!task.isCompleted && [taskDate isEqualToString:currentDate]) {
-//                [self.arrayTodayTaskNotCompleted addObject:task];
-//            }
-//        }
+        self.navigationItem.title = VAKToday;
+        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
+        self.navigationItem.leftBarButtonItem = self.editButton;
     }
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
+}
+
+//будет выполняться каждый раз при переходе на эту вкладку (в первый раз только viewDidLoad)
+- (void)viewWillAppear:(BOOL)animated {
+    [self arrayTasksToday];
+    [self.tableView reloadData];
+}
+
+#pragma mark - lazy getters
+
+- (NSDictionary *)dictionaryTasksToday {
+    if (!_dictionaryTasksToday) {
+        _dictionaryTasksToday = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
+    }
+    return _dictionaryTasksToday;
+}
+
+#pragma mark - helpers method
+
+- (void)arrayTasksToday {
+    NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
+    [self.dictionaryTasksToday[@"completedTasks"] removeAllObjects];
+    [self.dictionaryTasksToday[@"notCompletedTasks"] removeAllObjects];
+    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"]) {
+        if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
+            [self.dictionaryTasksToday[@"completedTasks"] addObject:task];
+        }
+    }
+    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"]) {
+        if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
+            [self.dictionaryTasksToday[@"notCompletedTasks"] addObject:task];
+        }
+    }
 }
 
 #pragma mark - action
@@ -95,9 +106,9 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == 0) {
-        return [self.arrayTodayTaskNotCompleted count];
+        return [self.dictionaryTasksToday[@"notCompletedTasks"] count];
     }
-    return [self.arrayTodayTaskCompleted count];
+    return [self.dictionaryTasksToday[@"completedTasks"] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -106,13 +117,13 @@
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
     if (indexPath.section == 0) {
-        VAKTask *notCompletedTask = self.arrayTodayTaskNotCompleted[indexPath.row];
+        VAKTask *notCompletedTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
         cell.taskNameLabel.text = notCompletedTask.taskName;
         cell.taskNoteLabel.text = notCompletedTask.notes;
         cell.taskStartDateLabel.text = [self.formatter stringFromDate:notCompletedTask.startedAt];
     }
     else {
-        VAKTask *completedTask = self.arrayTodayTaskCompleted[indexPath.row];
+        VAKTask *completedTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
         cell.taskNameLabel.text = completedTask.taskName;
         cell.taskNoteLabel.text = completedTask.notes;
         cell.taskStartDateLabel.text = [self.formatter stringFromDate:completedTask.startedAt];
@@ -145,10 +156,10 @@
     //пока в пределах одной секции
     if (sourceIndexPath.section == destinationIndexPath.section) {
         if (sourceIndexPath.section == 0) {
-            [self.arrayTodayTaskNotCompleted exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasksToday[@"notCompletedTasks"] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
         else {
-            [self.arrayTodayTaskCompleted exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasksToday[@"completedTasks"] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
     }
 
@@ -159,16 +170,16 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
-    VAKDetailViewController *detailViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierDetailTask];
+    VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     VAKTask *currentTask = nil;
     if (indexPath.section == 0) {
-        currentTask = self.arrayTodayTaskNotCompleted[indexPath.row];
+        currentTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
     }
     else {
-        currentTask = self.arrayTodayTaskCompleted[indexPath.row];
+        currentTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
     }
-    detailViewController.task = currentTask;
-    [self.navigationController pushViewController:detailViewController animated:YES];
+    editTaskController.task = currentTask;
+    [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -177,10 +188,10 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         if (indexPath.section == 0)
         {
-            [self.arrayTodayTaskNotCompleted removeObjectAtIndex:indexPath.row];
+            [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
         }
         else {
-            [self.arrayTodayTaskCompleted removeObjectAtIndex:indexPath.row];
+            [self.dictionaryTasksToday[@"completedTasks"] removeObjectAtIndex:indexPath.row];
         }
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
@@ -190,9 +201,9 @@
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         if (indexPath.section == 0) {
-            VAKTask *task = self.arrayTodayTaskNotCompleted[indexPath.row];
-            [self.arrayTodayTaskCompleted addObject:self.arrayTodayTaskNotCompleted[indexPath.row]];
-            [self.arrayTodayTaskNotCompleted removeObjectAtIndex:indexPath.row];
+            VAKTask *task = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
+            [self.dictionaryTasksToday[@"completedTasks"] addObject:self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row]];
+            [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
             task.completed = YES;
             [self.tableView reloadData];
         }
@@ -212,12 +223,7 @@
     [self.taskService addTask:task];
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:VAKKeySort ascending:YES];
     [self.taskService.tasks sortUsingDescriptors:@[sortDescriptor]];
-    if (task.isCompleted) {
-        [self.arrayTodayTaskCompleted addObject:task];
-    }
-    else {
-        [self.arrayTodayTaskNotCompleted addObject:task];
-    }
+
     [self.tableView reloadData];
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddTaskForGroup object:nil];
 }
