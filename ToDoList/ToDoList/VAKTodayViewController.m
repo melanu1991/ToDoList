@@ -9,28 +9,10 @@
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
-@property (strong, nonatomic) NSMutableArray *arrayTodayTaskCompleted;
-@property (strong, nonatomic) NSMutableArray *arrayTodayTaskNotCompleted;
 
 @end
 
 @implementation VAKTodayViewController
-
-#pragma mark - lazy initialize
-
-- (NSMutableArray *)arrayTodayTaskCompleted {
-    if (!_arrayTodayTaskCompleted) {
-        _arrayTodayTaskCompleted = [[NSMutableArray alloc] init];
-    }
-    return _arrayTodayTaskCompleted;
-}
-
-- (NSMutableArray *)arrayTodayTaskNotCompleted {
-    if (!_arrayTodayTaskNotCompleted) {
-        _arrayTodayTaskNotCompleted = [[NSMutableArray alloc] init];
-    }
-    return _arrayTodayTaskNotCompleted;
-}
 
 #pragma mark - life cycle view controller
 
@@ -51,14 +33,14 @@
         self.backButton = [[UIBarButtonItem alloc] initWithTitle:VAKBackButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
         NSArray *arrayLeftButton = [NSArray arrayWithObjects:self.editButton, self.backButton, nil];
         self.navigationItem.leftBarButtonItems = arrayLeftButton;
-        for (VAKTask *task in self.arrayOfTasksForSelectedGroup) {
-            if (task.isCompleted) {
-                [self.arrayTodayTaskCompleted addObject:task];
-            }
-            else {
-                [self.arrayTodayTaskNotCompleted addObject:task];
-            }
-        }
+//        for (VAKTask *task in self.arrayOfTasksForSelectedGroup) {
+//            if (task.isCompleted) {
+//                [self.arrayTodayTaskCompleted addObject:task];
+//            }
+//            else {
+//                [self.arrayTodayTaskNotCompleted addObject:task];
+//            }
+//        }
     }
     else {
 //        self.navigationItem.title = VAKToday;
