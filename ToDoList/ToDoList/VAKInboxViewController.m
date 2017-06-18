@@ -8,12 +8,20 @@
 @property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
+@property (assign, nonatomic) BOOL needToReloadData;
 
 @end
 
 @implementation VAKInboxViewController
 
 #pragma mark - life cycle view controller
+
+- (void)viewWillAppear:(BOOL)animated {
+    if (self.needToReloadData) {
+        [self.tableView reloadData];
+        self.needToReloadData = NO;
+    }
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -34,18 +42,7 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    if (notification.userInfo[@"VAKDateWasChanged"]) {
-        VAKTask *currentTask = notification.userInfo[@"currentTask"];
-        NSString *lastDate = notification.userInfo[@"lastDate"];
-        NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
-        if (![lastDate isEqualToString:newDate]) {
-            [self.taskService updateTask:currentTask lastDate:lastDate newDate:newDate];
-        }
-        [self.tableView reloadData];
-    }
-    else {
-        
-    }
+    self.needToReloadData = YES;
 }
 
 #pragma mark - action
@@ -77,12 +74,6 @@
     addTaskController.task = nil;
     addTaskController.currentGroup = VAKInbox;
     [self.navigationController showViewController:addTaskController sender:nil];
-}
-
-- (void)addNewTaskWithTask:(VAKTask *)task {
-    [self.taskService addTask:task];
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.tableView reloadData];
 }
 
 #pragma mark - implemented UITableViewDataSource

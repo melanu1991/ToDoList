@@ -230,6 +230,8 @@
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
         newTask.currentGroup = self.currentGroup;
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, @"VAKCurrentTask", @"VAKAddNewTask", @"VAKAddNewTask", nil];
+        NSLog(@"%@", addOrChangedTask);
     }
     else {
         self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
@@ -239,7 +241,7 @@
         self.task.notes = self.taskNotes;
         NSString *lastDate = [self.formatter stringFromDate:self.task.startedAt];
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:lastDate, @"lastDate", self.task, @"currentTask", @"VAKDateWasChanged", @"VAKDateWasChanged", nil];
-            self.task.startedAt = self.selectDate;
+        self.task.startedAt = self.selectDate;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];

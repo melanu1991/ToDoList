@@ -68,9 +68,31 @@
         [self addTask:task6];
         [self addTask:task7];
     }
-    [self sortArrayKeysGroup:NO];
-    [self sortArrayKeysDate:NO];
+    
+    [self sortArrayKeysGroup:self.isReverseOrdered];
+    [self sortArrayKeysDate:self.isReverseOrdered];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    
     return self;
+}
+
+#pragma mark - Notification
+
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+    if (notification.userInfo[@"VAKDateWasChanged"]) {
+        VAKTask *currentTask = notification.userInfo[@"currentTask"];
+        NSString *lastDate = notification.userInfo[@"lastDate"];
+        NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
+        if (![lastDate isEqualToString:newDate]) {
+            [self updateTask:currentTask lastDate:lastDate newDate:newDate];
+        }
+    }
+    else if (notification.userInfo[@"VAKAddNewTask"]) {
+        VAKTask *newTask = notification.userInfo[@"VAKCurrentTask"];
+        [self addTask:newTask];
+    }
 }
 
 #pragma mark - lazy getters
@@ -151,6 +173,10 @@
         NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
         [tempArrayGroup addObject:task];
     }
+    
+    [self sortArrayKeysDate:NO];
+    [self sortArrayKeysGroup:NO];
+    
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -246,6 +272,12 @@
         }
     }];
     self.arrayKeysDate = arrayKeysDate;
+}
+
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
