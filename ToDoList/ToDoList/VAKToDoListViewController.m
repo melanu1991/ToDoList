@@ -12,12 +12,20 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editButton;
 @property (strong, nonatomic) VAKTaskService *taskService;
+@property (assign, nonatomic) BOOL needToReloadData;
 
 @end
 
 @implementation VAKToDoListViewController
 
 #pragma mark - life cycle view controller
+
+- (void)viewWillAppear:(BOOL)animated {
+    if (self.needToReloadData) {
+        self.needToReloadData = NO;
+        [self.tableView reloadData];
+    }
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -26,13 +34,21 @@
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
-    [self.taskService sortArrayKeysGroup:NO];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewProject:) name:@"VAKAddProject" object:nil];
 }
 
-#pragma mark - reload table
+#pragma mark - Notification
 
-- (void)reloadTable {
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    if (notification.userInfo[@"VAKDeleteTask"] || notification.userInfo[@"VAKAddNewTask"]) {
+        self.needToReloadData = YES;
+    }
+}
+
+- (void)addNewProject:(NSNotification *)notification {
+    NSString *nameNewProject = notification.userInfo[@"VAKNameNewProject"];
+    [self.taskService addGroup:nameNewProject];
     [self.tableView reloadData];
 }
 
@@ -41,12 +57,6 @@
 - (IBAction)addProjectButtonPressed:(id)sender {
     VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
     [self.navigationController pushViewController:addProjectViewController animated:YES];
-}
-
-- (void)addNewProjectWithName:(NSString *)name {
-    [self.taskService addGroup:name];
-    [self.taskService sortArrayKeysGroup:NO];
-    [self.tableView reloadData];
 }
 
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {

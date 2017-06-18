@@ -253,6 +253,7 @@
 - (void)addGroup:(NSString *)group {
     if (self.dictionaryGroup[group] == nil) {
         [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:group];
+        [self sortArrayKeysGroup:NO];
     }
 }
 

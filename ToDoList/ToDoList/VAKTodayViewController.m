@@ -23,7 +23,6 @@
     self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
-    [self arrayTasksToday];
     
     if (self.dictionaryTasksForSelectedGroup) {
         self.navigationItem.title = VAKTaskOfSelectedGroup;
@@ -37,6 +36,7 @@
         self.navigationItem.title = VAKToday;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
+        [self arrayTasksToday];
     }
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
@@ -68,8 +68,13 @@
             self.needToReloadData = YES;
         }
     }
-    else if ((notification.userInfo[@"VAKAddNewTask"] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[@"VAKDeleteTask"] && [self.formatter stringFromDate:currentTask.startedAt])) {
+    else if (((notification.userInfo[@"VAKAddNewTask"] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[@"VAKDeleteTask"] && [self.formatter stringFromDate:currentTask.startedAt])) && !self.dictionaryTasksForSelectedGroup) {
         [self arrayTasksToday];
+        self.needToReloadData = YES;
+    }
+    else if ((notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) && self.dictionaryTasksForSelectedGroup) {
+        NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[currentTask.currentGroup];
+        [arrayCurrentGroup addObject:currentTask];
         self.needToReloadData = YES;
     }
     else if (notification.userInfo[@"VAKDoneTask"]) {

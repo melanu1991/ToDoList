@@ -245,6 +245,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="textFieldValueChanged:" destination="LRO-YU-svL" eventType="valueChanged" id="epH-3X-vVn"/>
+                                </connections>
                             </textField>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -270,6 +273,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="doneButton" destination="eqH-5t-orW" id="BSU-1r-rlS"/>
                         <outlet property="nameProjectField" destination="mL4-Hx-qpe" id="fD1-XB-6RY"/>
                     </connections>
                 </viewController>
