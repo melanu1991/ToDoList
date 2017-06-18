@@ -51,7 +51,7 @@
             self.needToReloadData = YES;
         }
     }
-    else if (notification.userInfo[@"VAKAddNewTask"]) {
+    else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) {
         self.needToReloadData = YES;
     }
 }

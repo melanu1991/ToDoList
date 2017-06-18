@@ -33,7 +33,7 @@
         task1.priority = @"Low";
         task1.remindMeOnADay = YES;
         VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-        task2.startedAt = [self.dateFormatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task2.startedAt = [self.dateFormatter dateFromString:@"Sunday, 18 June 2017 г., 12:57"];
         task2.notes = @"My new task!";
         task2.currentGroup = @"Inbox";
         task2.completed = YES;
@@ -43,7 +43,7 @@
         task3.completed = YES;
         task3.currentGroup = @"Work";
         VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
-        task4.startedAt = [self.dateFormatter dateFromString:@"Sunday, 08 June 2017 г., 12:57"];
+        task4.startedAt = [self.dateFormatter dateFromString:@"Sunday, 18 June 2017 г., 12:57"];
         task4.notes = @"My new task!";
         task4.currentGroup = @"Building";
         VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
@@ -56,7 +56,7 @@
         task6.currentGroup = @"Building";
         task6.priority = @"None";
         VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-        task7.startedAt = [self.dateFormatter dateFromString:@"Thursday, 15 June 2017 г., 12:57"];
+        task7.startedAt = [self.dateFormatter dateFromString:@"Sunday, 18 June 2017 г., 12:57"];
         task7.notes = @"My new task!";
         task7.currentGroup = @"My";
         task7.remindMeOnADay = YES;
@@ -81,8 +81,8 @@
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
     if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
-        VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
         NSString *lastDate = notification.userInfo[@"VAKLastDate"];
         NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
         if (![lastDate isEqualToString:newDate]) {
@@ -91,7 +91,17 @@
     }
     else if (notification.userInfo[@"VAKAddNewTask"]) {
         VAKTask *newTask = notification.userInfo[@"VAKCurrentTask"];
-        [self addTask:newTask];
+        if (![self.tasks containsObject:currentTask]) {
+            [self addTask:newTask];
+        }
+    }
+    else if (notification.userInfo[@"VAKDoneTask"]) {
+        [self updateTaskForCompleted:currentTask];
+    }
+    else if (notification.userInfo[@"VAKDeleteTask"]) {
+        if ([self.tasks containsObject:currentTask]) {
+            [self removeTaskById:currentTask.taskId];
+        }
     }
 }
 
@@ -232,9 +242,11 @@
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
     NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
-    [arrayTasks removeObject:task];
-    arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
-    [arrayTasks addObject:task];
+    if ([arrayTasks containsObject:task]) {
+        [arrayTasks removeObject:task];
+        arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+        [arrayTasks addObject:task];
+    }
 }
 
 //Добавление новой группы ToDoList

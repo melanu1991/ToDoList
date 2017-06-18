@@ -28,8 +28,6 @@
     self.taskService = [VAKTaskService sharedVAKTaskService];
     [self.taskService sortArrayKeysGroup:NO];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKAddTaskForGroup object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadTable) name:VAKDeleteTaskToDoList object:nil];
 }
 
 #pragma mark - reload table

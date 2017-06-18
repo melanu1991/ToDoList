@@ -8,6 +8,7 @@
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
 @property (strong, nonatomic) NSDictionary *dictionaryTasksToday;
+@property (assign, nonatomic) BOOL needToReloadData;
 
 @end
 
@@ -40,12 +41,40 @@
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
-//будет выполняться каждый раз при переходе на эту вкладку (в первый раз только viewDidLoad)
 - (void)viewWillAppear:(BOOL)animated {
-    [self arrayTasksToday];
-    [self.tableView reloadData];
+    if (self.needToReloadData) {
+        [self.tableView reloadData];
+    }
+}
+
+#pragma mark - Notification
+
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
+    NSString *lastDate = notification.userInfo[@"VAKLastDate"];
+    NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
+    NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+    
+    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
+        if (![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+            self.needToReloadData = YES;
+        }
+        else if (![lastDate isEqualToString:[self.formatter stringFromDate:currentTask.startedAt]]) {
+            [self arrayTasksToday];
+            self.needToReloadData = YES;
+        }
+    }
+    else if ((notification.userInfo[@"VAKAddNewTask"] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[@"VAKDeleteTask"] && [self.formatter stringFromDate:currentTask.startedAt])) {
+        [self arrayTasksToday];
+        self.needToReloadData = YES;
+    }
+    else if (notification.userInfo[@"VAKDoneTask"]) {
+        self.needToReloadData = YES;
+    }
 }
 
 #pragma mark - lazy getters
@@ -177,7 +206,6 @@
 
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     
-    //пока в пределах одной секции
     if (sourceIndexPath.section == destinationIndexPath.section) {
         if (sourceIndexPath.section == 0) {
             [self.dictionaryTasksToday[@"notCompletedTasks"] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
@@ -262,7 +290,8 @@
         }
 
         [self.taskService removeTaskById:currentTask.taskId];
-        [[NSNotificationCenter defaultCenter] postNotificationName:VAKDeleteTaskToDoList object:nil];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"VAKDeleteTask", @"VAKDeleteTask", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
@@ -276,6 +305,7 @@
                 [self.dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"][indexPath.row]];
                 [self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;
+                currentTask.finishedAt = [NSDate date];
                 [self.tableView reloadData];
             }
         }
@@ -284,9 +314,12 @@
                 [self.dictionaryTasksToday[@"completedTasks"] addObject:self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row]];
                 [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;
+                currentTask.finishedAt = [NSDate date];
                 [self.tableView reloadData];
             }
         }
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDoneTask", @"VAKDoneTask", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
 
     }];
     
@@ -304,18 +337,10 @@
     return @[deleteAction, doneAction];
 }
 
-#pragma mark - delegate add task
+#pragma mark - deallocate
 
-- (void)addNewTaskWithTask:(VAKTask *)task {
-    [self.taskService addTask:task];
-    if (task.isCompleted) {
-        [self.dictionaryTasksToday[@"completedTasks"] addObject:task];
-    }
-    else {
-        [self.dictionaryTasksToday[@"notCompletedTasks"] addObject:task];
-    }
-    [self.tableView reloadData];
-    [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddNewTask object:nil];
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

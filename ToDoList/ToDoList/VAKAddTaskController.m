@@ -32,6 +32,9 @@
     if (!self.task) {
         title = VAKAddTaskTitle;
         self.selectPriority = VAKNone;
+        if (!self.currentGroup) {
+            self.currentGroup = VAKInbox;
+        }
         self.selectDate = [NSDate date];
         self.doneButton.enabled = NO;
     }
