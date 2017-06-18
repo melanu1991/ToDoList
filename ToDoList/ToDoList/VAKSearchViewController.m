@@ -11,6 +11,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *noResultLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseActiveOrCompletedTasks;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (assign, nonatomic) BOOL needToReloadData;
 
 @end
 
@@ -19,7 +20,10 @@
 #pragma mark - life cycle view controller
 
 - (void)viewWillAppear:(BOOL)animated {
-    
+    if (self.needToReloadData) {
+        [self searchBar:self.searchBar textDidChange:self.searchBar.text];
+        self.needToReloadData = NO;
+    }
 }
 
 - (void)viewDidLoad {
@@ -29,11 +33,35 @@
     self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
 #pragma mark - Notification
 
-
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
+    
+    if (notification.userInfo[@"VAKDoneTask"] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
+        self.needToReloadData = YES;
+    }
+    else if (notification.userInfo[@"VAKDoneTask"] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) {
+        self.needToReloadData = YES;
+    }
+    
+    if ( (currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) || (!currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) ) {
+        if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
+            NSString *lastDate = notification.userInfo[@"VAKLastDate"];
+            NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
+            NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+            if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+                self.needToReloadData = YES;
+            }
+        }
+        else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) {
+            self.needToReloadData = YES;
+        }
+    }
+}
 
 #pragma mark - implemented UITableViewDataSource
 

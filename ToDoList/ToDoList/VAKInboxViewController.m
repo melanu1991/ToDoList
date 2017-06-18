@@ -168,6 +168,8 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         [self.taskService removeTaskById:currentTask.taskId];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDeleteTask", @"VAKDeleteTask", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [self.tableView reloadData];
         
     }];
@@ -182,6 +184,8 @@
             currentTask.completed = YES;
             currentTask.finishedAt = [NSDate date];
             [self.taskService updateTaskForCompleted:currentTask];
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDoneTask", @"VAKDoneTask", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         }
         
     }];
