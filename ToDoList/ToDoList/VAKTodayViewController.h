@@ -3,10 +3,9 @@
 #import "VAKTaskService.h"
 #import "VAKTask.h"
 #import "Constants.h"
-#import "VAKAddNewTaskDelegate.h"
 #import "VAKAddTaskController.h"
 
-@interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, VAKAddNewTaskDelegate>
+@interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) VAKTaskService *taskService;
 @property (strong, nonatomic) NSDictionary *dictionaryTasksForSelectedGroup;

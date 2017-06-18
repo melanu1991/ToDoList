@@ -34,7 +34,6 @@
         self.selectPriority = VAKNone;
         self.selectDate = [NSDate date];
         self.doneButton.enabled = NO;
-        self.currentGroup = VAKInbox;
     }
     else {
         title = VAKEditTaskTitle;
@@ -46,7 +45,19 @@
         self.doneButton.enabled = YES;
     }
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(dateWasChanged:) name:VAKSelectedDate object:nil];
+    
     [self.navigationItem setTitle:title];
+}
+
+#pragma mark - Notification
+
+- (void)dateWasChanged:(NSNotification *)notification {
+    if (notification.userInfo[VAKSelectedDate]) {
+        self.selectDate = notification.userInfo[VAKSelectedDate];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:1];
+        [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+    }
 }
 
 #pragma mark - implemented UITableViewDataSource
@@ -135,7 +146,6 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     if (indexPath.section == 1 && indexPath.row == 1) {
         VAKSelectDateController *selectDateController = [[VAKSelectDateController alloc] init];
-        selectDateController.delegate = self;
         [self.navigationController pushViewController:selectDateController animated:YES];
     }
     else if (indexPath.section == 2) {
@@ -211,6 +221,7 @@
 }
 
 - (void)doneButtonPressed {
+    NSDictionary *addOrChangedTask = nil;
     if (!self.task) {
         NSString *taskId = [NSString stringWithFormat:@"%u",arc4random()%1000];
         VAKTask *newTask = [[VAKTask alloc] initTaskWithId:taskId taskName:self.taskName];
@@ -219,7 +230,6 @@
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
         newTask.currentGroup = self.currentGroup;
-        [self.delegate addNewTaskWithTask:newTask];
     }
     else {
         self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
@@ -227,25 +237,18 @@
         self.task.priority = self.selectPriority;
         self.task.remindMeOnADay = self.remindMeOnADay;
         self.task.notes = self.taskNotes;
-        NSString *taskDate = [self.formatter stringFromDate:self.task.startedAt];
-        NSString *selectedDate = [self.formatter stringFromDate:self.selectDate];
-        if ([taskDate isEqualToString:selectedDate]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil];
-        }
-        else {
-            NSDictionary *dictionaryCurrentObject = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"currentObject", [self.formatter stringFromDate:self.task.startedAt], @"lastDate", nil];
+        NSString *lastDate = [self.formatter stringFromDate:self.task.startedAt];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:lastDate, @"lastDate", self.task, @"currentTask", @"VAKDateWasChanged", @"VAKDateWasChanged", nil];
             self.task.startedAt = self.selectDate;
-            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChanged object:nil userInfo:dictionaryCurrentObject];
-        }
     }
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)setNewDateWithDate:(NSDate *)date {
-    self.selectDate = date;
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:1];
-    NSArray *rowToReload = [NSArray arrayWithObjects:indexPath, nil];
-    [self.tableView reloadRowsAtIndexPaths:rowToReload withRowAnimation:UITableViewRowAnimationRight];
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

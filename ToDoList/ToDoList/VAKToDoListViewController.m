@@ -1,13 +1,12 @@
 #import "VAKToDoListViewController.h"
 #import "VAKAddProjectViewController.h"
-#import "VAKAddProject.h"
 #import "VAKTaskService.h"
 #import "VAKTask.h"
 #import "VAKPriorityCell.h"
 #import "Constants.h"
 #import "VAKTodayViewController.h"
 
-@interface VAKToDoListViewController () <VAKAddProject>
+@interface VAKToDoListViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
@@ -43,7 +42,6 @@
 
 - (IBAction)addProjectButtonPressed:(id)sender {
     VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
-    addProjectViewController.delegate = self;
     [self.navigationController pushViewController:addProjectViewController animated:YES];
 }
 
@@ -75,7 +73,7 @@
         return 1;
     }
     else {
-        return [self.taskService.arrayKeysGroup count] - 1;
+        return [self.taskService.arrayKeysGroup count];
     }
 }
 
@@ -91,11 +89,17 @@
         cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
     }
     else {
-        NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-        [arrayGroupWithoutInbox removeObject:VAKInbox];
-        NSUInteger countTasks = [self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row]] count];
-        cell.textLabel.text = arrayGroupWithoutInbox[indexPath.row];
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
+        if (indexPath.row == 0) {
+            cell.textLabel.text = @"Add project";
+            cell.detailTextLabel.text = nil;
+        }
+        else {
+            NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+            [arrayGroupWithoutInbox removeObject:VAKInbox];
+            NSUInteger countTasks = [self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row-1]] count];
+            cell.textLabel.text = arrayGroupWithoutInbox[indexPath.row-1];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
+        }
     }
 
     return cell;
@@ -119,22 +123,31 @@
         }
         todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
         todayViewController.currentGroup = VAKInbox;
+        [self.navigationController pushViewController:todayViewController animated:YES];
     }
     else {
-        NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-        [arrayWithoutInbox removeObject:VAKInbox];
-        for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row]]) {
-            if (!task.isCompleted) {
-                [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
-            }
-            else {
-                [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
-            }
+        if (indexPath.row == 0) {
+            VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
+            [self.navigationController pushViewController:addProjectViewController animated:YES];
         }
-        todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
-        todayViewController.currentGroup = arrayWithoutInbox[indexPath.row];
+        else {
+            NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+            [arrayWithoutInbox removeObject:VAKInbox];
+            for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row-1]]) {
+                if (!task.isCompleted) {
+                    [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
+                }
+                else {
+                    [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
+                }
+            }
+            todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
+            todayViewController.currentGroup = arrayWithoutInbox[indexPath.row-1];
+            [self.navigationController pushViewController:todayViewController animated:YES];
+        }
+        
     }
-    [self.navigationController pushViewController:todayViewController animated:YES];
+    
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {

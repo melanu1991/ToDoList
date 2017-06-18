@@ -23,7 +23,6 @@
 }
 
 - (IBAction)doneButtonPressed:(UIBarButtonItem *)sender {
-    [self.delegate addNewProjectWithName:self.nameProjectField.text];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

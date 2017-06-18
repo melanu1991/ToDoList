@@ -21,8 +21,6 @@
     self.tabBarController.delegate = self;
 
     self.taskService = [VAKTaskService sharedVAKTaskService];
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
     
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
@@ -30,49 +28,30 @@
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detailWasChanged:) name:VAKTaskWasChanged object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewTask) name:VAKAddNewTask object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteTaskToDoList) name:VAKDeleteTaskToDoList object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteTask) name:VAKDeleteTask object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
 #pragma mark - Notification
 
-- (void)detailWasChanged:(NSNotification *)notification {
-    VAKTask *currentTask = [notification.userInfo objectForKey:@"currentObject"];
-    NSString *lastDate = [notification.userInfo objectForKey:@"lastDate"];
-    [self.taskService updateTask:currentTask lastDate:lastDate];
-    [self.tableView reloadData];
-}
-
-- (void)addNewTask {
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.tableView reloadData];
-}
-
-- (void)deleteTaskToDoList {
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
-    [self.tableView reloadData];
-}
-
-- (void)deleteTask {
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.tableView reloadData];
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    if (notification.userInfo[@"VAKDateWasChanged"]) {
+        VAKTask *currentTask = notification.userInfo[@"currentTask"];
+        NSString *lastDate = notification.userInfo[@"lastDate"];
+        NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
+        if (![lastDate isEqualToString:newDate]) {
+            [self.taskService updateTask:currentTask lastDate:lastDate newDate:newDate];
+        }
+        [self.tableView reloadData];
+    }
+    else {
+        
+    }
 }
 
 #pragma mark - action
 
 - (IBAction)changeSegmentedControl:(UISegmentedControl *)sender {
     [self.tableView reloadData];
-}
-
-- (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
-    for (VAKTask *task in self.taskService.tasks) {
-        if ([task.taskId isEqualToString:taskId]) {
-            task.completed = YES;
-            task.finishedAt = date;
-        }
-    }
 }
 
 - (void)editButtonPressed {
@@ -94,15 +73,14 @@
 }
 
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
-    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:VAKAddController bundle:nil];
-    addTaskController.delegate = self;
+    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     addTaskController.task = nil;
+    addTaskController.currentGroup = VAKInbox;
     [self.navigationController showViewController:addTaskController sender:nil];
 }
 
 - (void)addNewTaskWithTask:(VAKTask *)task {
     [self.taskService addTask:task];
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
     [self.taskService sortArrayKeysDate:self.isReverseOrder];
     [self.tableView reloadData];
 }
@@ -165,7 +143,6 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
-    editTaskController.delegate = self;
     
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
         NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
@@ -190,9 +167,6 @@
         
         [self.taskService removeTaskById:currentTask.taskId];
         [self.tableView reloadData];
-        //такой вариант имеет право на жизнь только в случае, когда в группе/дате есть хотя бы 1 таск, а иначе краш приложения
-        //можно конечно возвращать булевское значение и если оно YES тогда перегружать только строчку, иначе таблицу
-//        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];

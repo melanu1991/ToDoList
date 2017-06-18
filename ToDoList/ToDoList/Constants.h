@@ -1,7 +1,8 @@
 #ifndef Constants_h
 #define Constants_h
 
-static NSString * const VAKTaskWasChanged = @"TaskWasChanged";
+static NSString * const VAKTaskWasChangedOrAddOrDelete = @"VAKTaskWasChangedOrAddOrDelete";
+static NSString *const VAKTaskWasChanged = @"VAKTaskWasChanged";
 static NSString * const VAKTaskWasComplited = @"TaskWasComplited";
 static NSString * const VAKAddTaskTitle = @"Add Item";
 static NSString * const VAKEditTaskTitle = @"Edit task";
@@ -31,6 +32,7 @@ static NSString * const VAKWarningDeleteMessage = @"Are you sure you want remove
 static NSString * const VAKDeleteTaskTitle = @"Delete task";
 static NSString * const VAKAddNewTask = @"VAKAddNewTask";
 static NSString * const VAKDeleteTask = @"VAKDeleteTask";
+static NSString * const VAKSelectedDate = @"VAKSelectedDate";
 static NSString * const VAKDeleteTaskToDoList = @"VAKDeleteTaskToDoList";
 
 static NSString * const VAKSelectPriority = @"Select Priority";

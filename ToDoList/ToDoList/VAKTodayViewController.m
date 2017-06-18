@@ -83,7 +83,6 @@
 
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
-    addTaskController.delegate = self;
     addTaskController.currentGroup = self.currentGroup;
     [self.navigationController pushViewController:addTaskController animated:YES];
 }

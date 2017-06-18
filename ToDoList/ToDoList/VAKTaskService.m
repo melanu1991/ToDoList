@@ -68,6 +68,8 @@
         [self addTask:task6];
         [self addTask:task7];
     }
+    [self sortArrayKeysGroup:NO];
+    [self sortArrayKeysDate:NO];
     return self;
 }
 
@@ -183,21 +185,21 @@
     }
 }
 
-- (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate {
-    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
+- (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate newDate:(NSString *)newDate {
+    
     NSMutableArray *arrayDate = self.dictionaryDate[lastDate];
     [arrayDate removeObject:task];
     if ([arrayDate count] == 0) {
         [self.dictionaryDate removeObjectForKey:lastDate];
     }
-    arrayDate = self.dictionaryDate[[self.dateFormatter stringFromDate:task.startedAt]];
+    arrayDate = self.dictionaryDate[newDate];
     if (arrayDate == nil) {
         arrayDate = [[NSMutableArray alloc] initWithObjects:task, nil];
     }
     else {
         [arrayDate addObject:task];
     }
-    [self.dictionaryDate setObject:arrayDate forKey:[self.dateFormatter stringFromDate:task.startedAt]];
+    [self.dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
 
 }

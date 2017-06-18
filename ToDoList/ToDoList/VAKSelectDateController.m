@@ -29,7 +29,8 @@
 #pragma mark - action
 
 - (void)setSelectDate {
-    [self.delegate setNewDateWithDate:[self.datePicker date]];
+    NSDictionary *selectedDate = [NSDictionary dictionaryWithObject:[self.datePicker date] forKey:VAKSelectedDate];
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKSelectedDate object:nil userInfo:selectedDate];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

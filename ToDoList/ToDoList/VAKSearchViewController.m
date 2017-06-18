@@ -40,8 +40,6 @@
     self.dateFormatter = [[NSDateFormatter alloc] init];
     self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadDataInTable) name:VAKTaskWasChanged object:nil];
-    
     self.taskService = [VAKTaskService sharedVAKTaskService];
 }
 
