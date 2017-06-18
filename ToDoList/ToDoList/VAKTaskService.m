@@ -81,9 +81,9 @@
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
-    if (notification.userInfo[@"VAKDateWasChanged"]) {
-        VAKTask *currentTask = notification.userInfo[@"currentTask"];
-        NSString *lastDate = notification.userInfo[@"lastDate"];
+    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
+        VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
+        NSString *lastDate = notification.userInfo[@"VAKLastDate"];
         NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
         if (![lastDate isEqualToString:newDate]) {
             [self updateTask:currentTask lastDate:lastDate newDate:newDate];

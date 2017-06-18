@@ -42,7 +42,18 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    self.needToReloadData = YES;
+    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
+        VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
+        NSString *lastDate = notification.userInfo[@"VAKLastDate"];
+        NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
+        NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+        if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+            self.needToReloadData = YES;
+        }
+    }
+    else if (notification.userInfo[@"VAKAddNewTask"]) {
+        self.needToReloadData = YES;
+    }
 }
 
 #pragma mark - action

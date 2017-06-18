@@ -16,23 +16,11 @@
 
 @implementation VAKSearchViewController
 
-#pragma mark - delegate finished task
-
-- (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date {
-//    for (VAKTask *task in self.taskService.groupNotCompletedTasks) {
-//        if ([task.taskId isEqualToString:taskId]) {
-//            task.completed = YES;
-//            task.finishedAt = date;
-//            [self.taskService.groupCompletedTasks addObject:task];
-//            [self.taskService.groupNotCompletedTasks removeObject:task];
-//            [self searchBar:self.searchBar textDidChange:self.searchBar.text];
-//            [self.tableView reloadData];
-//            return;
-//        }
-//    }
-}
-
 #pragma mark - life cycle view controller
+
+- (void)viewWillAppear:(BOOL)animated {
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -45,9 +33,7 @@
 
 #pragma mark - Notification
 
-- (void)reloadDataInTable {
-    [self.tableView reloadData];
-}
+
 
 #pragma mark - implemented UITableViewDataSource
 
