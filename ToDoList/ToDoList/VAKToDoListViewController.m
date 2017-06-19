@@ -158,16 +158,61 @@
     
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (editingStyle == UITableViewCellEditingStyleDelete) {
-        if (indexPath.section != 0) {
-            NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-            [arrayGroupWithoutInbox removeObject:VAKInbox];
-            [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row]];
-            [self.taskService sortArrayKeysGroup:NO];
-            [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        if (indexPath.row != 0) {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+                [arrayGroupWithoutInbox removeObject:VAKInbox];
+                [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row - 1]];
+                [self.taskService sortArrayKeysGroup:NO];
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:@"VAKDeleteGroupTasks" forKey:@"VAKDeleteGroupTasks"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+            }];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            [alertController addAction:alertActionOk];
+            [alertController addAction:alertActionCancel];
+            [self presentViewController:alertController animated:YES completion:nil];
         }
-    }
+        
+    }];
+    
+    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Edit" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        if (indexPath.row != 0) {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Edit task" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
+                textField.placeholder = @"Input new name group";
+            }];
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
+                [arrayGroupWithoutInbox removeObject:VAKInbox];
+                NSString *selectedGroup = arrayGroupWithoutInbox[indexPath.row - 1];
+                NSMutableArray *arraySelectedGroup = self.taskService.dictionaryGroup[selectedGroup];
+                for (VAKTask *task in arraySelectedGroup) {
+                    task.currentGroup = alertController.textFields[0].text;
+                }
+                [self.taskService.dictionaryGroup removeObjectForKey:selectedGroup];
+                [self.taskService addGroup:alertController.textFields[0].text];
+                self.taskService.dictionaryGroup[alertController.textFields[0].text] = [arraySelectedGroup mutableCopy];
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:@"VAKWasEditNameGroup" forKey:@"VAKWasEditNameGroup"];
+                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+                [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+            }];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            [alertController addAction:alertActionOk];
+            [alertController addAction:alertActionCancel];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+        
+    }];
+    
+    deleteAction.backgroundColor = [UIColor redColor];
+    editAction.backgroundColor = [UIColor blueColor];
+    return @[deleteAction, editAction];
 }
 
 #pragma mark - deallocate

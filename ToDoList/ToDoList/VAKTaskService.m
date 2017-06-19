@@ -208,10 +208,6 @@
             }
             [arrayDate removeObject:task];
             [arrayGroup removeObject:task];
-            if ([arrayGroup count] == 0) {
-                [self.dictionaryGroup removeObjectForKey:task.currentGroup];
-                [self sortArrayKeysGroup:self.isReverseOrdered];
-            }
             if ([arrayDate count] == 0) {
                 [self.dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];

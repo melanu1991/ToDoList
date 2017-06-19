@@ -73,11 +73,23 @@
         self.needToReloadData = YES;
     }
     else if ((notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) && self.dictionaryTasksForSelectedGroup) {
-        NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[currentTask.currentGroup];
-        [arrayCurrentGroup addObject:currentTask];
+        if (notification.userInfo[@"VAKAddNewTask"]) {
+            NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"];
+            [arrayCurrentGroup addObject:currentTask];
+        }
+        else {
+            if (currentTask.isCompleted) {
+                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"completedTasks"];
+                [arrayCurrentGroup removeObject:currentTask];
+            }
+            else {
+                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"];
+                [arrayCurrentGroup removeObject:currentTask];
+            }
+        }
         self.needToReloadData = YES;
     }
-    else if (notification.userInfo[@"VAKDoneTask"]) {
+    else if (notification.userInfo[@"VAKDoneTask"]  || notification.userInfo[@"VAKWasEditNameGroup"] || notification.userInfo[@"VAKDeleteGroupTasks"]) {
         self.needToReloadData = YES;
     }
 }

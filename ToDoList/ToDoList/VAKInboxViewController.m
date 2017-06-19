@@ -51,7 +51,7 @@
             self.needToReloadData = YES;
         }
     }
-    else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) {
+    else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"] || notification.userInfo[@"VAKWasEditNameGroup"] || notification.userInfo[@"VAKDeleteGroupTasks"]) {
         self.needToReloadData = YES;
     }
 }
