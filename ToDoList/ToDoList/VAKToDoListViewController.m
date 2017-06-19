@@ -166,8 +166,13 @@
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
                 [arrayGroupWithoutInbox removeObject:VAKInbox];
+                NSMutableArray *arrayTasksDeleteGroup = self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row - 1]];
+                for (VAKTask *task in arrayTasksDeleteGroup) {
+                    [self.taskService removeTaskById:task.taskId];
+                }
                 [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row - 1]];
                 [self.taskService sortArrayKeysGroup:NO];
+                [self.taskService sortArrayKeysDate:NO];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
                 NSDictionary *dic = [NSDictionary dictionaryWithObject:@"VAKDeleteGroupTasks" forKey:@"VAKDeleteGroupTasks"];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
