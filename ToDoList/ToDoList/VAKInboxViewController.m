@@ -42,16 +42,16 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
-        VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
-        NSString *lastDate = notification.userInfo[@"VAKLastDate"];
-        NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
-        NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+        VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+        NSString *lastDate = notification.userInfo[VAKLastDate];
+        NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
+        NSString *lastNotes = notification.userInfo[VAKLastNotes];
         if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
             self.needToReloadData = YES;
         }
     }
-    else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"] || notification.userInfo[@"VAKWasEditNameGroup"] || notification.userInfo[@"VAKDeleteGroupTasks"]) {
+    else if (notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask] || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
         self.needToReloadData = YES;
     }
 }
@@ -168,7 +168,7 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         [self.taskService removeTaskById:currentTask.taskId];
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDeleteTask", @"VAKDeleteTask", nil];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [self.tableView reloadData];
         
@@ -184,7 +184,7 @@
             currentTask.completed = YES;
             currentTask.finishedAt = [NSDate date];
             [self.taskService updateTaskForCompleted:currentTask];
-            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDoneTask", @"VAKDoneTask", nil];
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         }
         

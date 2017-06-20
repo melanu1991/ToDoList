@@ -39,25 +39,25 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
+    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
     
-    if (notification.userInfo[@"VAKDoneTask"] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
+    if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
         self.needToReloadData = YES;
     }
-    else if (notification.userInfo[@"VAKDoneTask"] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) {
+    else if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) {
         self.needToReloadData = YES;
     }
     
     if ( (currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) || (!currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) ) {
-        if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
-            NSString *lastDate = notification.userInfo[@"VAKLastDate"];
-            NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
-            NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+        if (notification.userInfo[VAKDetailTaskWasChanged]) {
+            NSString *lastDate = notification.userInfo[VAKLastDate];
+            NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
+            NSString *lastNotes = notification.userInfo[VAKLastNotes];
             if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
                 self.needToReloadData = YES;
             }
         }
-        else if (notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"] || notification.userInfo[@"VAKWasEditNameGroup"] || notification.userInfo[@"VAKDeleteGroupTasks"]) {
+        else if (notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask] || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
             self.needToReloadData = YES;
         }
     }
@@ -101,10 +101,10 @@
     self.criteria = [NSPredicate predicateWithFormat:@"taskName contains[cd] %@", searchText];
 
     if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
-        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"] mutableCopy];
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask] mutableCopy];
     }
     else {
-        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"] mutableCopy];
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask] mutableCopy];
     }
 
     [self.filteredArray filterUsingPredicate:self.criteria];

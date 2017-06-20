@@ -31,8 +31,8 @@
 #pragma mark - action
 
 - (IBAction)doneButtonPressed:(UIBarButtonItem *)sender {
-    NSDictionary *dic = [NSDictionary dictionaryWithObject:self.nameProjectField.text forKey:@"VAKNameNewProject"];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"VAKAddProject" object:nil userInfo:dic];
+    NSDictionary *dic = [NSDictionary dictionaryWithObject:self.nameProjectField.text forKey:VAKNameNewProject];
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKAddProject object:nil userInfo:dic];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

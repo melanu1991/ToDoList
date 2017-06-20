@@ -35,19 +35,19 @@
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewProject:) name:@"VAKAddProject" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewProject:) name:VAKAddProject object:nil];
 }
 
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    if (notification.userInfo[@"VAKDeleteTask"] || notification.userInfo[@"VAKAddNewTask"]) {
+    if (notification.userInfo[VAKDeleteTask] || notification.userInfo[VAKAddNewTask]) {
         self.needToReloadData = YES;
     }
 }
 
 - (void)addNewProject:(NSNotification *)notification {
-    NSString *nameNewProject = notification.userInfo[@"VAKNameNewProject"];
+    NSString *nameNewProject = notification.userInfo[VAKNameNewProject];
     [self.taskService addGroup:nameNewProject];
     [self.tableView reloadData];
 }
@@ -98,7 +98,7 @@
     }
     else {
         if (indexPath.row == 0) {
-            cell.textLabel.text = @"Add project";
+            cell.textLabel.text = VAKAddProjectLabel;
             cell.detailTextLabel.text = nil;
         }
         else {
@@ -119,14 +119,14 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
-    NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
+    NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     if (indexPath.section == 0) {
         for (VAKTask *task in self.taskService.dictionaryGroup[VAKInbox]) {
             if (!task.isCompleted) {
-                [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
+                [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
             }
             else {
-                [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
+                [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
             }
         }
         todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
@@ -143,10 +143,10 @@
             [arrayWithoutInbox removeObject:VAKInbox];
             for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row-1]]) {
                 if (!task.isCompleted) {
-                    [dictionaryTasksForSelectedGroup[@"notCompletedTasks"] addObject:task];
+                    [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
                 }
                 else {
-                    [dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:task];
+                    [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
                 }
             }
             todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
@@ -159,11 +159,11 @@
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Delete" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (indexPath.row != 0) {
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
                 [arrayGroupWithoutInbox removeObject:VAKInbox];
                 NSMutableArray *arrayTasksDeleteGroup = self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row - 1]];
@@ -174,10 +174,10 @@
                 [self.taskService sortArrayKeysGroup:NO];
                 [self.taskService sortArrayKeysDate:NO];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-                NSDictionary *dic = [NSDictionary dictionaryWithObject:@"VAKDeleteGroupTasks" forKey:@"VAKDeleteGroupTasks"];
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKDeleteGroupTask forKey:VAKDeleteGroupTask];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
             }];
-            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
             [alertController addAction:alertActionOk];
             [alertController addAction:alertActionCancel];
             [self presentViewController:alertController animated:YES completion:nil];
@@ -185,14 +185,14 @@
         
     }];
     
-    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:@"Edit" handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKEditButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (indexPath.row != 0) {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"Edit task" message:nil preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKEditTaskTitle message:nil preferredStyle:UIAlertControllerStyleAlert];
             [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-                textField.placeholder = @"Input new name group";
+                textField.placeholder = VAKInputNewNameGroup;
             }];
-            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
                 [arrayGroupWithoutInbox removeObject:VAKInbox];
                 NSString *selectedGroup = arrayGroupWithoutInbox[indexPath.row - 1];
@@ -203,11 +203,11 @@
                 [self.taskService.dictionaryGroup removeObjectForKey:selectedGroup];
                 [self.taskService addGroup:alertController.textFields[0].text];
                 self.taskService.dictionaryGroup[alertController.textFields[0].text] = [arraySelectedGroup mutableCopy];
-                NSDictionary *dic = [NSDictionary dictionaryWithObject:@"VAKWasEditNameGroup" forKey:@"VAKWasEditNameGroup"];
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKWasEditNameGroup forKey:VAKWasEditNameGroup];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             }];
-            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
             [alertController addAction:alertActionOk];
             [alertController addAction:alertActionCancel];
             [self presentViewController:alertController animated:YES completion:nil];

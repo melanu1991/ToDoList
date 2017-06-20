@@ -81,24 +81,24 @@
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
-    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
-    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
-        NSString *lastDate = notification.userInfo[@"VAKLastDate"];
+    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+        NSString *lastDate = notification.userInfo[VAKLastDate];
         NSString *newDate = [self.dateFormatter stringFromDate:currentTask.startedAt];
         if (![lastDate isEqualToString:newDate]) {
             [self updateTask:currentTask lastDate:lastDate newDate:newDate];
         }
     }
-    else if (notification.userInfo[@"VAKAddNewTask"]) {
-        VAKTask *newTask = notification.userInfo[@"VAKCurrentTask"];
+    else if (notification.userInfo[VAKAddNewTask]) {
+        VAKTask *newTask = notification.userInfo[VAKCurrentTask];
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:newTask];
         }
     }
-    else if (notification.userInfo[@"VAKDoneTask"]) {
+    else if (notification.userInfo[VAKDoneTask]) {
         [self updateTaskForCompleted:currentTask];
     }
-    else if (notification.userInfo[@"VAKDeleteTask"]) {
+    else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
         }
@@ -130,7 +130,7 @@
 
 - (NSDictionary *)dictionaryCompletedOrNotCompletedTasks {
     if (!_dictionaryCompletedOrNotCompletedTasks) {
-        _dictionaryCompletedOrNotCompletedTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
+        _dictionaryCompletedOrNotCompletedTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     }
     return _dictionaryCompletedOrNotCompletedTasks;
 }
@@ -156,11 +156,11 @@
     NSString *currentGroup = task.currentGroup;
     
     if (task.isCompleted) {
-        NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+        NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayCompletedTasks addObject:task];
     }
     else {
-        NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+        NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
         [arrayNotCompletedTasks addObject:task];
     }
     
@@ -199,11 +199,11 @@
             NSMutableArray *arrayDate = self.dictionaryDate[currentDate];
             NSMutableArray *arrayGroup = self.dictionaryGroup[task.currentGroup];
             if (task.isCompleted) {
-                NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+                NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
                 [arrayCompletedTasks removeObject:task];
             }
             else {
-                NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+                NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
                 [arrayNotCompletedTasks removeObject:task];
             }
             [arrayDate removeObject:task];
@@ -237,10 +237,10 @@
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
-    NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"];
+    NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
     if ([arrayTasks containsObject:task]) {
         [arrayTasks removeObject:task];
-        arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"];
+        arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
 }

@@ -54,12 +54,12 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-    VAKTask *currentTask = notification.userInfo[@"VAKCurrentTask"];
-    NSString *lastDate = notification.userInfo[@"VAKLastDate"];
-    NSString *lastTaskName = notification.userInfo[@"VAKLastTaskName"];
-    NSString *lastNotes = notification.userInfo[@"VAKLastNotes"];
+    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+    NSString *lastDate = notification.userInfo[VAKLastDate];
+    NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
+    NSString *lastNotes = notification.userInfo[VAKLastNotes];
     
-    if (notification.userInfo[@"VAKDetailTaskWasChanged"]) {
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
         if (![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
             self.needToReloadData = YES;
         }
@@ -68,28 +68,28 @@
             self.needToReloadData = YES;
         }
     }
-    else if (((notification.userInfo[@"VAKAddNewTask"] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[@"VAKDeleteTask"] && [self.formatter stringFromDate:currentTask.startedAt])) && !self.dictionaryTasksForSelectedGroup) {
+    else if (((notification.userInfo[VAKAddNewTask] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[VAKDeleteTask] && [self.formatter stringFromDate:currentTask.startedAt])) && !self.dictionaryTasksForSelectedGroup) {
         [self arrayTasksToday];
         self.needToReloadData = YES;
     }
-    else if ((notification.userInfo[@"VAKAddNewTask"] || notification.userInfo[@"VAKDeleteTask"]) && self.dictionaryTasksForSelectedGroup) {
-        if (notification.userInfo[@"VAKAddNewTask"]) {
-            NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"];
+    else if ((notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask]) && self.dictionaryTasksForSelectedGroup) {
+        if (notification.userInfo[VAKAddNewTask]) {
+            NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask];
             [arrayCurrentGroup addObject:currentTask];
         }
         else {
             if (currentTask.isCompleted) {
-                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"completedTasks"];
+                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKCompletedTask];
                 [arrayCurrentGroup removeObject:currentTask];
             }
             else {
-                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"];
+                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask];
                 [arrayCurrentGroup removeObject:currentTask];
             }
         }
         self.needToReloadData = YES;
     }
-    else if (notification.userInfo[@"VAKDoneTask"]  || notification.userInfo[@"VAKWasEditNameGroup"] || notification.userInfo[@"VAKDeleteGroupTasks"]) {
+    else if (notification.userInfo[VAKDoneTask]  || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
         self.needToReloadData = YES;
     }
 }
@@ -98,7 +98,7 @@
 
 - (NSDictionary *)dictionaryTasksToday {
     if (!_dictionaryTasksToday) {
-        _dictionaryTasksToday = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"completedTasks", [NSMutableArray array], @"notCompletedTasks", nil];
+        _dictionaryTasksToday = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     }
     return _dictionaryTasksToday;
 }
@@ -107,16 +107,16 @@
 
 - (void)arrayTasksToday {
     NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
-    [self.dictionaryTasksToday[@"completedTasks"] removeAllObjects];
-    [self.dictionaryTasksToday[@"notCompletedTasks"] removeAllObjects];
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[@"completedTasks"]) {
+    [self.dictionaryTasksToday[VAKCompletedTask] removeAllObjects];
+    [self.dictionaryTasksToday[VAKNotCompletedTask] removeAllObjects];
+    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
         if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
-            [self.dictionaryTasksToday[@"completedTasks"] addObject:task];
+            [self.dictionaryTasksToday[VAKCompletedTask] addObject:task];
         }
     }
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[@"notCompletedTasks"]) {
+    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
         if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
-            [self.dictionaryTasksToday[@"notCompletedTasks"] addObject:task];
+            [self.dictionaryTasksToday[VAKNotCompletedTask] addObject:task];
         }
     }
 }
@@ -152,15 +152,15 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (self.dictionaryTasksForSelectedGroup) {
         if (section == 0) {
-            return [self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"] count];
+            return [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] count];
         }
-        return [self.dictionaryTasksForSelectedGroup[@"completedTasks"] count];
+        return [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] count];
     }
     else {
         if (section == 0) {
-            return [self.dictionaryTasksToday[@"notCompletedTasks"] count];
+            return [self.dictionaryTasksToday[VAKNotCompletedTask] count];
         }
-        return [self.dictionaryTasksToday[@"completedTasks"] count];
+        return [self.dictionaryTasksToday[VAKCompletedTask] count];
     }
 }
 
@@ -171,13 +171,13 @@
     
     if (self.dictionaryTasksForSelectedGroup) {
         if (indexPath.section == 0) {
-            VAKTask *notCompletedTask = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"][indexPath.row];
+            VAKTask *notCompletedTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
             cell.taskStartDateLabel.text = [self.formatter stringFromDate:notCompletedTask.startedAt];
         }
         else {
-            VAKTask *completedTask = self.dictionaryTasksForSelectedGroup[@"completedTasks"][indexPath.row];
+            VAKTask *completedTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
             cell.taskNameLabel.text = completedTask.taskName;
             cell.taskNoteLabel.text = completedTask.notes;
             cell.taskStartDateLabel.text = [self.formatter stringFromDate:completedTask.startedAt];
@@ -185,13 +185,13 @@
     }
     else {
         if (indexPath.section == 0) {
-            VAKTask *notCompletedTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
+            VAKTask *notCompletedTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
             cell.taskStartDateLabel.text = [self.formatter stringFromDate:notCompletedTask.startedAt];
         }
         else {
-            VAKTask *completedTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
+            VAKTask *completedTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
             cell.taskNameLabel.text = completedTask.taskName;
             cell.taskNoteLabel.text = completedTask.notes;
             cell.taskStartDateLabel.text = [self.formatter stringFromDate:completedTask.startedAt];
@@ -225,10 +225,10 @@
     
     if (sourceIndexPath.section == destinationIndexPath.section) {
         if (sourceIndexPath.section == 0) {
-            [self.dictionaryTasksToday[@"notCompletedTasks"] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasksToday[VAKNotCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
         else {
-            [self.dictionaryTasksToday[@"completedTasks"] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasksToday[VAKCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
     }
 
@@ -244,18 +244,18 @@
     
     if (self.dictionaryTasksForSelectedGroup) {
         if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
         }
         else {
-            currentTask = self.dictionaryTasksForSelectedGroup[@"completedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
         }
     }
     else {
         if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
         }
         else {
-            currentTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
         }
     }
 
@@ -269,18 +269,18 @@
     
     if (self.dictionaryTasksForSelectedGroup) {
         if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
         }
         else {
-            currentTask = self.dictionaryTasksForSelectedGroup[@"completedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
         }
     }
     else {
         if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
         }
         else {
-            currentTask = self.dictionaryTasksToday[@"completedTasks"][indexPath.row];
+            currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
         }
     }
     
@@ -290,24 +290,24 @@
         if (self.dictionaryTasksForSelectedGroup) {
             if (indexPath.section == 0)
             {
-                [self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
             }
             else {
-                [self.dictionaryTasksForSelectedGroup[@"completedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] removeObjectAtIndex:indexPath.row];
             }
         }
         else {
             if (indexPath.section == 0)
             {
-                [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
             }
             else {
-                [self.dictionaryTasksToday[@"completedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksToday[VAKCompletedTask] removeObjectAtIndex:indexPath.row];
             }
         }
 
         [self.taskService removeTaskById:currentTask.taskId];
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:@"VAKDeleteTask", @"VAKDeleteTask", nil];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
@@ -319,8 +319,8 @@
         
         if (self.dictionaryTasksForSelectedGroup) {
             if (indexPath.section == 0) {
-                [self.dictionaryTasksForSelectedGroup[@"completedTasks"] addObject:self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"][indexPath.row]];
-                [self.dictionaryTasksForSelectedGroup[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row]];
+                [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;
                 currentTask.finishedAt = [NSDate date];
                 [self.tableView reloadData];
@@ -328,14 +328,14 @@
         }
         else {
             if (indexPath.section == 0) {
-                [self.dictionaryTasksToday[@"completedTasks"] addObject:self.dictionaryTasksToday[@"notCompletedTasks"][indexPath.row]];
-                [self.dictionaryTasksToday[@"notCompletedTasks"] removeObjectAtIndex:indexPath.row];
+                [self.dictionaryTasksToday[VAKCompletedTask] addObject:self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row]];
+                [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;
                 currentTask.finishedAt = [NSDate date];
                 [self.tableView reloadData];
             }
         }
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, @"VAKCurrentTask", @"VAKDoneTask", @"VAKDoneTask", nil];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
 
     }];

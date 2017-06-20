@@ -233,7 +233,7 @@
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
         newTask.currentGroup = self.currentGroup;
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, @"VAKCurrentTask", @"VAKAddNewTask", @"VAKAddNewTask", nil];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
     }
     else {
         self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
@@ -244,7 +244,7 @@
             self.task.notes = @"";
         }
         
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, @"VAKLastNotes", self.task.taskName, @"VAKLastTaskName", lastDate, @"VAKLastDate", self.task, @"VAKCurrentTask", @"VAKDetailTaskWasChanged", @"VAKDetailTaskWasChanged", nil];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         self.task.remindMeOnADay = self.remindMeOnADay;
