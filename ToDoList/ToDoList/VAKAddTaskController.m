@@ -169,9 +169,7 @@
             self.selectPriority = VAKHigh;
             [tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            return;
-        }];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
         [priorityAlertController addAction:noneAction];
         [priorityAlertController addAction:lowAction];
         [priorityAlertController addAction:mediumAction];

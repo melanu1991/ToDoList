@@ -181,8 +181,6 @@
         
         VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
         if (!currentTask.isCompleted) {
-            currentTask.completed = YES;
-            currentTask.finishedAt = [NSDate date];
             [self.taskService updateTaskForCompleted:currentTask];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];

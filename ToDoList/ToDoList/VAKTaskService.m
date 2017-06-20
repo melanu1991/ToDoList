@@ -26,7 +26,7 @@
         self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
         self.tasks = [NSMutableArray array];
         VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
-        task1.startedAt = [self.dateFormatter dateFromString:@"Saturday, 08 June 2017 г., 12:57"];
+        task1.startedAt = [self.dateFormatter dateFromString:@"Tuesday, 20 June 2017 г., 12:57"];
         task1.notes = @"My new task!";
         task1.completed = YES;
         task1.currentGroup = @"Inbox";
@@ -51,7 +51,7 @@
         task5.notes = @"My new task!";
         task5.currentGroup = @"Inbox";
         VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
-        task6.startedAt = [self.dateFormatter dateFromString:@"Tuesday, 11 June 2017 г., 12:57"];
+        task6.startedAt = [self.dateFormatter dateFromString:@"Tuesday, 20 June 2017 г., 12:57"];
         task6.notes = @"My new task!";
         task6.currentGroup = @"Building";
         task6.priority = @"None";
@@ -239,6 +239,8 @@
 - (void)updateTaskForCompleted:(VAKTask *)task {
     NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
     if ([arrayTasks containsObject:task]) {
+        task.completed = YES;
+        task.finishedAt = [NSDate date];
         [arrayTasks removeObject:task];
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
