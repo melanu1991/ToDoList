@@ -12,5 +12,6 @@ static NSString * const VAKDateTitle = @"Select date";
 static NSString * const VAKDoneTitle = @"Done";
 static NSString * const VAKDateController = @"VAKSelectDateController";
 static NSString * const VAKSaveTitle = @"Save";
+static NSString * const VAKDateFormat = @"HH:mm dd.MMMM.yyyy";
 
 #endif

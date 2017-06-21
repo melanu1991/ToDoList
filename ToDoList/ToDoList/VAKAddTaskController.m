@@ -1,4 +1,5 @@
 #import "VAKAddTaskController.h"
+#import "VAKDateFormatterHelper.h"
 #import "Constants.h"
 
 @interface VAKAddTaskController ()
@@ -7,6 +8,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *taskNameField;
 @property (weak, nonatomic) IBOutlet UITextView *taskNotesTextView;
 @property (nonatomic, strong) NSDateFormatter *formatter;
+@property (strong, nonatomic) VAKDateFormatterHelper *dateFormatterHelper;
 
 @end
 
@@ -20,8 +22,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    self.formatter = [[NSDateFormatter alloc]init];
-    self.formatter.dateFormat = @"HH:mm dd.MMMM.yyyy";
+    self.formatter = [VAKDateFormatterHelper sharedDateFormatter];
+    self.formatter.dateFormat = VAKDateFormat;
     
     UIBarButtonItem *save = [[UIBarButtonItem alloc]initWithTitle:VAKSaveTitle style:UIBarButtonItemStyleDone target:self action:@selector(saveTask)];
     self.navigationItem.rightBarButtonItem = save;
@@ -29,8 +31,8 @@
     UITapGestureRecognizer *handleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleEndEditing)];
     [self.view addGestureRecognizer:handleTap];
     
-    NSDate *date = nil;
-    NSString *title = nil;
+    NSDate *date;
+    NSString *title;
     if (!self.task) {
         date = [NSDate date];
         title = VAKAddTaskTitle;

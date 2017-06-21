@@ -274,10 +274,10 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="finishDate" destination="GMA-rw-PlW" id="gMF-3c-Ycq"/>
-                        <outlet property="notes" destination="qS9-2E-bnJ" id="dkk-ly-Gun"/>
-                        <outlet property="startDate" destination="cuD-La-pUT" id="YJe-EI-WjC"/>
-                        <outlet property="taskName" destination="BnX-wm-tTw" id="ChT-7C-wxN"/>
+                        <outlet property="finishDateLabel" destination="GMA-rw-PlW" id="osU-A0-ArR"/>
+                        <outlet property="notesLabel" destination="qS9-2E-bnJ" id="lY1-SL-xjO"/>
+                        <outlet property="startDateLabel" destination="cuD-La-pUT" id="HI4-2f-xzN"/>
+                        <outlet property="taskNameLabel" destination="BnX-wm-tTw" id="u3o-5W-Exb"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nHC-bn-Ggf" userLabel="First Responder" sceneMemberID="firstResponder"/>

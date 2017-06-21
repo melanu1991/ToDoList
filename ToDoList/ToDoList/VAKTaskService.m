@@ -37,7 +37,15 @@
 }
 
 - (void)updateTask:(VAKTask *)task {
-    //не совсем понял что подразумевается под апдейтом таска
+    for (VAKTask *currentTask in self.tasks) {
+        if ([currentTask.taskId isEqualToString:task.taskId]) {
+            currentTask.taskName = task.taskName;
+            currentTask.startedAt = task.startedAt;
+            currentTask.finishedAt = task.finishedAt;
+            currentTask.notes = task.notes;
+            currentTask.completed = task.completed;
+        }
+    }
 }
 
 @end

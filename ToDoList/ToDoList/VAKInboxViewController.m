@@ -11,15 +11,6 @@
 
 @implementation VAKInboxViewController
 
-//- (void)tabBarController:(UITabBarController *)tabBarController didSelectViewController:(UIViewController *)viewController {
-//
-//    UINavigationController *myNavController = (UINavigationController *)viewController;
-//    VAKSearchViewController *myController = [[myNavController childViewControllers] firstObject];
-//    myController.tasks = [self.taskService.tasks copy];
-//    [self.tabBarController setSelectedIndex:[self.tabBarController selectedIndex]];
-//    
-//}
-
 - (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
     for (int i = 0; i < self.taskService.tasks.count; i++) {
         VAKTask *task = self.taskService.tasks[i];
