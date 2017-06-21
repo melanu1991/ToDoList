@@ -19,6 +19,7 @@
 		580038221EE3E69400A19465 /* VAKTodayViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 580038211EE3E69400A19465 /* VAKTodayViewController.m */; };
 		580038291EE3EF7D00A19465 /* VAKAddTaskController.m in Sources */ = {isa = PBXBuildFile; fileRef = 580038271EE3EF7D00A19465 /* VAKAddTaskController.m */; };
 		5800382A1EE3EF7D00A19465 /* VAKAddTaskController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 580038281EE3EF7D00A19465 /* VAKAddTaskController.xib */; };
+		580862CF1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m in Sources */ = {isa = PBXBuildFile; fileRef = 580862CE1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m */; };
 		5896F3A41EE5327400E64890 /* VAKTaskService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5896F3A31EE5327400E64890 /* VAKTaskService.m */; };
 		5897A5A81EF079DB001905B8 /* VAKAddProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5897A5A71EF079DB001905B8 /* VAKAddProjectViewController.m */; };
 		58A17CA01EEDB28E00C023E2 /* VAKTaskNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 58A17C9E1EEDB28E00C023E2 /* VAKTaskNameCell.m */; };
@@ -59,6 +60,8 @@
 		580038261EE3EF7D00A19465 /* VAKAddTaskController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKAddTaskController.h; sourceTree = "<group>"; };
 		580038271EE3EF7D00A19465 /* VAKAddTaskController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKAddTaskController.m; sourceTree = "<group>"; };
 		580038281EE3EF7D00A19465 /* VAKAddTaskController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKAddTaskController.xib; sourceTree = "<group>"; };
+		580862CD1EFAE9C800FF9E23 /* VAKNSDate+Formatters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VAKNSDate+Formatters.h"; sourceTree = "<group>"; };
+		580862CE1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VAKNSDate+Formatters.m"; sourceTree = "<group>"; };
 		5870F2721EE95C31007A69B0 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		5896F3A21EE5327400E64890 /* VAKTaskService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKTaskService.h; sourceTree = "<group>"; };
 		5896F3A31EE5327400E64890 /* VAKTaskService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKTaskService.m; sourceTree = "<group>"; };
@@ -117,6 +120,7 @@
 		580037F41EE3E3B200A19465 /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
+				58D1CF581EFAE9090080F61C /* Helpers */,
 				5870F2731EE95C3F007A69B0 /* Constants */,
 				580038251EE3EF5000A19465 /* View */,
 				580038161EE3E5E600A19465 /* Controller */,
@@ -205,6 +209,15 @@
 				5870F2721EE95C31007A69B0 /* Constants.h */,
 			);
 			name = Constants;
+			sourceTree = "<group>";
+		};
+		58D1CF581EFAE9090080F61C /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				580862CD1EFAE9C800FF9E23 /* VAKNSDate+Formatters.h */,
+				580862CE1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -303,6 +316,7 @@
 				580037F71EE3E3B200A19465 /* main.m in Sources */,
 				58A17CA51EEDB33A00C023E2 /* VAKRemindCell.m in Sources */,
 				58C936D41EE44D5800970D40 /* VAKSelectDateController.m in Sources */,
+				580862CF1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m in Sources */,
 				580038191EE3E63500A19465 /* VAKInboxViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
