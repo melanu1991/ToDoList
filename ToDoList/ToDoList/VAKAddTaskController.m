@@ -31,13 +31,10 @@
     UITapGestureRecognizer *handleTap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleEndEditing)];
     [self.view addGestureRecognizer:handleTap];
     
-    NSDate *date;
-    NSString *title;
-    if (!self.task) {
-        date = [NSDate date];
-        title = VAKAddTaskTitle;
-    }
-    else {
+    NSDate *date = [NSDate date];
+    NSString *title = VAKAddTaskTitle;
+
+    if (self.task) {
         date = self.task.startedAt;
         title = VAKEditTaskTitle;
         self.taskNameField.text = self.task.taskName;
