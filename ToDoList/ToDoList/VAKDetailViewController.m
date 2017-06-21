@@ -1,5 +1,5 @@
 #import "VAKDetailViewController.h"
-#import "VAKDateFormatterHelper.h"
+#import "VAKNSDate+Formatters.h"
 #import "Constants.h"
 
 @interface VAKDetailViewController ()
@@ -8,7 +8,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *startDateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *finishDateLabel;
 @property (weak, nonatomic) IBOutlet UILabel *notesLabel;
-@property (strong, nonatomic) VAKDateFormatterHelper *dateFormatter;
 
 @end
 
@@ -26,11 +25,9 @@
 }
 
 - (void)detailWasChanged {
-    NSDateFormatter *formatter = [VAKDateFormatterHelper sharedDateFormatter];
-    formatter.dateFormat = VAKDateFormat;
     self.taskNameLabel.text = self.task.taskName;
-    self.startDateLabel.text =  [formatter stringFromDate:self.task.startedAt];
-    self.finishDateLabel.text = [formatter stringFromDate:self.task.finishedAt];
+    self.startDateLabel.text =  [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormat];
+    self.finishDateLabel.text = [NSDate dateStringFromDate:self.task.finishedAt format:VAKDateFormat];
     self.notesLabel.text = self.task.notes;
 }
 
@@ -41,10 +38,8 @@
 }
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
-    NSDateFormatter *formatter = [VAKDateFormatterHelper sharedDateFormatter];
-    formatter.dateFormat = VAKDateFormat;
-    self.finishDateLabel.text = [formatter stringFromDate:[NSDate date]];
-    [self.delegate finishedTaskById:self.task.taskId finishedDate:[formatter dateFromString:self.finishDateLabel.text]];
+    self.finishDateLabel.text = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormat];
+    [self.delegate finishedTaskById:self.task.taskId finishedDate:[NSDate dateFromString:self.finishDateLabel.text format:VAKDateFormat]];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
