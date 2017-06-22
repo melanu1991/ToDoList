@@ -7,7 +7,6 @@
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSMutableArray *filteredArray;
 @property (strong, nonatomic) NSPredicate * criteria;
-@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @property (weak, nonatomic) IBOutlet UILabel *noResultLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseActiveOrCompletedTasks;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
@@ -28,9 +27,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.dateFormatter = [[NSDateFormatter alloc] init];
-    self.dateFormatter.dateFormat = VAKDateFormatWithHourAndMinute;
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
@@ -53,7 +49,7 @@
             NSString *lastDate = notification.userInfo[VAKLastDate];
             NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
             NSString *lastNotes = notification.userInfo[VAKLastNotes];
-            if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+            if (![lastDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithHourAndMinute]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
                 self.needToReloadData = YES;
             }
         }
@@ -81,7 +77,7 @@
     
     cell.taskNameLabel.text = temp.taskName;
     cell.taskNoteLabel.text = temp.notes;
-    cell.taskStartDateLabel.text = [self.dateFormatter stringFromDate:temp.startedAt];
+    cell.taskStartDateLabel.text = [NSDate dateStringFromDate:temp.startedAt format:VAKDateFormatWithHourAndMinute];
     return cell;
 }
 

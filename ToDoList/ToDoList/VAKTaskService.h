@@ -22,6 +22,4 @@
 
 + (VAKTaskService *)sharedVAKTaskService;
 
-@property (strong, nonatomic) NSDateFormatter *dateFormatter;
-
 @end

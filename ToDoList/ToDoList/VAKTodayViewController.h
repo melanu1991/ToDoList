@@ -4,6 +4,7 @@
 #import "VAKTask.h"
 #import "Constants.h"
 #import "VAKAddTaskController.h"
+#import "VAKNSDate+Formatters.h"
 
 @interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 

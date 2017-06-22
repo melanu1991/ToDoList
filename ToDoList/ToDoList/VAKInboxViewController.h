@@ -4,6 +4,7 @@
 #import "VAKTask.h"
 #import "Constants.h"
 #import "VAKCustumCell.h"
+#import "VAKNSDate+Formatters.h"
 
 @interface VAKInboxViewController : UIViewController <UITableViewDataSource, UITabBarControllerDelegate, UITableViewDelegate>
 

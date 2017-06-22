@@ -5,7 +5,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseDateOrGroupSorted;
 @property (nonatomic, strong) VAKTaskService *taskService;
-@property (strong, nonatomic) NSDateFormatter *dateFormatter;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
 @property (assign, nonatomic) BOOL needToReloadData;
@@ -29,9 +28,6 @@
     self.tabBarController.delegate = self;
 
     self.taskService = [VAKTaskService sharedVAKTaskService];
-    
-    self.dateFormatter = [[NSDateFormatter alloc] init];
-    self.dateFormatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
 
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
@@ -47,7 +43,7 @@
         NSString *lastDate = notification.userInfo[VAKLastDate];
         NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
         NSString *lastNotes = notification.userInfo[VAKLastNotes];
-        if (![lastDate isEqualToString:[self.dateFormatter stringFromDate:currentTask.startedAt]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+        if (![lastDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
             self.needToReloadData = YES;
         }
     }
@@ -99,14 +95,14 @@
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
-        cell.taskStartDateLabel.text = [self.dateFormatter stringFromDate:task.startedAt];
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
         NSArray *arrayCurrentSection = [self.taskService.dictionaryGroup objectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
-        cell.taskStartDateLabel.text = [self.dateFormatter stringFromDate:task.startedAt];
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     
     return cell;

@@ -1,5 +1,6 @@
 #import "VAKSelectDateController.h"
 #import "Constants.h"
+#import "VAKNSDate+Formatters.h"
 
 @interface VAKSelectDateController ()
 
@@ -21,9 +22,7 @@
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.datePicker.minimumDate = [NSDate date];
     [self.navigationItem setTitle:VAKDateTitle];
-    NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
-    formatter.dateFormat = VAKDateFormatWithHourAndMinute;
-    self.currentDate.text = [formatter stringFromDate:[NSDate date]];
+    self.currentDate.text = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithHourAndMinute];
 }
 
 #pragma mark - action

@@ -2,7 +2,6 @@
 
 @interface VAKAddTaskController ()
 
-@property (nonatomic, strong) NSDateFormatter *formatter;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSDate *selectDate;
 @property (strong, nonatomic) NSString *selectPriority;
@@ -19,9 +18,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.formatter = [[NSDateFormatter alloc]init];
-    self.formatter.dateFormat = VAKDateFormatWithHourAndMinute;
-    
+
     self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.doneButton;
     
@@ -97,7 +94,7 @@
         }
         else {
             VAKDateCell *cell = (VAKDateCell *)[self cellForIdentifier:VAKDateCellIdentifier tableView:tableView];
-            cell.textLabel.text = [self.formatter stringFromDate:self.selectDate];
+            cell.textLabel.text = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute];
             return cell;
         }
     }
@@ -237,8 +234,7 @@
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
     }
     else {
-        self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
-        NSString *lastDate = [self.formatter stringFromDate:self.task.startedAt];
+        NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
         
         //заплатка если не задан нотес, иначе дикшенари не создается!
         if (self.task.notes == nil) {
@@ -253,8 +249,7 @@
         }
         self.task.remindMeOnADay = self.remindMeOnADay;
         self.task.notes = self.taskNotes;
-        self.formatter.dateFormat = VAKDateFormatWithHourAndMinute;
-        if (![[self.formatter stringFromDate:self.task.startedAt] isEqualToString:[self.formatter stringFromDate:self.selectDate]]) {
+        if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
             self.task.startedAt = self.selectDate;
             [self updateDateRemind:self.task];
         }
@@ -267,7 +262,7 @@
 
 - (void)remind:(VAKTask *)task {
     NSString *eventInfo = [NSString stringWithFormat:@"Name: %@ and notes: %@", task.taskName, task.notes];
-    NSString *eventDate = [self.formatter stringFromDate:task.startedAt];
+    NSString *eventDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithHourAndMinute];
     NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:eventInfo, @"eventInfo", eventDate, @"eventDate", task.taskId, @"taskId", nil];
     UILocalNotification *notification = [[UILocalNotification alloc] init];
     notification.userInfo = dic;

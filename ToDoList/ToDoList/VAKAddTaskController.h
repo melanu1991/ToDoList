@@ -7,6 +7,7 @@
 #import "VAKNotesCell.h"
 #import "VAKPriorityCell.h"
 #import "Constants.h"
+#import "VAKNSDate+Formatters.h"
 
 @interface VAKAddTaskController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 

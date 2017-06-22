@@ -3,7 +3,6 @@
 @interface VAKTodayViewController ()
 
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSDateFormatter *formatter;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
@@ -18,9 +17,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.formatter = [[NSDateFormatter alloc] init];
-    self.formatter.dateFormat = VAKDateFormatWithoutHourAndMinute;
     
     self.taskService = [VAKTaskService sharedVAKTaskService];
     
@@ -63,12 +59,12 @@
         if (![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
             self.needToReloadData = YES;
         }
-        else if (![lastDate isEqualToString:[self.formatter stringFromDate:currentTask.startedAt]]) {
+        else if (![lastDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
             [self arrayTasksToday];
             self.needToReloadData = YES;
         }
     }
-    else if (((notification.userInfo[VAKAddNewTask] && [self.formatter stringFromDate:currentTask.startedAt]) || (notification.userInfo[VAKDeleteTask] && [self.formatter stringFromDate:currentTask.startedAt])) && !self.dictionaryTasksForSelectedGroup) {
+    else if (((notification.userInfo[VAKAddNewTask] && [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]) || (notification.userInfo[VAKDeleteTask] && [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute])) && !self.dictionaryTasksForSelectedGroup) {
         [self arrayTasksToday];
         self.needToReloadData = YES;
     }
@@ -106,16 +102,16 @@
 #pragma mark - helpers method
 
 - (void)arrayTasksToday {
-    NSString *currentDate = [self.formatter stringFromDate:[NSDate date]];
+    NSString *currentDate = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute];
     [self.dictionaryTasksToday[VAKCompletedTask] removeAllObjects];
     [self.dictionaryTasksToday[VAKNotCompletedTask] removeAllObjects];
     for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
-        if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
+        if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
             [self.dictionaryTasksToday[VAKCompletedTask] addObject:task];
         }
     }
     for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
-        if ([[self.formatter stringFromDate:task.startedAt] isEqualToString:currentDate] ) {
+        if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
             [self.dictionaryTasksToday[VAKNotCompletedTask] addObject:task];
         }
     }
@@ -174,13 +170,13 @@
             VAKTask *notCompletedTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
-            cell.taskStartDateLabel.text = [self.formatter stringFromDate:notCompletedTask.startedAt];
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         }
         else {
             VAKTask *completedTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
             cell.taskNameLabel.text = completedTask.taskName;
             cell.taskNoteLabel.text = completedTask.notes;
-            cell.taskStartDateLabel.text = [self.formatter stringFromDate:completedTask.startedAt];
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         }
     }
     else {
@@ -188,13 +184,13 @@
             VAKTask *notCompletedTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
-            cell.taskStartDateLabel.text = [self.formatter stringFromDate:notCompletedTask.startedAt];
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         }
         else {
             VAKTask *completedTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
             cell.taskNameLabel.text = completedTask.taskName;
             cell.taskNoteLabel.text = completedTask.notes;
-            cell.taskStartDateLabel.text = [self.formatter stringFromDate:completedTask.startedAt];
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         }
     }
 
