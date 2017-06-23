@@ -1,37 +1,80 @@
-//
-//  VAKInboxViewController.m
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import "VAKInboxViewController.h"
+#import "Constants.h"
 
 @interface VAKInboxViewController ()
+
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic, strong) VAKTaskService *taskService;
+@property (nonatomic, strong) VAKSearchViewController *searchViewController;
 
 @end
 
 @implementation VAKInboxViewController
 
+- (void)finishedTaskById:(NSString *)taskId finishedDate:(NSDate *)date{
+    for (int i = 0; i < self.taskService.tasks.count; i++) {
+        VAKTask *task = self.taskService.tasks[i];
+        if ([task.taskId isEqualToString:taskId]) {
+            task.completed = YES;
+            task.finishedAt = date;
+        }
+    }
+    [self.tableView reloadData];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([[segue identifier] isEqualToString:VAKDetailSegue])
+    {
+        NSIndexPath *index = [self.tableView indexPathForCell:sender];
+        VAKTask *task = (VAKTask *)self.taskService.tasks[index.row];
+        VAKDetailViewController  *detailController = [segue destinationViewController];
+        detailController.delegate = self;
+        detailController.task = task;
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    self.taskService = [[VAKTaskService alloc]init];
+    self.tabBarController.delegate = self;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChanged) name:VAKTaskWasChanged object:nil];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)taskWasChanged {
+    [self.tableView reloadData];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (IBAction)addNewTask:(UIBarButtonItem *)sender {
+    VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc]initWithNibName:VAKAddController bundle:nil];
+    addTaskController.delegate = self;
+    addTaskController.task = nil;
+    [self.navigationController showViewController:addTaskController sender:nil];
 }
-*/
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKInboxCell];
+    VAKTask *temp = self.taskService.tasks[indexPath.row];
+    cell.textLabel.text = temp.taskName;
+    return cell;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [self.taskService.tasks count];
+}
+
+- (void)addNewTaskWithTask:(VAKTask *)task {
+    [self.taskService addTask:task];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:VAKKeySort ascending:YES];
+    [self.taskService.tasks sortUsingDescriptors:@[sortDescriptor]];
+    [self.tableView reloadData];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 @end

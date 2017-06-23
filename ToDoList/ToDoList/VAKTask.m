@@ -1,13 +1,14 @@
-//
-//  VAKTask.m
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import "VAKTask.h"
 
 @implementation VAKTask
+
+- (instancetype)initTaskWithId:(NSString *)taskId taskName:(NSString *)taskName {
+    self = [super init];
+    if (self) {
+        _taskId = taskId;
+        _taskName = taskName;
+    }
+    return self;
+}
 
 @end
