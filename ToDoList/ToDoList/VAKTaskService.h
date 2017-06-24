@@ -9,6 +9,7 @@
 @property (strong, nonatomic) NSDictionary *dictionaryCompletedOrNotCompletedTasks;
 @property (strong, nonatomic) NSArray *arrayKeysDate;
 @property (strong, nonatomic) NSArray *arrayKeysGroup;
+@property (strong, nonatomic) NSArray *toDoListArray;
 
 - (VAKTask *)taskById:(NSString *)taskId;
 - (void)addTask:(VAKTask *)task;

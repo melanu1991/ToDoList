@@ -10,6 +10,9 @@
 @end
 
 @implementation VAKTaskService
+{
+    NSMutableArray *_privateToDoListArray;
+}
 
 #pragma mark - initialize
 
@@ -108,6 +111,13 @@
 }
 
 #pragma mark - lazy getters
+
+- (NSArray *)toDoListArray {
+    if (!_privateToDoListArray) {
+        _privateToDoListArray = [[NSMutableArray alloc] init];
+    }
+    return _privateToDoListArray;
+}
 
 - (NSArray *)tasks {
     if (!_tasks) {

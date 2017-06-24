@@ -36,6 +36,7 @@
 		58BFD9031EEA74CA003897F4 /* VAKCustumCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */; };
 		58C936D41EE44D5800970D40 /* VAKSelectDateController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58C936D21EE44D5800970D40 /* VAKSelectDateController.m */; };
 		58C936D51EE44D5800970D40 /* VAKSelectDateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */; };
+		58E8F1E71EFD1F5700E72463 /* VAKToDoList.m in Sources */ = {isa = PBXBuildFile; fileRef = 58E8F1E61EFD1F5700E72463 /* VAKToDoList.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -88,6 +89,8 @@
 		58C936D11EE44D5800970D40 /* VAKSelectDateController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKSelectDateController.h; sourceTree = "<group>"; };
 		58C936D21EE44D5800970D40 /* VAKSelectDateController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKSelectDateController.m; sourceTree = "<group>"; };
 		58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKSelectDateController.xib; sourceTree = "<group>"; };
+		58E8F1E51EFD1F5700E72463 /* VAKToDoList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKToDoList.h; sourceTree = "<group>"; };
+		58E8F1E61EFD1F5700E72463 /* VAKToDoList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKToDoList.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,6 +150,8 @@
 		580038121EE3E5A200A19465 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				58E8F1E51EFD1F5700E72463 /* VAKToDoList.h */,
+				58E8F1E61EFD1F5700E72463 /* VAKToDoList.m */,
 				5800380F1EE3E59A00A19465 /* VAKTask.h */,
 				580038101EE3E59A00A19465 /* VAKTask.m */,
 				5896F3A21EE5327400E64890 /* VAKTaskService.h */,
@@ -317,6 +322,7 @@
 				58A17CA51EEDB33A00C023E2 /* VAKRemindCell.m in Sources */,
 				58C936D41EE44D5800970D40 /* VAKSelectDateController.m in Sources */,
 				580862CF1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m in Sources */,
+				58E8F1E71EFD1F5700E72463 /* VAKToDoList.m in Sources */,
 				580038191EE3E63500A19465 /* VAKInboxViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
