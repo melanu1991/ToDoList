@@ -2,7 +2,7 @@
 
 @implementation VAKTask
 
-- (instancetype)initTaskWithId:(NSString *)taskId taskName:(NSString *)taskName {
+- (instancetype)initTaskWithId:(NSNumber *)taskId taskName:(NSString *)taskName {
     self = [super init];
     if (self) {
         _taskId = taskId;

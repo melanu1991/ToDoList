@@ -1,26 +1,27 @@
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "VAKTask.h"
+#import "VAKNSDate+Formatters.h"
+#import "Constants.h"
 
 @interface VAKTaskService : NSObject
 
-@property (strong, nonatomic) NSMutableArray *tasks;
-@property (strong, nonatomic) NSMutableDictionary *dictionaryDate;
-@property (strong, nonatomic) NSMutableDictionary *dictionaryGroup;
+@property (strong, nonatomic) NSArray *tasks;
+@property (strong, nonatomic) NSDictionary *dictionaryDate;
 @property (strong, nonatomic) NSDictionary *dictionaryCompletedOrNotCompletedTasks;
 @property (strong, nonatomic) NSArray *arrayKeysDate;
-@property (strong, nonatomic) NSArray *arrayKeysGroup;
 @property (strong, nonatomic) NSArray *toDoListArray;
 
-- (VAKTask *)taskById:(NSString *)taskId;
++ (VAKTaskService *)sharedVAKTaskService;
+
+- (VAKTask *)taskById:(NSNumber *)taskId;
 - (void)addTask:(VAKTask *)task;
-- (void)addGroup:(NSString *)group;
-- (void)removeTaskById:(NSString *)taskId;
+- (void)addGroup:(NSString *)groupName;
+- (void)removeTaskById:(NSNumber *)taskId;
 - (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate newDate:(NSString *)newDate;
 - (void)updateTaskForCompleted:(VAKTask *)task;
 
-- (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder;
-
-+ (VAKTaskService *)sharedVAKTaskService;
+- (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
 
 @end

@@ -98,8 +98,8 @@
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
-        NSArray *arrayCurrentSection = [self.taskService.dictionaryGroup objectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
-        VAKTask *task = arrayCurrentSection[indexPath.row];
+        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
@@ -113,7 +113,8 @@
         return self.taskService.arrayKeysDate[section];
     }
     else {
-        return self.taskService.arrayKeysGroup[section];
+        VAKToDoList *currentProject = self.taskService.toDoListArray[section];
+        return currentProject.toDoListName;
     }
 }
 
@@ -122,7 +123,8 @@
         return [self.taskService.dictionaryDate[self.taskService.arrayKeysDate[section]] count];
     }
     else {
-        return [self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[section]] count];
+        VAKToDoList *currentProject = self.taskService.toDoListArray[section];
+        return [currentProject.toDoListArrayTasks count];
     }
 }
 
@@ -131,7 +133,7 @@
         return [self.taskService.dictionaryDate count];
     }
     else {
-        return [self.taskService.dictionaryGroup count];
+        return [self.taskService.toDoListArray count];
     }
 }
 
@@ -148,8 +150,8 @@
         editTaskController.task = task;
     }
     else {
-        NSArray *temp = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
-        VAKTask *task = temp[indexPath.row];
+        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
         editTaskController.task = task;
     }
     
@@ -208,8 +210,8 @@
         currentTask = arrayDate[indexPath.row];
     }
     else {
-        NSMutableArray *arrayGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
-        currentTask = arrayGroup[indexPath.row];
+        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        currentTask = currentProject.toDoListArrayTasks[indexPath.row];
     }
     return currentTask;
 }
