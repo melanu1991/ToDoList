@@ -47,7 +47,7 @@
     
 }
 
-- (void)removeProjectWithName:(NSString *)name {
+- (void)removeProject {
     
 }
 

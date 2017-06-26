@@ -177,33 +177,45 @@
     
 }
 
-//- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-//    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-//        
-//        if (indexPath.row != 0) {
-//            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
-//            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-//                NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-//                [arrayGroupWithoutInbox removeObject:VAKInbox];
-//                NSMutableArray *arrayTasksDeleteGroup = self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row - 1]];
-//                for (VAKTask *task in arrayTasksDeleteGroup) {
-//                    [self.taskService removeTaskById:task.taskId];
-//                }
-//                [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row - 1]];
-//                [self.taskService sortArrayKeysGroup:NO];
-//                [self.taskService sortArrayKeysDate:NO];
-//                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
-//                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKDeleteGroupTask forKey:VAKDeleteGroupTask];
-//                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
-//            }];
-//            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
-//            [alertController addAction:alertActionOk];
-//            [alertController addAction:alertActionCancel];
-//            [self presentViewController:alertController animated:YES completion:nil];
-//        }
-//        
-//    }];
-//    
+- (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        if (indexPath.row != 0) {
+            
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+                NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
+                for (VAKToDoList *item in self.taskService.toDoListArray) {
+                    if (![item.toDoListName isEqualToString:VAKInbox]) {
+                        [arrayGroupWithoutInbox addObject:item];
+                    }
+                }
+                VAKToDoList *currentToDoList = arrayGroupWithoutInbox[indexPath.row - 1];
+                for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
+                    [self.taskService removeTaskById:task.taskId];
+                }
+                NSMutableArray *arrayToDoLists = (NSMutableArray *)self.taskService.toDoListArray;
+                [arrayToDoLists removeObject:currentToDoList];
+                
+                [self.taskService sortArrayKeysDate:NO];
+                [self.taskService sortArrayKeysGroup:NO];
+                
+                [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                
+                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKDeleteGroupTask forKey:VAKDeleteGroupTask];
+                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+            
+            }];
+            
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
+            [alertController addAction:alertActionOk];
+            [alertController addAction:alertActionCancel];
+            [self presentViewController:alertController animated:YES completion:nil];
+            
+        }
+        
+    }];
+    
 //    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKEditButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
 //        
 //        if (indexPath.row != 0) {
@@ -233,11 +245,11 @@
 //        }
 //        
 //    }];
-//    
-//    deleteAction.backgroundColor = [UIColor redColor];
+    
+    deleteAction.backgroundColor = [UIColor redColor];
 //    editAction.backgroundColor = [UIColor blueColor];
-//    return @[deleteAction, editAction];
-//}
+    return @[deleteAction/*, editAction*/];
+}
 
 #pragma mark - deallocate
 

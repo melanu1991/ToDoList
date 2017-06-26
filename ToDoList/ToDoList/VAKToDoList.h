@@ -18,6 +18,6 @@
 - (void)removeTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task;
 - (void)updateTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task;
 - (void)addNewProjectWithName:(NSString *)name;
-- (void)removeProjectWithName:(NSString *)name;
+- (void)removeProject;
 
 @end
