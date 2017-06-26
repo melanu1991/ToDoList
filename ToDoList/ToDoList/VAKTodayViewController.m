@@ -125,7 +125,12 @@
 
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
-    addTaskController.currentGroup = self.currentGroup;
+    for (VAKToDoList *item in self.taskService.toDoListArray) {
+        if ([item.toDoListName isEqualToString:VAKInbox]) {
+            addTaskController.currentGroup = item;
+            break;
+        }
+    }
     [self.navigationController pushViewController:addTaskController animated:YES];
 }
 

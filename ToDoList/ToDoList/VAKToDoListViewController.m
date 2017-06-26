@@ -50,6 +50,8 @@
 - (void)addNewProject:(NSNotification *)notification {
     NSString *nameNewProject = notification.userInfo[VAKNameNewProject];
     [self.taskService addGroup:nameNewProject];
+    NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKAddProject forKey:VAKAddProject];
+    [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
     [self.tableView reloadData];
 }
 

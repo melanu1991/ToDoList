@@ -8,10 +8,11 @@
 #import "VAKPriorityCell.h"
 #import "Constants.h"
 #import "VAKNSDate+Formatters.h"
+#import "VAKToDoList.h"
 
 @interface VAKAddTaskController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 
 @property (nonatomic, strong) VAKTask *task;
-@property (strong, nonatomic) NSString *currentGroup;
+@property (strong, nonatomic) VAKToDoList *currentGroup;
 
 @end

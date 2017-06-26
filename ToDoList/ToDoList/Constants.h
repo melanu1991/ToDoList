@@ -73,5 +73,7 @@ static NSString * const VAKDateFormatWithoutHourAndMinute = @"dd.MM.YYYY";
 
 static NSString * const VAKStoriboardIdentifierTodayViewController = @"VAKStoriboardIdentifierTodayViewController";
 static NSString * const VAKTaskOfSelectedGroup = @"Tasks Of Selected Group";
+static NSString * const VAKRemindTask = @"VAKRemindTask";
+static NSString * const VAKCurrentGroup = @"VAKCurrentGroup";
 
 #endif

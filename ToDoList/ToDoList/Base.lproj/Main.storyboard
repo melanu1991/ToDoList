@@ -218,7 +218,7 @@
         <!--Add Project-->
         <scene sceneID="w9Z-2e-n7I">
             <objects>
-                <viewController storyboardIdentifier="addProject" id="LRO-YU-svL" customClass="VAKAddProjectViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="VAKAddProject" id="LRO-YU-svL" customClass="VAKAddProjectViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="S8N-ef-ejZ"/>
                         <viewControllerLayoutGuide type="bottom" id="LiT-XM-VER"/>

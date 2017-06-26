@@ -30,7 +30,7 @@
     if (self = [super init]) {
         self.tasks = [NSMutableArray array];
         VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@1 taskName:@"task1"];
-        task1.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 12:57" format:VAKDateFormatWithHourAndMinute];
+        task1.startedAt = [NSDate dateFromString:@"Monday, 26 June 2017 г., 12:57" format:VAKDateFormatWithHourAndMinute];
         task1.notes = @"My new task!";
         task1.completed = YES;
         task1.priority = @"Low";
@@ -50,7 +50,7 @@
         task5.startedAt = [NSDate dateFromString:@"Tuesday, 10 June 2017 г., 09:57" format:VAKDateFormatWithHourAndMinute];
         task5.notes = @"My new task!";
         VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@6 taskName:@"task6"];
-        task6.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 06:57" format:VAKDateFormatWithHourAndMinute];
+        task6.startedAt = [NSDate dateFromString:@"Monday, 26 June 2017 г., 06:57" format:VAKDateFormatWithHourAndMinute];
         task6.notes = @"My new task!";
         task6.priority = @"None";
         VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@7 taskName:@"task7"];
@@ -98,6 +98,7 @@
     [self sortArrayKeysGroup:self.isReverseOrdered];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remindMeOnADay:) name:VAKRemindTask object:nil];
     
     return self;
 }
@@ -182,10 +183,6 @@
         [self remind:task];
     }
 
-    if (!task.currentToDoList) {
-        
-    }
-    
     NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     
     if (task.isCompleted) {
@@ -234,7 +231,6 @@
                 [dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
-//            [task.currentToDoList removeTaskByToDoList:task.currentToDoList task:task];
             return;
         }
     }
@@ -325,6 +321,18 @@
 }
 
 #pragma mark - remind task
+
+- (void)remindMeOnADay:(NSNotification *)notification {
+    if (notification.userInfo[@"remind"]) {
+        [self remind:notification.userInfo[@"task"]];
+    }
+    else if (notification.userInfo[@"delete"]) {
+        [self deleteRemind:notification.userInfo[@"task"]];
+    }
+    else {
+        [self updateDateRemind:notification.userInfo[@"task"]];
+    }
+}
 
 - (void)remind:(VAKTask *)task {
     NSString *eventInfo = [NSString stringWithFormat:@"Name: %@ and notes: %@", task.taskName, task.notes];

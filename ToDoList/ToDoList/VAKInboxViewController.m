@@ -47,7 +47,7 @@
             self.needToReloadData = YES;
         }
     }
-    else if (notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask] || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
+    else if (notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask] || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask] || notification.userInfo[VAKAddProject]) {
         self.needToReloadData = YES;
     }
 }
@@ -79,7 +79,12 @@
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     addTaskController.task = nil;
-    addTaskController.currentGroup = VAKInbox;
+    for (VAKToDoList *item in self.taskService.toDoListArray) {
+        if ([item.toDoListName isEqualToString:VAKInbox]) {
+            addTaskController.currentGroup = item;
+            break;
+        }
+    }
     [self.navigationController showViewController:addTaskController sender:nil];
 }
 
