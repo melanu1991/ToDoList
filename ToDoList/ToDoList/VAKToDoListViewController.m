@@ -130,12 +130,17 @@
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
     NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     if (indexPath.section == 0) {
-        for (VAKTask *task in ) {
-            if (!task.isCompleted) {
-                [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
-            }
-            else {
-                [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
+        for (VAKToDoList *item in self.taskService.toDoListArray) {
+            if ([item.toDoListName isEqualToString:VAKInbox]) {
+                for (VAKTask *task in item.toDoListArrayTasks) {
+                    if (!task.isCompleted) {
+                        [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
+                    }
+                    else {
+                        [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
+                    }
+                }
+                break;
             }
         }
         todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
@@ -148,9 +153,14 @@
             [self.navigationController pushViewController:addProjectViewController animated:YES];
         }
         else {
-            NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
-            [arrayWithoutInbox removeObject:VAKInbox];
-            for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row-1]]) {
+            NSMutableArray *arrayToDoList = [NSMutableArray array];
+            for (VAKToDoList *item in self.taskService.toDoListArray) {
+                if (![item.toDoListName isEqualToString:VAKInbox]) {
+                    [arrayToDoList addObject:item];
+                }
+            }
+            VAKToDoList *currentToDoList = arrayToDoList[indexPath.row - 1];
+            for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
                 if (!task.isCompleted) {
                     [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
                 }
@@ -159,7 +169,7 @@
                 }
             }
             todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
-            todayViewController.currentGroup = arrayWithoutInbox[indexPath.row-1];
+            todayViewController.currentGroup = currentToDoList.toDoListName;
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
         
