@@ -126,7 +126,7 @@
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
     for (VAKToDoList *item in self.taskService.toDoListArray) {
-        if ([item.toDoListName isEqualToString:VAKInbox]) {
+        if ([item.toDoListName isEqualToString:self.currentGroup]) {
             addTaskController.currentGroup = item;
             break;
         }
@@ -308,6 +308,7 @@
         }
 
         [self.taskService removeTaskById:currentTask.taskId];
+        [currentTask.currentToDoList removeTaskByTask:currentTask];
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];

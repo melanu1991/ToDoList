@@ -94,9 +94,6 @@
   
     }
     
-    [self sortArrayKeysDate:self.isReverseOrdered];
-    [self sortArrayKeysGroup:self.isReverseOrdered];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(remindMeOnADay:) name:VAKRemindTask object:nil];
     
@@ -204,6 +201,9 @@
         NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];
         [tempArrayDate addObject:task];
     }
+    
+    [self sortArrayKeysDate:self.isReverseOrdered];
+    [self sortArrayKeysGroup:self.isReverseOrdered];
 }
 
 - (void)removeTaskById:(NSNumber *)taskId {
@@ -231,6 +231,8 @@
                 [dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
+//            [task.currentToDoList removeTaskByTask:task];
+//            [self sortArrayKeysGroup:self.isReverseOrdered];
             return;
         }
     }

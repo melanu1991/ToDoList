@@ -25,29 +25,21 @@
 
 @implementation VAKToDoList (Additional)
 
-- (void)addTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task {
-    NSMutableArray *arrayCurrentToDoList = (NSMutableArray *)toDoList.toDoListArrayTasks;
+- (void)addTaskByTask:(VAKTask *)task {
+    NSMutableArray *arrayCurrentToDoList = (NSMutableArray *)self.toDoListArrayTasks;
     if (![arrayCurrentToDoList containsObject:task]) {
         [arrayCurrentToDoList addObject:task];
     }
 }
 
-- (void)removeTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task {
-    NSMutableArray *arrayCurrentToDoList = (NSMutableArray *)toDoList.toDoListArrayTasks;
+- (void)removeTaskByTask:(VAKTask *)task {
+    NSMutableArray *arrayCurrentToDoList = (NSMutableArray *)self.toDoListArrayTasks;
     if ([arrayCurrentToDoList containsObject:task]) {
         [arrayCurrentToDoList removeObject:task];
     }
 }
 
-- (void)updateTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task {
-    
-}
-
-- (void)addNewProjectWithName:(NSString *)name {
-    
-}
-
-- (void)removeProject {
+- (void)updateTaskByTask:(VAKTask *)task {
     
 }
 

@@ -196,6 +196,7 @@
                 for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
                     [self.taskService removeTaskById:task.taskId];
                 }
+                
                 NSMutableArray *arrayToDoLists = (NSMutableArray *)self.taskService.toDoListArray;
                 [arrayToDoLists removeObject:currentToDoList];
                 

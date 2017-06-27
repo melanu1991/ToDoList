@@ -14,10 +14,8 @@
 
 @interface VAKToDoList (Additional)
 
-- (void)addTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task;
-- (void)removeTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task;
-- (void)updateTaskByToDoList:(VAKToDoList *)toDoList task:(VAKTask *)task;
-- (void)addNewProjectWithName:(NSString *)name;
-- (void)removeProject;
+- (void)addTaskByTask:(VAKTask *)task;
+- (void)removeTaskByTask:(VAKTask *)task;
+- (void)updateTaskByTask:(VAKTask *)task;
 
 @end
