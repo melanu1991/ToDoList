@@ -46,10 +46,6 @@
     }
 }
 
-- (void)viewDidDisappear:(BOOL)animated {
-    self.selectedGroup = NO;
-}
-
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
@@ -88,6 +84,7 @@
 #pragma mark - helpers method
 
 - (void)arrayTasks {
+    self.dictionaryTasks = nil;
     if (self.isSelectedGroup) {
         for (VAKTask *task in self.currentGroup.toDoListArrayTasks) {
             if (task.isCompleted) {
@@ -118,6 +115,7 @@
 #pragma mark - action
 
 - (void)backButtonPressed {
+    self.selectedGroup = NO;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
