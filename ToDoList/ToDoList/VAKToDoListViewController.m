@@ -142,7 +142,6 @@
                         [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
                     }
                 }
-                todayViewController.selectedGroup = YES;
                 todayViewController.currentGroup = item;
                 break;
             }
@@ -170,11 +169,11 @@
                     [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
                 }
             }
-            todayViewController.selectedGroup = YES;
             todayViewController.currentGroup = currentToDoList;
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
     }
+    todayViewController.selectedGroup = YES;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {

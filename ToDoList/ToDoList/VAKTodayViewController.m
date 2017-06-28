@@ -18,6 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.taskService = [VAKTaskService sharedVAKTaskService];
+    [self arrayTasks];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
@@ -30,27 +31,23 @@
         self.backButton = [[UIBarButtonItem alloc] initWithTitle:VAKBackButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
         NSArray *arrayLeftButton = [NSArray arrayWithObjects:self.editButton, self.backButton, nil];
         self.navigationItem.leftBarButtonItems = arrayLeftButton;
-        self.selectedGroup = NO;
     }
     else {
         self.navigationItem.title = VAKToday;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
-        [self arrayTasksToday];
-        for (VAKToDoList *item in self.taskService.toDoListArray) {
-            if ([item.toDoListName isEqualToString:VAKInbox]) {
-                self.currentGroup = item;
-                break;
-            }
-        }
     }
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
-    
+
     if (self.needToReloadData) {
         [self.tableView reloadData];
     }
+}
+
+- (void)viewDidDisappear:(BOOL)animated {
+    self.selectedGroup = NO;
 }
 
 #pragma mark - Notification
@@ -66,12 +63,12 @@
             self.needToReloadData = YES;
         }
         else if (![lastDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
-            [self arrayTasksToday];
+            [self arrayTasks];
             self.needToReloadData = YES;
         }
     }
     else if ((notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask]) && [[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:[NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute]]) {
-        [self arrayTasksToday];
+        [self arrayTasks];
         self.needToReloadData = YES;
     }
     else if (notification.userInfo[VAKDoneTask]  || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
@@ -81,7 +78,7 @@
 
 #pragma mark - lazy getters
 
-- (NSDictionary *)dictionaryTasksToday {
+- (NSDictionary *)dictionaryTasks {
     if (!_dictionaryTasks) {
         _dictionaryTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     }
@@ -90,18 +87,30 @@
 
 #pragma mark - helpers method
 
-- (void)arrayTasksToday {
-    NSString *currentDate = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute];
-    [self.dictionaryTasksToday[VAKCompletedTask] removeAllObjects];
-    [self.dictionaryTasksToday[VAKNotCompletedTask] removeAllObjects];
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
-        if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
-            [self.dictionaryTasksToday[VAKCompletedTask] addObject:task];
+- (void)arrayTasks {
+    if (self.isSelectedGroup) {
+        for (VAKTask *task in self.currentGroup.toDoListArrayTasks) {
+            if (task.isCompleted) {
+                [self.dictionaryTasks[VAKCompletedTask] addObject:task];
+            }
+            else {
+                [self.dictionaryTasks[VAKNotCompletedTask] addObject:task];
+            }
         }
     }
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
-        if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
-            [self.dictionaryTasksToday[VAKNotCompletedTask] addObject:task];
+    else {
+        NSString *currentDate = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute];
+        [self.dictionaryTasks[VAKCompletedTask] removeAllObjects];
+        [self.dictionaryTasks[VAKNotCompletedTask] removeAllObjects];
+        for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
+            if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
+                [self.dictionaryTasks[VAKCompletedTask] addObject:task];
+            }
+        }
+        for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
+            if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
+                [self.dictionaryTasks[VAKNotCompletedTask] addObject:task];
+            }
         }
     }
 }
@@ -204,10 +213,10 @@
     VAKTask *currentTask = nil;
     
     if (indexPath.section == 0) {
-        currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
+        currentTask = self.dictionaryTasks[VAKNotCompletedTask][indexPath.row];
     }
     else {
-        currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
+        currentTask = self.dictionaryTasks[VAKCompletedTask][indexPath.row];
     }
 
     editTaskController.task = currentTask;
