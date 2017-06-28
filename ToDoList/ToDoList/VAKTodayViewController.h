@@ -10,7 +10,7 @@
 @interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @property (strong, nonatomic) VAKTaskService *taskService;
-@property (strong, nonatomic) NSDictionary *dictionaryTasksForSelectedGroup;
-@property (strong, nonatomic) NSString *currentGroup;
+@property (strong, nonatomic) VAKToDoList *currentGroup;
+@property (assign, nonatomic, getter=isSelectedGroup) BOOL selectedGroup;
 
 @end

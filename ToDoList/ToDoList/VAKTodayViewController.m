@@ -6,7 +6,7 @@
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
-@property (strong, nonatomic) NSDictionary *dictionaryTasksToday;
+@property (strong, nonatomic) NSDictionary *dictionaryTasks;
 @property (assign, nonatomic) BOOL needToReloadData;
 
 @end
@@ -17,31 +17,37 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     self.taskService = [VAKTaskService sharedVAKTaskService];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
     
-    if (self.dictionaryTasksForSelectedGroup) {
-        self.navigationItem.title = VAKTaskOfSelectedGroup;
+    if (self.isSelectedGroup) {
+        self.navigationItem.title = self.currentGroup.toDoListName;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
         self.backButton = [[UIBarButtonItem alloc] initWithTitle:VAKBackButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
         NSArray *arrayLeftButton = [NSArray arrayWithObjects:self.editButton, self.backButton, nil];
         self.navigationItem.leftBarButtonItems = arrayLeftButton;
+        self.selectedGroup = NO;
     }
     else {
         self.navigationItem.title = VAKToday;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
         [self arrayTasksToday];
+        for (VAKToDoList *item in self.taskService.toDoListArray) {
+            if ([item.toDoListName isEqualToString:VAKInbox]) {
+                self.currentGroup = item;
+                break;
+            }
+        }
     }
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
     if (self.needToReloadData) {
         [self.tableView reloadData];
     }
@@ -64,25 +70,8 @@
             self.needToReloadData = YES;
         }
     }
-    else if (((notification.userInfo[VAKAddNewTask] && [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]) || (notification.userInfo[VAKDeleteTask] && [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute])) && !self.dictionaryTasksForSelectedGroup) {
+    else if ((notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask]) && [[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:[NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute]]) {
         [self arrayTasksToday];
-        self.needToReloadData = YES;
-    }
-    else if ((notification.userInfo[VAKAddNewTask] || notification.userInfo[VAKDeleteTask]) && self.dictionaryTasksForSelectedGroup) {
-        if (notification.userInfo[VAKAddNewTask]) {
-            NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask];
-            [arrayCurrentGroup addObject:currentTask];
-        }
-        else {
-            if (currentTask.isCompleted) {
-                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKCompletedTask];
-                [arrayCurrentGroup removeObject:currentTask];
-            }
-            else {
-                NSMutableArray *arrayCurrentGroup = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask];
-                [arrayCurrentGroup removeObject:currentTask];
-            }
-        }
         self.needToReloadData = YES;
     }
     else if (notification.userInfo[VAKDoneTask]  || notification.userInfo[VAKWasEditNameGroup] || notification.userInfo[VAKDeleteGroupTask]) {
@@ -93,10 +82,10 @@
 #pragma mark - lazy getters
 
 - (NSDictionary *)dictionaryTasksToday {
-    if (!_dictionaryTasksToday) {
-        _dictionaryTasksToday = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
+    if (!_dictionaryTasks) {
+        _dictionaryTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     }
-    return _dictionaryTasksToday;
+    return _dictionaryTasks;
 }
 
 #pragma mark - helpers method
@@ -125,12 +114,7 @@
 
 - (void)addTaskButtonPressed {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] init];
-    for (VAKToDoList *item in self.taskService.toDoListArray) {
-        if ([item.toDoListName isEqualToString:self.currentGroup]) {
-            addTaskController.currentGroup = item;
-            break;
-        }
-    }
+    addTaskController.currentGroup = self.currentGroup;
     [self.navigationController pushViewController:addTaskController animated:YES];
 }
 
@@ -151,52 +135,28 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.dictionaryTasksForSelectedGroup) {
-        if (section == 0) {
-            return [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] count];
-        }
-        return [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] count];
+    if (section == 0) {
+        return [self.dictionaryTasks[VAKNotCompletedTask] count];
     }
-    else {
-        if (section == 0) {
-            return [self.dictionaryTasksToday[VAKNotCompletedTask] count];
-        }
-        return [self.dictionaryTasksToday[VAKCompletedTask] count];
-    }
+    return [self.dictionaryTasks[VAKCompletedTask] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
-    
-    if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
-            VAKTask *notCompletedTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
-            cell.taskNameLabel.text = notCompletedTask.taskName;
-            cell.taskNoteLabel.text = notCompletedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
-        else {
-            VAKTask *completedTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
-            cell.taskNameLabel.text = completedTask.taskName;
-            cell.taskNoteLabel.text = completedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
+
+    if (indexPath.section == 0) {
+        VAKTask *notCompletedTask = self.dictionaryTasks[VAKNotCompletedTask][indexPath.row];
+        cell.taskNameLabel.text = notCompletedTask.taskName;
+        cell.taskNoteLabel.text = notCompletedTask.notes;
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
-        if (indexPath.section == 0) {
-            VAKTask *notCompletedTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
-            cell.taskNameLabel.text = notCompletedTask.taskName;
-            cell.taskNoteLabel.text = notCompletedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
-        else {
-            VAKTask *completedTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
-            cell.taskNameLabel.text = completedTask.taskName;
-            cell.taskNoteLabel.text = completedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
+        VAKTask *completedTask = self.dictionaryTasks[VAKCompletedTask][indexPath.row];
+        cell.taskNameLabel.text = completedTask.taskName;
+        cell.taskNoteLabel.text = completedTask.notes;
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
 
     return cell;
@@ -226,10 +186,10 @@
     
     if (sourceIndexPath.section == destinationIndexPath.section) {
         if (sourceIndexPath.section == 0) {
-            [self.dictionaryTasksToday[VAKNotCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasks[VAKNotCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
         else {
-            [self.dictionaryTasksToday[VAKCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
+            [self.dictionaryTasks[VAKCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
     }
 
@@ -243,21 +203,11 @@
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     VAKTask *currentTask = nil;
     
-    if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
-        }
-        else {
-            currentTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
-        }
+    if (indexPath.section == 0) {
+        currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
     }
     else {
-        if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
-        }
-        else {
-            currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
-        }
+        currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
     }
 
     editTaskController.task = currentTask;
@@ -268,43 +218,22 @@
     
     VAKTask *currentTask = nil;
     
-    if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
-        }
-        else {
-            currentTask = self.dictionaryTasksForSelectedGroup[VAKCompletedTask][indexPath.row];
-        }
+    if (indexPath.section == 0) {
+        currentTask = self.dictionaryTasks[VAKNotCompletedTask][indexPath.row];
     }
     else {
-        if (indexPath.section == 0) {
-            currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
-        }
-        else {
-            currentTask = self.dictionaryTasksToday[VAKCompletedTask][indexPath.row];
-        }
+        currentTask = self.dictionaryTasks[VAKCompletedTask][indexPath.row];
     }
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        if (self.dictionaryTasksForSelectedGroup) {
-            if (indexPath.section == 0)
-            {
-                [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
-            }
-            else {
-                [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] removeObjectAtIndex:indexPath.row];
-            }
+        if (indexPath.section == 0)
+        {
+            [self.dictionaryTasks[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
         }
         else {
-            if (indexPath.section == 0)
-            {
-                [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
-            }
-            else {
-                [self.dictionaryTasksToday[VAKCompletedTask] removeObjectAtIndex:indexPath.row];
-            }
+            [self.dictionaryTasks[VAKCompletedTask] removeObjectAtIndex:indexPath.row];
         }
 
         [self.taskService removeTaskById:currentTask.taskId];
@@ -319,24 +248,14 @@
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
-        if (self.dictionaryTasksForSelectedGroup) {
-            if (indexPath.section == 0) {
-                [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row]];
-                [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
-                currentTask.completed = YES;
-                currentTask.finishedAt = [NSDate date];
-                [self.tableView reloadData];
-            }
+        if (indexPath.section == 0) {
+            [self.dictionaryTasks[VAKCompletedTask] addObject:self.dictionaryTasks[VAKNotCompletedTask][indexPath.row]];
+            [self.dictionaryTasks[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
+            currentTask.completed = YES;
+            currentTask.finishedAt = [NSDate date];
+            [self.tableView reloadData];
         }
-        else {
-            if (indexPath.section == 0) {
-                [self.dictionaryTasksToday[VAKCompletedTask] addObject:self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row]];
-                [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
-                currentTask.completed = YES;
-                currentTask.finishedAt = [NSDate date];
-                [self.tableView reloadData];
-            }
-        }
+        
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
 

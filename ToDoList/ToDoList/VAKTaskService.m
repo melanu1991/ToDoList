@@ -231,8 +231,6 @@
                 [dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
-//            [task.currentToDoList removeTaskByTask:task];
-//            [self sortArrayKeysGroup:self.isReverseOrdered];
             return;
         }
     }

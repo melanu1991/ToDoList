@@ -142,11 +142,11 @@
                         [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
                     }
                 }
+                todayViewController.selectedGroup = YES;
+                todayViewController.currentGroup = item;
                 break;
             }
         }
-        todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
-        todayViewController.currentGroup = VAKInbox;
         [self.navigationController pushViewController:todayViewController animated:YES];
     }
     else {
@@ -170,13 +170,11 @@
                     [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
                 }
             }
-            todayViewController.dictionaryTasksForSelectedGroup = dictionaryTasksForSelectedGroup;
-            todayViewController.currentGroup = currentToDoList.toDoListName;
+            todayViewController.selectedGroup = YES;
+            todayViewController.currentGroup = currentToDoList;
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
-        
     }
-    
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
