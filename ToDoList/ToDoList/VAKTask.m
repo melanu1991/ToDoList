@@ -7,6 +7,9 @@
     if (self) {
         _taskId = taskId;
         _taskName = taskName;
+        _startedAt = [NSDate date];
+        _notes = @"";
+        _priority = @"None";
     }
     return self;
 }

@@ -83,6 +83,7 @@
 		58A17CB11EEDC26600C023E2 /* VAKPriorityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKPriorityCell.h; sourceTree = "<group>"; };
 		58A17CB21EEDC26600C023E2 /* VAKPriorityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKPriorityCell.m; sourceTree = "<group>"; };
 		58A17CB31EEDC26600C023E2 /* VAKPriorityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKPriorityCell.xib; sourceTree = "<group>"; };
+		58B0ECA11F0528BD0033A4CD /* VAKRemindDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VAKRemindDelegate.h; sourceTree = "<group>"; };
 		58BFD8FF1EEA74CA003897F4 /* VAKCustumCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKCustumCell.h; sourceTree = "<group>"; };
 		58BFD9001EEA74CA003897F4 /* VAKCustumCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKCustumCell.m; sourceTree = "<group>"; };
 		58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKCustumCell.xib; sourceTree = "<group>"; };
@@ -123,6 +124,7 @@
 		580037F41EE3E3B200A19465 /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
+				58B0ECA01F0528A60033A4CD /* Delegate */,
 				58D1CF581EFAE9090080F61C /* Helpers */,
 				5870F2731EE95C3F007A69B0 /* Constants */,
 				580038251EE3EF5000A19465 /* View */,
@@ -214,6 +216,14 @@
 				5870F2721EE95C31007A69B0 /* Constants.h */,
 			);
 			name = Constants;
+			sourceTree = "<group>";
+		};
+		58B0ECA01F0528A60033A4CD /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				58B0ECA11F0528BD0033A4CD /* VAKRemindDelegate.h */,
+			);
+			name = Delegate;
 			sourceTree = "<group>";
 		};
 		58D1CF581EFAE9090080F61C /* Helpers */ = {

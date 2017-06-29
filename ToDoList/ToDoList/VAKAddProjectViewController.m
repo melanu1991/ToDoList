@@ -19,7 +19,7 @@
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     [self.nameProjectField resignFirstResponder];
-    if ([self.nameProjectField.text length] > 0) {
+    if ([self.nameProjectField.text length] > VAKZero) {
         self.doneButton.enabled = YES;
     }
     else {

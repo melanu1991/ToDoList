@@ -76,4 +76,13 @@ static NSString * const VAKTaskOfSelectedGroup = @"Tasks Of Selected Group";
 static NSString * const VAKRemindTask = @"VAKRemindTask";
 static NSString * const VAKCurrentGroup = @"VAKCurrentGroup";
 
+static NSInteger const VAKOne = 1;
+static NSInteger const VAKTwo = 2;
+static NSInteger const VAKThree = 3;
+static NSInteger const VAKFour = 4;
+static NSInteger const VAKZero = 0;
+
+static float const VAKHeightBigCell = 200.f;
+static float const VAKHeightRegularCell = 44.f;
+
 #endif

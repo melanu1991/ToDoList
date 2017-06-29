@@ -9,6 +9,7 @@
 #import "Constants.h"
 #import "VAKNSDate+Formatters.h"
 #import "VAKToDoList.h"
+#import "VAKRemindDelegate.h"
 
 @interface VAKAddTaskController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UITextViewDelegate>
 

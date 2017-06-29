@@ -4,7 +4,6 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseDateOrGroupSorted;
-@property (nonatomic, strong) VAKTaskService *taskService;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
 @property (assign, nonatomic) BOOL needToReloadData;
@@ -26,9 +25,6 @@
     [super viewDidLoad];
     
     self.tabBarController.delegate = self;
-
-    self.taskService = [VAKTaskService sharedVAKTaskService];
-
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     
@@ -71,15 +67,15 @@
 
 - (IBAction)sortDateOrGroup:(UIBarButtonItem *)sender {
     self.reverseOrder = !self.reverseOrder;
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+    [[VAKTaskService sharedVAKTaskService] sortArrayKeysDate:self.isReverseOrder];
+    [[VAKTaskService sharedVAKTaskService] sortArrayKeysGroup:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     addTaskController.task = nil;
-    for (VAKToDoList *item in self.taskService.toDoListArray) {
+    for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
         if ([item.toDoListName isEqualToString:VAKInbox]) {
             addTaskController.currentGroup = item;
             break;
@@ -95,15 +91,15 @@
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        NSArray *arrayCurrentSection = [self.taskService.dictionaryDate objectForKey:self.taskService.arrayKeysDate[indexPath.section]];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        NSArray *arrayCurrentSection = [[VAKTaskService sharedVAKTaskService].dictionaryDate objectForKey:[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
-        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
         VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
@@ -114,31 +110,31 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        return self.taskService.arrayKeysDate[section];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        return [VAKTaskService sharedVAKTaskService].arrayKeysDate[section];
     }
     else {
-        VAKToDoList *currentProject = self.taskService.toDoListArray[section];
+        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
         return currentProject.toDoListName;
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        return [self.taskService.dictionaryDate[self.taskService.arrayKeysDate[section]] count];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        return [[VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[section]] count];
     }
     else {
-        VAKToDoList *currentProject = self.taskService.toDoListArray[section];
+        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
         return [currentProject.toDoListArrayTasks count];
     }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        return [self.taskService.dictionaryDate count];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        return [[VAKTaskService sharedVAKTaskService].dictionaryDate count];
     }
     else {
-        return [self.taskService.toDoListArray count];
+        return [[VAKTaskService sharedVAKTaskService].toDoListArray count];
     }
 }
 
@@ -149,13 +145,13 @@
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        NSArray *temp = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         editTaskController.task = task;
     }
     else {
-        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
         VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
         editTaskController.task = task;
     }
@@ -170,7 +166,7 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        [self.taskService removeTaskById:currentTask.taskId];
+        [[VAKTaskService sharedVAKTaskService] removeTaskById:currentTask.taskId];
         [currentTask.currentToDoList removeTaskByTask:currentTask];
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
@@ -185,7 +181,7 @@
         
         VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
         if (!currentTask.isCompleted) {
-            [self.taskService updateTaskForCompleted:currentTask];
+            [[VAKTaskService sharedVAKTaskService] updateTaskForCompleted:currentTask];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         }
@@ -211,12 +207,12 @@
 
 - (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
     VAKTask *currentTask = nil;
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
-        NSMutableArray *arrayDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+        NSMutableArray *arrayDate = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         currentTask = arrayDate[indexPath.row];
     }
     else {
-        VAKToDoList *currentProject = self.taskService.toDoListArray[indexPath.section];
+        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
         currentTask = currentProject.toDoListArrayTasks[indexPath.row];
     }
     return currentTask;
