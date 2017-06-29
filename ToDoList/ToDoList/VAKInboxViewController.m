@@ -4,7 +4,6 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseDateOrGroupSorted;
-@property (nonatomic, strong) VAKTaskService *taskService;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
 @property (assign, nonatomic) BOOL needToReloadData;
@@ -26,8 +25,6 @@
     [super viewDidLoad];
     
     self.tabBarController.delegate = self;
-
-    self.taskService = [VAKTaskService sharedVAKTaskService];
 
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
@@ -71,8 +68,8 @@
 
 - (IBAction)sortDateOrGroup:(UIBarButtonItem *)sender {
     self.reverseOrder = !self.reverseOrder;
-    [self.taskService sortArrayKeysDate:self.isReverseOrder];
-    [self.taskService sortArrayKeysGroup:self.isReverseOrder];
+    [[VAKTaskService sharedVAKTaskService] sortArrayKeysDate:self.isReverseOrder];
+    [[VAKTaskService sharedVAKTaskService] sortArrayKeysGroup:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
@@ -91,14 +88,14 @@
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *arrayCurrentSection = [self.taskService.dictionaryDate objectForKey:self.taskService.arrayKeysDate[indexPath.section]];
+        NSArray *arrayCurrentSection = [[VAKTaskService sharedVAKTaskService].dictionaryDate objectForKey:[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
-        NSArray *arrayCurrentSection = [self.taskService.dictionaryGroup objectForKey:self.taskService.arrayKeysGroup[indexPath.section]];
+        NSArray *arrayCurrentSection = [[VAKTaskService sharedVAKTaskService].dictionaryGroup objectForKey:[VAKTaskService sharedVAKTaskService].arrayKeysGroup[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
         cell.taskNoteLabel.text = task.notes;
@@ -110,23 +107,23 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return self.taskService.arrayKeysDate[section];
+        return [VAKTaskService sharedVAKTaskService].arrayKeysDate[section];
     }
-    return self.taskService.arrayKeysGroup[section];
+    return [VAKTaskService sharedVAKTaskService].arrayKeysGroup[section];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return [self.taskService.dictionaryDate[self.taskService.arrayKeysDate[section]] count];
+        return [[VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[section]] count];
     }
-    return [self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[section]] count];
+    return [[VAKTaskService sharedVAKTaskService].dictionaryGroup[[VAKTaskService sharedVAKTaskService].arrayKeysGroup[section]] count];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return [self.taskService.dictionaryDate count];
+        return [[VAKTaskService sharedVAKTaskService].dictionaryDate count];
     }
-    return [self.taskService.dictionaryGroup count];
+    return [[VAKTaskService sharedVAKTaskService].dictionaryGroup count];
 }
 
 #pragma mark - implemented UITableViewDelegate
@@ -137,12 +134,12 @@
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+        NSArray *temp = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         editTaskController.task = task;
     }
     else {
-        NSArray *temp = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
+        NSArray *temp = [VAKTaskService sharedVAKTaskService].dictionaryGroup[[VAKTaskService sharedVAKTaskService].arrayKeysGroup[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         editTaskController.task = task;
     }
@@ -157,7 +154,7 @@
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        [self.taskService removeTaskById:currentTask.taskId];
+        [[VAKTaskService sharedVAKTaskService] removeTaskById:currentTask.taskId];
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [self.tableView reloadData];
@@ -171,7 +168,7 @@
         
         VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
         if (!currentTask.isCompleted) {
-            [self.taskService updateTaskForCompleted:currentTask];
+            [[VAKTaskService sharedVAKTaskService] updateTaskForCompleted:currentTask];
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         }
@@ -198,11 +195,11 @@
 - (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
     VAKTask *currentTask = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSMutableArray *arrayDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
+        NSMutableArray *arrayDate = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
         currentTask = arrayDate[indexPath.row];
     }
     else {
-        NSMutableArray *arrayGroup = self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[indexPath.section]];
+        NSMutableArray *arrayGroup = [VAKTaskService sharedVAKTaskService].dictionaryGroup[[VAKTaskService sharedVAKTaskService].arrayKeysGroup[indexPath.section]];
         currentTask = arrayGroup[indexPath.row];
     }
     return currentTask;

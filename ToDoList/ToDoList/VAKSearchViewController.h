@@ -6,6 +6,4 @@
 
 @interface VAKSearchViewController : UIViewController<UITableViewDataSource, UISearchBarDelegate, UITableViewDelegate>
 
-@property (nonatomic, strong) VAKTaskService *taskService;
-
 @end
