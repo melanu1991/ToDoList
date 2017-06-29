@@ -252,7 +252,6 @@
     }
 }
 
-//Добавление новой группы ToDoList
 - (void)addGroup:(NSString *)group {
     if (self.dictionaryGroup[group] == nil) {
         [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:group];
@@ -260,7 +259,6 @@
     }
 }
 
-//сортировка ключей для отображения в нужном порядке по датам/группам
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder {
     self.reverseOrdered = isReverseOrder;
     NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
@@ -275,7 +273,6 @@
     self.arrayKeysGroup = arrayKeysGroup;
 }
 
-//подумать как реализовать алгоритм с учетом еще времени, а не только даты!
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder {
     self.reverseOrdered = isReverseOrder;
     NSArray *arrayKeysDate = [self.dictionaryDate allKeys];

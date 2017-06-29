@@ -74,4 +74,13 @@ static NSString * const VAKDateFormatWithoutHourAndMinute = @"dd.MM.YYYY";
 static NSString * const VAKStoriboardIdentifierTodayViewController = @"VAKStoriboardIdentifierTodayViewController";
 static NSString * const VAKTaskOfSelectedGroup = @"Tasks Of Selected Group";
 
+static NSInteger const VAKZero = 0;
+static NSInteger const VAKOne = 1;
+static NSInteger const VAKTwo = 2;
+static NSInteger const VAKThree = 3;
+static NSInteger const VAKFour = 4;
+
+static CGFloat const VAKHeightBigCell = 200.f;
+static CGFloat const VAKHeightRegularCell = 44.f;
+
 #endif

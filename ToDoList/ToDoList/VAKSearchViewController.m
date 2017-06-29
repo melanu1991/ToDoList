@@ -37,14 +37,14 @@
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
     
-    if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
+    if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
         self.needToReloadData = YES;
     }
-    else if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) {
+    else if (notification.userInfo[VAKDoneTask] && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKOne) {
         self.needToReloadData = YES;
     }
     
-    if ( (currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 1) || (!currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) ) {
+    if ( (currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKOne) || (!currentTask.isCompleted && [self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) ) {
         if (notification.userInfo[VAKDetailTaskWasChanged]) {
             NSString *lastDate = notification.userInfo[VAKLastDate];
             NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
@@ -62,12 +62,12 @@
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if ([self.searchBar.text length] > 0 && [self.filteredArray count] > 0) {
+    if ([self.searchBar.text length] > VAKZero && [self.filteredArray count] > VAKZero) {
         self.tableView.hidden = NO;
         return [self.filteredArray count];
     }
     self.tableView.hidden = YES;
-    return 0;
+    return VAKZero;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -96,7 +96,7 @@
     
     self.criteria = [NSPredicate predicateWithFormat:@"taskName contains[cd] %@", searchText];
 
-    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == 0) {
+    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
         self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask] mutableCopy];
     }
     else {
@@ -105,7 +105,7 @@
 
     [self.filteredArray filterUsingPredicate:self.criteria];
     
-    if ([self.filteredArray count] > 0) {
+    if ([self.filteredArray count] > VAKZero) {
         [self.tableView reloadData];
         self.tableView.hidden = NO;
     }

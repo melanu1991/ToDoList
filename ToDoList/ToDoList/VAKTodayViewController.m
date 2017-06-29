@@ -142,18 +142,18 @@
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return VAKTwo;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (self.dictionaryTasksForSelectedGroup) {
-        if (section == 0) {
+        if (section == VAKZero) {
             return [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] count];
         }
         return [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] count];
     }
     else {
-        if (section == 0) {
+        if (section == VAKZero) {
             return [self.dictionaryTasksToday[VAKNotCompletedTask] count];
         }
         return [self.dictionaryTasksToday[VAKCompletedTask] count];
@@ -166,7 +166,7 @@
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
     if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             VAKTask *notCompletedTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
@@ -180,7 +180,7 @@
         }
     }
     else {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             VAKTask *notCompletedTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
             cell.taskNameLabel.text = notCompletedTask.taskName;
             cell.taskNoteLabel.text = notCompletedTask.notes;
@@ -198,7 +198,7 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if (section == 0) {
+    if (section == VAKZero) {
         return nil;
     }
     return VAKTitleForHeaderCompleted;
@@ -220,7 +220,7 @@
 - (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     
     if (sourceIndexPath.section == destinationIndexPath.section) {
-        if (sourceIndexPath.section == 0) {
+        if (sourceIndexPath.section == VAKZero) {
             [self.dictionaryTasksToday[VAKNotCompletedTask] exchangeObjectAtIndex:sourceIndexPath.row withObjectAtIndex:destinationIndexPath.row];
         }
         else {
@@ -239,7 +239,7 @@
     VAKTask *currentTask = nil;
     
     if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
         }
         else {
@@ -247,7 +247,7 @@
         }
     }
     else {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
         }
         else {
@@ -264,7 +264,7 @@
     VAKTask *currentTask = nil;
     
     if (self.dictionaryTasksForSelectedGroup) {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             currentTask = self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row];
         }
         else {
@@ -272,7 +272,7 @@
         }
     }
     else {
-        if (indexPath.section == 0) {
+        if (indexPath.section == VAKZero) {
             currentTask = self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row];
         }
         else {
@@ -284,7 +284,7 @@
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         if (self.dictionaryTasksForSelectedGroup) {
-            if (indexPath.section == 0)
+            if (indexPath.section == VAKZero)
             {
                 [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
             }
@@ -293,7 +293,7 @@
             }
         }
         else {
-            if (indexPath.section == 0)
+            if (indexPath.section == VAKZero)
             {
                 [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
             }
@@ -314,7 +314,7 @@
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (self.dictionaryTasksForSelectedGroup) {
-            if (indexPath.section == 0) {
+            if (indexPath.section == VAKZero) {
                 [self.dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask][indexPath.row]];
                 [self.dictionaryTasksForSelectedGroup[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;
@@ -323,7 +323,7 @@
             }
         }
         else {
-            if (indexPath.section == 0) {
+            if (indexPath.section == VAKZero) {
                 [self.dictionaryTasksToday[VAKCompletedTask] addObject:self.dictionaryTasksToday[VAKNotCompletedTask][indexPath.row]];
                 [self.dictionaryTasksToday[VAKNotCompletedTask] removeObjectAtIndex:indexPath.row];
                 currentTask.completed = YES;

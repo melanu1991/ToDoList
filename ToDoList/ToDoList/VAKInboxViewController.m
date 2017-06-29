@@ -90,7 +90,7 @@
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSArray *arrayCurrentSection = [self.taskService.dictionaryDate objectForKey:self.taskService.arrayKeysDate[indexPath.section]];
         VAKTask *task = arrayCurrentSection[indexPath.row];
         cell.taskNameLabel.text = task.taskName;
@@ -109,30 +109,24 @@
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         return self.taskService.arrayKeysDate[section];
     }
-    else {
-        return self.taskService.arrayKeysGroup[section];
-    }
+    return self.taskService.arrayKeysGroup[section];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         return [self.taskService.dictionaryDate[self.taskService.arrayKeysDate[section]] count];
     }
-    else {
-        return [self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[section]] count];
-    }
+    return [self.taskService.dictionaryGroup[self.taskService.arrayKeysGroup[section]] count];
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         return [self.taskService.dictionaryDate count];
     }
-    else {
-        return [self.taskService.dictionaryGroup count];
-    }
+    return [self.taskService.dictionaryGroup count];
 }
 
 #pragma mark - implemented UITableViewDelegate
@@ -142,7 +136,7 @@
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSArray *temp = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
         VAKTask *task = temp[indexPath.row];
         editTaskController.task = task;
@@ -203,7 +197,7 @@
 
 - (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
     VAKTask *currentTask = nil;
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == 0) {
+    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSMutableArray *arrayDate = self.taskService.dictionaryDate[self.taskService.arrayKeysDate[indexPath.section]];
         currentTask = arrayDate[indexPath.row];
     }
