@@ -1,0 +1,296 @@
+#import "VAKTaskService.h"
+#import "VAKAddTaskController.h"
+#import "Constants.h"
+
+@interface VAKTaskService ()
+
+@property (assign, nonatomic, getter=isReverseOrdered) BOOL reverseOrdered;
+@property (strong, nonatomic) VAKAddTaskController *addTaskController;
+
+@end
+
+@implementation VAKTaskService
+
+#pragma mark - initialize
+
++ (VAKTaskService *)sharedVAKTaskService {
+    static VAKTaskService *sharedVAKTaskService = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedVAKTaskService = [[self alloc] init];
+    });
+    return sharedVAKTaskService;
+}
+
+- (instancetype)init {
+    if (self = [super init]) {
+        self.tasks = [NSMutableArray array];
+        VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
+        task1.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task1.notes = @"My new task!";
+        task1.completed = YES;
+        task1.currentGroup = @"Inbox";
+        task1.priority = @"Low";
+        task1.remindMeOnADay = YES;
+        VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
+        task2.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task2.notes = @"My new task!";
+        task2.currentGroup = @"Inbox";
+        task2.completed = YES;
+        VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
+        task3.startedAt = [NSDate dateFromString:@"Monday, 09 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task3.notes = @"My new task!";
+        task3.completed = YES;
+        task3.currentGroup = @"Work";
+        VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
+        task4.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task4.notes = @"My new task!";
+        task4.currentGroup = @"Building";
+        VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
+        task5.startedAt = [NSDate dateFromString:@"Tuesday, 10 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task5.notes = @"My new task!";
+        task5.currentGroup = @"Inbox";
+        VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
+        task6.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task6.notes = @"My new task!";
+        task6.currentGroup = @"Building";
+        task6.priority = @"None";
+        VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
+        task7.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
+        task7.notes = @"My new task!";
+        task7.currentGroup = @"My";
+        task7.remindMeOnADay = YES;
+        
+        self.addTaskController = [[VAKAddTaskController alloc] init];
+        
+        [self addTask:task1];
+        [self addTask:task2];
+        [self addTask:task3];
+        [self addTask:task4];
+        [self addTask:task5];
+        [self addTask:task6];
+        [self addTask:task7];
+    }
+    
+    [self sortArrayKeysGroup:self.isReverseOrdered];
+    [self sortArrayKeysDate:self.isReverseOrdered];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    
+    return self;
+}
+
+#pragma mark - Notification
+
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+        NSString *lastDate = notification.userInfo[VAKLastDate];
+        NSString *newDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        if (![lastDate isEqualToString:newDate]) {
+            [self updateTask:currentTask lastDate:lastDate newDate:newDate];
+        }
+    }
+    else if (notification.userInfo[VAKAddNewTask]) {
+        VAKTask *newTask = notification.userInfo[VAKCurrentTask];
+        if (![self.tasks containsObject:currentTask]) {
+            [self addTask:newTask];
+        }
+    }
+    else if (notification.userInfo[VAKDoneTask]) {
+        [self updateTaskForCompleted:currentTask];
+    }
+    else if (notification.userInfo[VAKDeleteTask]) {
+        if ([self.tasks containsObject:currentTask]) {
+            [self removeTaskById:currentTask.taskId];
+        }
+    }
+}
+
+#pragma mark - lazy getters
+
+- (NSArray *)tasks {
+    if (!_tasks) {
+        _tasks = [[NSMutableArray alloc]init];
+    }
+    return _tasks;
+}
+
+- (NSDictionary *)dictionaryDate {
+    if (!_dictionaryDate) {
+        _dictionaryDate = [NSMutableDictionary dictionary];
+    }
+    return _dictionaryDate;
+}
+
+- (NSDictionary *)dictionaryGroup {
+    if (!_dictionaryGroup) {
+        _dictionaryGroup = [NSMutableDictionary dictionary];
+    }
+    return _dictionaryGroup;
+}
+
+- (NSDictionary *)dictionaryCompletedOrNotCompletedTasks {
+    if (!_dictionaryCompletedOrNotCompletedTasks) {
+        _dictionaryCompletedOrNotCompletedTasks = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
+    }
+    return _dictionaryCompletedOrNotCompletedTasks;
+}
+
+#pragma mark - work on tasks
+
+- (VAKTask *)taskById:(NSString *)taskId {
+    for (int i = 0; i < self.tasks.count; i++) {
+        VAKTask *task = self.tasks[i];
+        if ([task.taskId isEqualToString:taskId]) {
+            return task;
+        }
+    }
+    return nil;
+}
+
+- (void)addTask:(VAKTask *)task {
+    [self.tasks addObject:task];
+    if (task.remindMeOnADay) {
+        [self.addTaskController remind:task];
+    }
+
+    NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
+    NSString *currentGroup = task.currentGroup;
+    
+    if (task.isCompleted) {
+        NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
+        [arrayCompletedTasks addObject:task];
+    }
+    else {
+        NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
+        [arrayNotCompletedTasks addObject:task];
+    }
+    
+    if (self.dictionaryDate[currentDate] == nil) {
+        [self.dictionaryDate setObject:[[NSMutableArray alloc] init] forKey:currentDate];
+        NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];
+        [tempArrayDate addObject:task];
+    }
+    else {
+        NSMutableArray *tempArrayDate = self.dictionaryDate[currentDate];
+        [tempArrayDate addObject:task];
+    }
+    
+    if (self.dictionaryGroup[currentGroup] == nil) {
+        [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:currentGroup];
+        NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
+        [tempArrayGroup addObject:task];
+    }
+    else {
+        NSMutableArray *tempArrayGroup = self.dictionaryGroup[currentGroup];
+        [tempArrayGroup addObject:task];
+    }
+    
+    [self sortArrayKeysDate:NO];
+    [self sortArrayKeysGroup:NO];
+    
+}
+
+- (void)removeTaskById:(NSString *)taskId {
+
+    for (VAKTask *task in self.tasks) {
+        if ([task.taskId isEqualToString:taskId]) {
+            if (task.remindMeOnADay) {
+                [self.addTaskController deleteRemind:task];
+            }
+            NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
+            [self.tasks removeObject:task];
+            NSMutableArray *arrayDate = self.dictionaryDate[currentDate];
+            NSMutableArray *arrayGroup = self.dictionaryGroup[task.currentGroup];
+            if (task.isCompleted) {
+                NSMutableArray *arrayCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
+                [arrayCompletedTasks removeObject:task];
+            }
+            else {
+                NSMutableArray *arrayNotCompletedTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
+                [arrayNotCompletedTasks removeObject:task];
+            }
+            [arrayDate removeObject:task];
+            [arrayGroup removeObject:task];
+            if ([arrayDate count] == 0) {
+                [self.dictionaryDate removeObjectForKey:currentDate];
+                [self sortArrayKeysDate:self.isReverseOrdered];
+            }
+            return;
+        }
+    }
+}
+
+- (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate newDate:(NSString *)newDate {
+    
+    NSMutableArray *arrayDate = self.dictionaryDate[lastDate];
+    [arrayDate removeObject:task];
+    if ([arrayDate count] == 0) {
+        [self.dictionaryDate removeObjectForKey:lastDate];
+    }
+    arrayDate = self.dictionaryDate[newDate];
+    if (arrayDate == nil) {
+        arrayDate = [[NSMutableArray alloc] initWithObjects:task, nil];
+    }
+    else {
+        [arrayDate addObject:task];
+    }
+    [self.dictionaryDate setObject:arrayDate forKey:newDate];
+    [self sortArrayKeysDate:self.isReverseOrdered];
+
+}
+
+- (void)updateTaskForCompleted:(VAKTask *)task {
+    NSMutableArray *arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask];
+    if ([arrayTasks containsObject:task]) {
+        task.completed = YES;
+        task.finishedAt = [NSDate date];
+        [arrayTasks removeObject:task];
+        arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
+        [arrayTasks addObject:task];
+    }
+}
+
+- (void)addGroup:(NSString *)group {
+    if (self.dictionaryGroup[group] == nil) {
+        [self.dictionaryGroup setObject:[[NSMutableArray alloc] init] forKey:group];
+        [self sortArrayKeysGroup:NO];
+    }
+}
+
+- (void)sortArrayKeysGroup:(BOOL)isReverseOrder {
+    self.reverseOrdered = isReverseOrder;
+    NSArray *arrayKeysGroup = [self.dictionaryGroup allKeys];
+    arrayKeysGroup = [arrayKeysGroup sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        if (isReverseOrder) {
+            return -[obj1 compare:obj2];
+        }
+        else {
+            return [obj1 compare:obj2];
+        }
+    }];
+    self.arrayKeysGroup = arrayKeysGroup;
+}
+
+- (void)sortArrayKeysDate:(BOOL)isReverseOrder {
+    self.reverseOrdered = isReverseOrder;
+    NSArray *arrayKeysDate = [self.dictionaryDate allKeys];
+    arrayKeysDate = [arrayKeysDate sortedArrayUsingComparator:^NSComparisonResult(NSString *obj1, NSString *obj2) {
+        if (isReverseOrder) {
+            return -[obj1 compare:obj2];
+        }
+        else {
+            return [obj1 compare:obj2];
+        }
+    }];
+    self.arrayKeysDate = arrayKeysDate;
+}
+
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+@end

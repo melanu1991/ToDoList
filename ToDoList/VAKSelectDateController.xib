@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="VAKSelectDateController">
+            <connections>
+                <outlet property="currentDate" destination="VUF-CI-zWR" id="kxE-Vq-cPg"/>
+                <outlet property="datePicker" destination="FqA-4V-NjZ" id="Vv7-Yh-IEO"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="FqA-4V-NjZ">
+                    <rect key="frame" x="0.0" y="367" width="375" height="300"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="300" id="eNU-oU-dbt"/>
+                    </constraints>
+                    <date key="date" timeIntervalSinceReferenceDate="518278517.749219">
+                        <!--2017-06-04 14:15:17 +0000-->
+                    </date>
+                </datePicker>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VUF-CI-zWR">
+                    <rect key="frame" x="0.0" y="100" width="375" height="117"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="26"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="VUF-CI-zWR" secondAttribute="trailing" id="LQ8-Tp-b9i"/>
+                <constraint firstAttribute="trailing" secondItem="FqA-4V-NjZ" secondAttribute="trailing" id="T0G-mh-91X"/>
+                <constraint firstItem="VUF-CI-zWR" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="UlO-Qp-Klh"/>
+                <constraint firstItem="FqA-4V-NjZ" firstAttribute="top" secondItem="VUF-CI-zWR" secondAttribute="bottom" constant="150" id="baJ-f8-tVw"/>
+                <constraint firstAttribute="bottom" secondItem="FqA-4V-NjZ" secondAttribute="bottom" id="e1i-PJ-bAp"/>
+                <constraint firstItem="FqA-4V-NjZ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="mDT-LD-40U"/>
+                <constraint firstItem="VUF-CI-zWR" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="100" id="sKo-eW-pux"/>
+            </constraints>
+            <point key="canvasLocation" x="34.5" y="54.5"/>
+        </view>
+    </objects>
+</document>

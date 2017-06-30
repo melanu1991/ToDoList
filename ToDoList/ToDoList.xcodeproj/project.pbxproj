@@ -8,15 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		580037F71EE3E3B200A19465 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 580037F61EE3E3B200A19465 /* main.m */; };
-		58D1CF571EFADD1E0080F61C /* VAKNSDate+Formatters.m in Sources */ = {isa = PBXBuildFile; fileRef = 58D1CF561EFADD1E0080F61C /* VAKNSDate+Formatters.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		580037F21EE3E3B200A19465 /* ToDoList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		580037F61EE3E3B200A19465 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		58D1CF551EFADD1E0080F61C /* VAKNSDate+Formatters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VAKNSDate+Formatters.h"; sourceTree = "<group>"; };
-		58D1CF561EFADD1E0080F61C /* VAKNSDate+Formatters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VAKNSDate+Formatters.m"; sourceTree = "<group>"; };
-		58F69E051F05893600A83B79 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,8 +45,6 @@
 		580037F41EE3E3B200A19465 /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
-				58AECB151EFACE4500CA3130 /* Helpers */,
-				5870F2731EE95C3F007A69B0 /* Constants */,
 				580037F51EE3E3B200A19465 /* Supporting Files */,
 			);
 			path = ToDoList;
@@ -62,23 +56,6 @@
 				580037F61EE3E3B200A19465 /* main.m */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		5870F2731EE95C3F007A69B0 /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				58F69E051F05893600A83B79 /* Constants.h */,
-			);
-			name = Constants;
-			sourceTree = "<group>";
-		};
-		58AECB151EFACE4500CA3130 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				58D1CF551EFADD1E0080F61C /* VAKNSDate+Formatters.h */,
-				58D1CF561EFADD1E0080F61C /* VAKNSDate+Formatters.m */,
-			);
-			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -150,7 +127,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58D1CF571EFADD1E0080F61C /* VAKNSDate+Formatters.m in Sources */,
 				580037F71EE3E3B200A19465 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
