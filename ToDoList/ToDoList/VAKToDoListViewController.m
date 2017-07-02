@@ -11,6 +11,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editButton;
+@property (strong, nonatomic) VAKTaskService *taskService;
 @property (assign, nonatomic) BOOL needToReloadData;
 
 @end
@@ -32,6 +33,7 @@
     self.addProjectButton.target = self;
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
     
+    self.taskService = [VAKTaskService sharedVAKTaskService];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewProject:) name:VAKAddProject object:nil];
 }
@@ -46,7 +48,7 @@
 
 - (void)addNewProject:(NSNotification *)notification {
     NSString *nameNewProject = notification.userInfo[VAKNameNewProject];
-    [[VAKTaskService sharedVAKTaskService] addGroup:nameNewProject];
+    [self.taskService addGroup:nameNewProject];
     [self.tableView reloadData];
 }
 
@@ -71,15 +73,15 @@
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return VAKTwo;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == VAKZero) {
-        return VAKOne;
+    if (section == 0) {
+        return 1;
     }
     else {
-        return [[VAKTaskService sharedVAKTaskService].arrayKeysGroup count];
+        return [self.taskService.arrayKeysGroup count];
     }
 }
 
@@ -90,7 +92,7 @@
     VAKPriorityCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
     
     if (indexPath.section == VAKZero) {
-        NSUInteger countTasks = [[VAKTaskService sharedVAKTaskService].dictionaryGroup[VAKInbox] count];
+        NSUInteger countTasks = [self.taskService.dictionaryGroup[VAKInbox] count];
         cell.textLabel.text = VAKInbox;
         cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
     }
@@ -100,9 +102,9 @@
             cell.detailTextLabel.text = nil;
         }
         else {
-            NSMutableArray *arrayGroupWithoutInbox = [[VAKTaskService sharedVAKTaskService].arrayKeysGroup mutableCopy];
+            NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
             [arrayGroupWithoutInbox removeObject:VAKInbox];
-            NSUInteger countTasks = [[VAKTaskService sharedVAKTaskService].dictionaryGroup[arrayGroupWithoutInbox[indexPath.row-VAKOne]] count];
+            NSUInteger countTasks = [self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row-VAKOne]] count];
             cell.textLabel.text = arrayGroupWithoutInbox[indexPath.row-VAKOne];
             cell.detailTextLabel.text = [NSString stringWithFormat:@"(%ld)",countTasks];
         }
@@ -119,7 +121,7 @@
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
     NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     if (indexPath.section == VAKZero) {
-        for (VAKTask *task in [VAKTaskService sharedVAKTaskService].dictionaryGroup[VAKInbox]) {
+        for (VAKTask *task in self.taskService.dictionaryGroup[VAKInbox]) {
             if (!task.isCompleted) {
                 [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
             }
@@ -137,9 +139,9 @@
             [self.navigationController pushViewController:addProjectViewController animated:YES];
         }
         else {
-            NSMutableArray *arrayWithoutInbox = [[VAKTaskService sharedVAKTaskService].arrayKeysGroup mutableCopy];
+            NSMutableArray *arrayWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
             [arrayWithoutInbox removeObject:VAKInbox];
-            for (VAKTask *task in [VAKTaskService sharedVAKTaskService].dictionaryGroup[arrayWithoutInbox[indexPath.row-1]]) {
+            for (VAKTask *task in self.taskService.dictionaryGroup[arrayWithoutInbox[indexPath.row-1]]) {
                 if (!task.isCompleted) {
                     [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
                 }
@@ -162,15 +164,15 @@
         if (indexPath.row != VAKZero) {
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                NSMutableArray *arrayGroupWithoutInbox = [[VAKTaskService sharedVAKTaskService].arrayKeysGroup mutableCopy];
+                NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
                 [arrayGroupWithoutInbox removeObject:VAKInbox];
-                NSMutableArray *arrayTasksDeleteGroup = [VAKTaskService sharedVAKTaskService].dictionaryGroup[arrayGroupWithoutInbox[indexPath.row - VAKOne]];
+                NSMutableArray *arrayTasksDeleteGroup = self.taskService.dictionaryGroup[arrayGroupWithoutInbox[indexPath.row - VAKOne]];
                 for (VAKTask *task in arrayTasksDeleteGroup) {
-                    [[VAKTaskService sharedVAKTaskService] removeTaskById:task.taskId];
+                    [self.taskService removeTaskById:task.taskId];
                 }
-                [[VAKTaskService sharedVAKTaskService].dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row - VAKOne]];
-                [[VAKTaskService sharedVAKTaskService] sortArrayKeysGroup:NO];
-                [[VAKTaskService sharedVAKTaskService] sortArrayKeysDate:NO];
+                [self.taskService.dictionaryGroup removeObjectForKey:arrayGroupWithoutInbox[indexPath.row - VAKOne]];
+                [self.taskService sortArrayKeysGroup:NO];
+                [self.taskService sortArrayKeysDate:NO];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
                 NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKDeleteGroupTask forKey:VAKDeleteGroupTask];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
@@ -191,16 +193,16 @@
                 textField.placeholder = VAKInputNewNameGroup;
             }];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                NSMutableArray *arrayGroupWithoutInbox = [[VAKTaskService sharedVAKTaskService].arrayKeysGroup mutableCopy];
+                NSMutableArray *arrayGroupWithoutInbox = [self.taskService.arrayKeysGroup mutableCopy];
                 [arrayGroupWithoutInbox removeObject:VAKInbox];
                 NSString *selectedGroup = arrayGroupWithoutInbox[indexPath.row - VAKOne];
-                NSMutableArray *arraySelectedGroup = [VAKTaskService sharedVAKTaskService].dictionaryGroup[selectedGroup];
+                NSMutableArray *arraySelectedGroup = self.taskService.dictionaryGroup[selectedGroup];
                 for (VAKTask *task in arraySelectedGroup) {
                     task.currentGroup = alertController.textFields[VAKZero].text;
                 }
-                [[VAKTaskService sharedVAKTaskService].dictionaryGroup removeObjectForKey:selectedGroup];
-                [[VAKTaskService sharedVAKTaskService] addGroup:alertController.textFields[VAKZero].text];
-                [VAKTaskService sharedVAKTaskService].dictionaryGroup[alertController.textFields[VAKZero].text] = [arraySelectedGroup mutableCopy];
+                [self.taskService.dictionaryGroup removeObjectForKey:selectedGroup];
+                [self.taskService addGroup:alertController.textFields[VAKZero].text];
+                self.taskService.dictionaryGroup[alertController.textFields[VAKZero].text] = [arraySelectedGroup mutableCopy];
                 NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKWasEditNameGroup forKey:VAKWasEditNameGroup];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];

@@ -28,6 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    self.taskService = [VAKTaskService sharedVAKTaskService];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
@@ -96,10 +97,10 @@
     self.criteria = [NSPredicate predicateWithFormat:@"taskName contains[cd] %@", searchText];
 
     if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
-        self.filteredArray = [[VAKTaskService sharedVAKTaskService].dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask] mutableCopy];
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask] mutableCopy];
     }
     else {
-        self.filteredArray = [[VAKTaskService sharedVAKTaskService].dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask] mutableCopy];
+        self.filteredArray = [self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask] mutableCopy];
     }
 
     [self.filteredArray filterUsingPredicate:self.criteria];
