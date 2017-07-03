@@ -29,7 +29,7 @@
 
     self.taskService = [VAKTaskService sharedVAKTaskService];
 
-    self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
+    self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
@@ -59,12 +59,12 @@
 }
 
 - (void)editButtonPressed {
-    if ([self.editButton.title isEqualToString:VAKEditButton]) {
-        self.editButton.title = VAKDoneButton;
+    if ([self.editButton.title isEqualToString:NSLocalizedString(VAKEditButton, nil)]) {
+        self.editButton.title = NSLocalizedString(VAKDoneButton, nil);
         self.tableView.editing = YES;
     }
     else {
-        self.editButton.title = VAKEditButton;
+        self.editButton.title = NSLocalizedString(VAKEditButton, nil);
         self.tableView.editing = NO;
     }
 }
@@ -154,8 +154,8 @@
     
     VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
     
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         [self.taskService removeTaskById:currentTask.taskId];
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
@@ -163,11 +163,11 @@
         [self.tableView reloadData];
         
     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
     [alertController addAction:okAction];
     [alertController addAction:cancelAction];
     
-    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
         if (!currentTask.isCompleted) {
@@ -185,7 +185,7 @@
         doneAction.backgroundColor = [UIColor blueColor];
     }
     
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
        [self presentViewController:alertController animated:YES completion:nil];
     }];
     deleteAction.backgroundColor = [UIColor redColor];

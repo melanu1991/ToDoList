@@ -1,0 +1,14 @@
+/* 
+  Localizable.strings
+  ToDoList
+
+  Created by melanu1991 on 03.07.17.
+  Copyright © 2017 melanu1991. All rights reserved.
+*/
+
+"Edit" = "Редактирование";
+"Done" = "Применить";
+"OK" = "Окей";
+"Cancel" = "Отмена";
+"Delete" = "Удалить";
+"Are you sure you want remove this item?" = "Вы уверены что хотите удалить данный элемент?";
