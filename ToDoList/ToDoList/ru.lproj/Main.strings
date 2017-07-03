@@ -12,7 +12,7 @@
 "Bnt-al-kPF.segmentTitles[1]" = "Завершенные";
 
 /* Class = "UILabel"; text = "  Project"; ObjectID = "F8Q-fx-hyW"; */
-"F8Q-fx-hyW.text" = "  Группы";
+"F8Q-fx-hyW.text" = "  Название группы";
 
 /* Class = "UIViewController"; title = "Today"; ObjectID = "JDv-1Y-BrH"; */
 "JDv-1Y-BrH.title" = "Сегодня";

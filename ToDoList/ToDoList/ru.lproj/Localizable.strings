@@ -27,3 +27,11 @@
 "High" = "Высокий";
 "What you have to do..." = "Введите название задачи";
 "Add Item" = "Добавление задачи";
+"Back" = "Назад";
+"Add project" = "Добавить группу";
+"Select Priority" = "Выбор приоритета";
+"Inbox" = "Входящие";
+"Today" = "Сегодня";
+"Tasks Of Selected Group" = "Список задач выбранной группы";
+"Choose date" = "Выбор даты";
+"Completed" = "Завершенные";
