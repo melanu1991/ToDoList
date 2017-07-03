@@ -25,51 +25,8 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.tasks = [NSMutableArray array];
-        VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
-        task1.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task1.notes = @"My new task!";
-        task1.completed = YES;
-        task1.currentGroup = @"Inbox";
-        task1.priority = @"Low";
-        task1.remindMeOnADay = YES;
-        VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-        task2.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task2.notes = @"My new task!";
-        task2.currentGroup = @"Inbox";
-        task2.completed = YES;
-        VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
-        task3.startedAt = [NSDate dateFromString:@"Monday, 09 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task3.notes = @"My new task!";
-        task3.completed = YES;
-        task3.currentGroup = @"Work";
-        VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
-        task4.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task4.notes = @"My new task!";
-        task4.currentGroup = @"Building";
-        VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
-        task5.startedAt = [NSDate dateFromString:@"Tuesday, 10 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task5.notes = @"My new task!";
-        task5.currentGroup = @"Inbox";
-        VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
-        task6.startedAt = [NSDate dateFromString:@"Tuesday, 20 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task6.notes = @"My new task!";
-        task6.currentGroup = @"Building";
-        task6.priority = @"None";
-        VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-        task7.startedAt = [NSDate dateFromString:@"Sunday, 18 June 2017 г., 13:57" format:VAKDateFormatWithHourAndMinute];
-        task7.notes = @"My new task!";
-        task7.currentGroup = @"My";
-        task7.remindMeOnADay = YES;
-        
+        [self loadArrayTasks];  
         self.addTaskController = [[VAKAddTaskController alloc] init];
-        
-        [self addTask:task1];
-        [self addTask:task2];
-        [self addTask:task3];
-        [self addTask:task4];
-        [self addTask:task5];
-        [self addTask:task6];
-        [self addTask:task7];
     }
     
     [self sortArrayKeysGroup:self.isReverseOrdered];
@@ -92,9 +49,8 @@
         }
     }
     else if (notification.userInfo[VAKAddNewTask]) {
-        VAKTask *newTask = notification.userInfo[VAKCurrentTask];
         if (![self.tasks containsObject:currentTask]) {
-            [self addTask:newTask];
+            [self addTask:currentTask];
         }
     }
     else if (notification.userInfo[VAKDoneTask]) {
@@ -190,6 +146,7 @@
     [self sortArrayKeysDate:NO];
     [self sortArrayKeysGroup:NO];
     
+    [self saveArrayTasks];
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -217,6 +174,7 @@
                 [self.dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
+            [self saveArrayTasks];
             return;
         }
     }
@@ -239,6 +197,7 @@
     [self.dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
 
+    [self saveArrayTasks];
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
@@ -250,6 +209,7 @@
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
+    [self saveArrayTasks];
 }
 
 - (void)addGroup:(NSString *)group {
@@ -285,6 +245,21 @@
         }
     }];
     self.arrayKeysDate = arrayKeysDate;
+}
+
+#pragma mark - save and load array tasks
+
+- (void)saveArrayTasks {
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tasks];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"tasks"];
+}
+
+- (void)loadArrayTasks {
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"tasks"];
+    NSMutableArray *arrayTasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    for (VAKTask *task in arrayTasks) {
+        [self addTask:task];
+    }
 }
 
 #pragma mark - deallocate

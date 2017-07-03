@@ -3,6 +3,6 @@
 @interface NSDate (VAKDateFormatters)
 
 + (NSDate *)dateFromString:(NSString *)dateString format:(NSString *)format;
-+ (NSString *)dateStringFromDate:(NSDate *)dateString format:(NSString *)format;
++ (NSString *)dateStringFromDate:(NSDate *)date format:(NSString *)format;
 
 @end

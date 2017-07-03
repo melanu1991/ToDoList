@@ -35,15 +35,16 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKDoneButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.doneButton;
     
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
     self.navigationItem.leftBarButtonItem = cancelButton;
     
-    NSString *title = VAKAddTaskTitle;
+    NSString *title = NSLocalizedString(VAKAddTaskTitle, nil);
     if (!self.task) {
         self.selectPriority = VAKNone;
+        self.taskNotes = @"";
         if (!self.currentGroup) {
             self.currentGroup = VAKInbox;
         }
@@ -51,7 +52,7 @@
         self.doneButton.enabled = NO;
     }
     else {
-        title = VAKEditTaskTitle;
+        title = NSLocalizedString(VAKEditTaskTitle, nil);
         self.selectPriority = self.task.priority;
         self.selectDate = self.task.startedAt;
         self.remindMeOnADay = self.task.remindMeOnADay;
@@ -100,12 +101,14 @@
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
         cell.textField.text = self.task.taskName;
+        cell.textField.placeholder = NSLocalizedString(VAKWhatToDo, nil);
         return cell;
     }
     else if (indexPath.section == VAKOne) {
         if (indexPath.row == VAKZero) {
             VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
             cell.delegate = self;
+            cell.remindLabel.text = NSLocalizedString(VAKRemindMeOnADay, nil);
             if (self.remindMeOnADay) {
                 [cell.remindSwitch setOn:YES animated:YES];
             }
@@ -119,7 +122,8 @@
     }
     else if (indexPath.section == VAKTwo) {
         VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
-        cell.detailTextLabel.text = self.selectPriority;
+        cell.textLabel.text = NSLocalizedString(VAKPriority, nil);
+        cell.detailTextLabel.text = NSLocalizedString(self.selectPriority, nil);
         return cell;
     }
     else {
@@ -132,15 +136,15 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == VAKZero) {
-        return VAKTaskTitle;
+        return NSLocalizedString(VAKTaskTitle, nil);
     }
     else if (section == VAKOne) {
-        return VAKRemindTitle;
+        return NSLocalizedString(VAKRemindTitle, nil);
     }
     else if (section == VAKTwo) {
-        return VAKPriorityTitle;
+        return NSLocalizedString(VAKPriorityTitle, nil);
     }
-    return VAKNotesTitle;
+    return NSLocalizedString(VAKNotesTitle, nil);
 }
 
 - (UITableViewCell *)cellForIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
@@ -236,7 +240,6 @@
     }
     else {
         NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         if (self.task.remindMeOnADay && !self.remindMeOnADay) {
@@ -248,6 +251,7 @@
             self.task.startedAt = self.selectDate;
             [self updateDateRemind:self.task];
         }
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];

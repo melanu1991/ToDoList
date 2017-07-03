@@ -6,18 +6,22 @@
     if (!dateString || !format) {
         return nil;
     }
+    NSString *ft = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:[NSLocale currentLocale]];
     NSDateFormatter *formatter = NSDateFormatter.new;
-    formatter.dateFormat = format;
-    return [formatter dateFromString:dateString];
+    formatter.dateFormat = ft;
+    NSDate *date = [formatter dateFromString:dateString];
+    return date;
 }
 
-+ (NSString *)dateStringFromDate:(NSDate *)dateString format:(NSString *)format {
-    if (!dateString || !format) {
++ (NSString *)dateStringFromDate:(NSDate *)date format:(NSString *)format {
+    if (!date || !format) {
         return nil;
     }
+    NSString *ft = [NSDateFormatter dateFormatFromTemplate:format options:0 locale:[NSLocale currentLocale]];
     NSDateFormatter *formatter = NSDateFormatter.new;
-    formatter.dateFormat = format;
-    return [formatter stringFromDate:dateString];
+    formatter.dateFormat = ft;
+    NSString *dateString = [formatter stringFromDate:date];
+    return dateString;
 }
 
 @end

@@ -22,4 +22,7 @@
 
 + (VAKTaskService *)sharedVAKTaskService;
 
+- (void)saveArrayTasks;
+- (void)loadArrayTasks;
+
 @end
