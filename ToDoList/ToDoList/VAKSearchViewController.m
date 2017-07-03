@@ -74,7 +74,6 @@
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     VAKTask *temp = self.filteredArray[indexPath.row];
-    
     cell.taskNameLabel.text = temp.taskName;
     cell.taskNoteLabel.text = temp.notes;
     cell.taskStartDateLabel.text = [NSDate dateStringFromDate:temp.startedAt format:VAKDateFormatWithHourAndMinute];
