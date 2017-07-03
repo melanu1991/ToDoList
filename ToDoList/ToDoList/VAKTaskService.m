@@ -25,44 +25,44 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.tasks = [NSMutableArray array];
-        VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
-        task1.notes = @"My new task!";
-        task1.completed = YES;
-        task1.currentGroup = @"Inbox";
-        task1.priority = @"Low";
-        task1.remindMeOnADay = YES;
-        VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
-        task2.notes = @"My new task!";
-        task2.currentGroup = @"Inbox";
-        task2.completed = YES;
-        VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
-        task3.notes = @"My new task!";
-        task3.completed = YES;
-        task3.currentGroup = @"Work";
-        VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
-        task4.notes = @"My new task!";
-        task4.currentGroup = @"Building";
-        VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
-        task5.notes = @"My new task!";
-        task5.currentGroup = @"Inbox";
-        VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
-        task6.notes = @"My new task!";
-        task6.currentGroup = @"Building";
-        task6.priority = @"None";
-        VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
-        task7.notes = @"My new task!";
-        task7.currentGroup = @"My";
-        task7.remindMeOnADay = YES;
-        
+//        VAKTask *task1 = [[VAKTask alloc] initTaskWithId:@"1" taskName:@"task1"];
+//        task1.notes = @"My new task!";
+//        task1.completed = YES;
+//        task1.currentGroup = @"Inbox";
+//        task1.priority = @"Low";
+//        task1.remindMeOnADay = YES;
+//        VAKTask *task2 = [[VAKTask alloc] initTaskWithId:@"2" taskName:@"task2"];
+//        task2.notes = @"My new task!";
+//        task2.currentGroup = @"Inbox";
+//        task2.completed = YES;
+//        VAKTask *task3 = [[VAKTask alloc] initTaskWithId:@"3" taskName:@"task3"];
+//        task3.notes = @"My new task!";
+//        task3.completed = YES;
+//        task3.currentGroup = @"Work";
+//        VAKTask *task4 = [[VAKTask alloc] initTaskWithId:@"4" taskName:@"task4"];
+//        task4.notes = @"My new task!";
+//        task4.currentGroup = @"Building";
+//        VAKTask *task5 = [[VAKTask alloc] initTaskWithId:@"5" taskName:@"task5"];
+//        task5.notes = @"My new task!";
+//        task5.currentGroup = @"Inbox";
+//        VAKTask *task6 = [[VAKTask alloc] initTaskWithId:@"6" taskName:@"task6"];
+//        task6.notes = @"My new task!";
+//        task6.currentGroup = @"Building";
+//        task6.priority = @"None";
+//        VAKTask *task7 = [[VAKTask alloc] initTaskWithId:@"7" taskName:@"task7"];
+//        task7.notes = @"My new task!";
+//        task7.currentGroup = @"My";
+//        task7.remindMeOnADay = YES;
+//        
         self.addTaskController = [[VAKAddTaskController alloc] init];
         
-        [self addTask:task1];
-        [self addTask:task2];
-        [self addTask:task3];
-        [self addTask:task4];
-        [self addTask:task5];
-        [self addTask:task6];
-        [self addTask:task7];
+//        [self addTask:task1];
+//        [self addTask:task2];
+//        [self addTask:task3];
+//        [self addTask:task4];
+//        [self addTask:task5];
+//        [self addTask:task6];
+//        [self addTask:task7];
     }
     
     [self sortArrayKeysGroup:self.isReverseOrdered];
