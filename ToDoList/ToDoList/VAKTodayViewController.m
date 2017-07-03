@@ -17,9 +17,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    self.taskService = [VAKTaskService sharedVAKTaskService];
-    
     if (self.dictionaryTasksForSelectedGroup) {
         self.navigationItem.title = NSLocalizedString(VAKTaskOfSelectedGroup, nil);
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
@@ -105,12 +102,12 @@
     NSString *currentDate = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithoutHourAndMinute];
     [self.dictionaryTasksToday[VAKCompletedTask] removeAllObjects];
     [self.dictionaryTasksToday[VAKNotCompletedTask] removeAllObjects];
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
+    for (VAKTask *task in [VAKTaskService sharedVAKTaskService].dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask]) {
         if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
             [self.dictionaryTasksToday[VAKCompletedTask] addObject:task];
         }
     }
-    for (VAKTask *task in self.taskService.dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
+    for (VAKTask *task in [VAKTaskService sharedVAKTaskService].dictionaryCompletedOrNotCompletedTasks[VAKNotCompletedTask]) {
         if ([[NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute] isEqualToString:currentDate] ) {
             [self.dictionaryTasksToday[VAKNotCompletedTask] addObject:task];
         }
@@ -302,7 +299,7 @@
             }
         }
 
-        [self.taskService removeTaskById:currentTask.taskId];
+        [[VAKTaskService sharedVAKTaskService] removeTaskById:currentTask.taskId];
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
