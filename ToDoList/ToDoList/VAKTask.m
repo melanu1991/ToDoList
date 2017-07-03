@@ -22,8 +22,8 @@
     [aCoder encodeObject:self.priority forKey:@"priority"];
     [aCoder encodeObject:self.taskId forKey:@"taskId"];
     [aCoder encodeObject:self.currentGroup forKey:@"currentGroup"];
-    [aCoder encodeObject:[NSNumber numberWithBool:self.isRemindMeOnADay] forKey:@"isRemindMeOnADay"];
-    [aCoder encodeObject:[NSNumber numberWithBool:self.isCompleted] forKey:@"isCompleted"];
+    [aCoder encodeObject:[NSNumber numberWithBool:self.remindMeOnADay] forKey:@"remindMeOnADay"];
+    [aCoder encodeObject:[NSNumber numberWithBool:self.completed] forKey:@"isCompleted"];
 }
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -36,8 +36,8 @@
         _priority = [aDecoder decodeObjectForKey:@"priority"];
         _taskId = [aDecoder decodeObjectForKey:@"taskId"];
         _currentGroup = [aDecoder decodeObjectForKey:@"currentGroup"];
-        _remindMeOnADay = [aDecoder decodeObjectForKey:@"isRemindMeOnADay"];
-        _completed = [aDecoder decodeObjectForKey:@"isCompleted"];
+        _remindMeOnADay = [aDecoder decodeObjectForKey:@"remindMeOnADay"];
+        _completed = [aDecoder decodeObjectForKey:@"completed"];
     }
     return self;
 }

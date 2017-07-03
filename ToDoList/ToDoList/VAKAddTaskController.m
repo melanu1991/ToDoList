@@ -44,6 +44,7 @@
     NSString *title = NSLocalizedString(VAKAddTaskTitle, nil);
     if (!self.task) {
         self.selectPriority = VAKNone;
+        self.taskNotes = @"";
         if (!self.currentGroup) {
             self.currentGroup = VAKInbox;
         }
@@ -239,7 +240,6 @@
     }
     else {
         NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         if (self.task.remindMeOnADay && !self.remindMeOnADay) {
@@ -251,6 +251,7 @@
             self.task.startedAt = self.selectDate;
             [self updateDateRemind:self.task];
         }
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];
