@@ -1,6 +1,6 @@
 #import <Foundation/Foundation.h>
 
-@interface VAKTask : NSObject <NSCoding>
+@interface VAKTask : NSObject
 
 @property (nonatomic, copy) NSString *taskId;
 @property (nonatomic, copy) NSString *taskName;
