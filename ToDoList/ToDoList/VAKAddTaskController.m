@@ -233,57 +233,21 @@
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
         newTask.currentGroup = self.currentGroup;
-        if (newTask.remindMeOnADay) {
-            [self remind:newTask];
-        }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
     }
     else {
         NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
-        if (self.task.remindMeOnADay && !self.remindMeOnADay) {
-            [self deleteRemind:self.task];
-        }
         self.task.remindMeOnADay = self.remindMeOnADay;
         self.task.notes = self.taskNotes;
         if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
             self.task.startedAt = self.selectDate;
-            [self updateDateRemind:self.task];
         }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-#pragma mark - remind task
-
-- (void)remind:(VAKTask *)task {
-    NSString *eventInfo = [NSString stringWithFormat:@"Name: %@ and notes: %@", task.taskName, task.notes];
-    NSString *eventDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithHourAndMinute];
-    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:eventInfo, @"eventInfo", eventDate, @"eventDate", task.taskId, @"taskId", nil];
-    UILocalNotification *notification = [[UILocalNotification alloc] init];
-    notification.userInfo = dic;
-    notification.timeZone = [NSTimeZone defaultTimeZone];
-    notification.fireDate = task.startedAt;
-    notification.alertBody = eventInfo;
-    notification.applicationIconBadgeNumber = 1;
-    notification.soundName = UILocalNotificationDefaultSoundName;
-    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
-}
-
-- (void)deleteRemind:(VAKTask *)task {
-    for (UILocalNotification *notification in [[UIApplication sharedApplication] scheduledLocalNotifications]) {
-        if ([notification.userInfo[@"taskId"] isEqualToString:task.taskId]) {
-            [[UIApplication sharedApplication] cancelLocalNotification:notification];
-        }
-    }
-}
-
-- (void)updateDateRemind:(VAKTask *)task {
-    [self deleteRemind:task];
-    [self remind:task];
 }
 
 #pragma mark - deallocate
