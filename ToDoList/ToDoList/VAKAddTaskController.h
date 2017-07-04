@@ -15,8 +15,4 @@
 @property (nonatomic, strong) VAKTask *task;
 @property (strong, nonatomic) NSString *currentGroup;
 
-- (void)updateDateRemind:(VAKTask *)task;
-- (void)remind:(VAKTask *)task;
-- (void)deleteRemind:(VAKTask *)task;
-
 @end
