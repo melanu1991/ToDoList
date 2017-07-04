@@ -70,12 +70,12 @@
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 2;
+    return VAKTwo;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == 0) {
-        return 1;
+    if (section == VAKZero) {
+        return VAKOne;
     }
     else {
         return [[VAKTaskService sharedVAKTaskService].arrayKeysGroup count];
