@@ -59,7 +59,6 @@
     else if (notification.userInfo[VAKAddNewTask]) {
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:currentTask];
-            [[VAKCoreDataManager sharedManager] addTaskToCoreData:currentTask];
         }
     }
     else if (notification.userInfo[VAKDoneTask]) {
@@ -68,7 +67,6 @@
     else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
-            [[VAKCoreDataManager sharedManager] removeTaskById:currentTask.taskId];
         }
     }
 }

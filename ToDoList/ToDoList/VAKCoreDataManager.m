@@ -1,4 +1,5 @@
 #import "VAKCoreDataManager.h"
+#import "Constants.h"
 
 @implementation VAKCoreDataManager
 
@@ -13,8 +14,29 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     });
     return manager;
+}
+
+#pragma mark - Notifications
+
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+    NSArray *arrayTasks = [self allTasks];
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+        [self updateTaskWithTask:currentTask];
+    }
+    else if (notification.userInfo[VAKAddNewTask]) {
+        if (![arrayTasks containsObject:currentTask]) {
+            [self addTaskToCoreData:currentTask];
+        }
+    }
+    else if (notification.userInfo[VAKDeleteTask]) {
+        if ([arrayTasks containsObject:currentTask]) {
+            [self removeTaskById:currentTask.taskId];
+        }
+    }
 }
 
 #pragma mark - helpers methods
@@ -156,5 +178,10 @@
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 @end

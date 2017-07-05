@@ -83,7 +83,7 @@ static NSInteger const VAKTwo = 2;
 static NSInteger const VAKThree = 3;
 static NSInteger const VAKFour = 4;
 
-static CGFloat const VAKHeightBigCell = 200.f;
-static CGFloat const VAKHeightRegularCell = 44.f;
+static float const VAKHeightBigCell = 200.f;
+static float const VAKHeightRegularCell = 44.f;
 
 #endif
