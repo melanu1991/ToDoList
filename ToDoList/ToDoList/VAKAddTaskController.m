@@ -239,21 +239,16 @@
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
     }
     else {
-        NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        self.task.taskName = self.taskName;
-        self.task.priority = self.selectPriority;
+        NSString *newDate = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithoutHourAndMinute];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.taskNotes, VAKNewNotes, self.taskName, VAKNewTaskName, newDate, VAKNewDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
         if (self.task.remindMeOnADay && !self.remindMeOnADay) {
             [self deleteRemind:self.task];
         }
-        self.task.remindMeOnADay = self.remindMeOnADay;
-        self.task.notes = self.taskNotes;
         if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
-            self.task.startedAt = self.selectDate;
             [self updateDateRemind:self.task];
         }
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
     }
-    [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

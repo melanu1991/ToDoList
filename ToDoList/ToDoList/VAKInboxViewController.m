@@ -36,10 +36,10 @@
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     if (notification.userInfo[VAKDetailTaskWasChanged]) {
         VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
-        NSString *lastDate = notification.userInfo[VAKLastDate];
-        NSString *lastTaskName = notification.userInfo[VAKLastTaskName];
-        NSString *lastNotes = notification.userInfo[VAKLastNotes];
-        if (![lastDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]] || ![lastNotes isEqualToString:currentTask.notes] || ![lastTaskName isEqualToString:currentTask.taskName]) {
+        NSString *newDate = notification.userInfo[VAKNewDate];
+        NSString *newTaskName = notification.userInfo[VAKNewTaskName];
+        NSString *newNotes = notification.userInfo[VAKNewNotes];
+        if (![newDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]] || ![newNotes isEqualToString:currentTask.notes] || ![newTaskName isEqualToString:currentTask.taskName]) {
             self.needToReloadData = YES;
         }
     }
