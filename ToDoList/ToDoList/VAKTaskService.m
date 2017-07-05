@@ -25,7 +25,7 @@
 - (instancetype)init {
     if (self = [super init]) {
         self.tasks = [NSMutableArray array];
-        [self loadArrayTasks];  
+//        [self loadArrayTasks];  
         self.addTaskController = [[VAKAddTaskController alloc] init];
     }
     
@@ -146,7 +146,7 @@
     [self sortArrayKeysDate:NO];
     [self sortArrayKeysGroup:NO];
     
-    [self saveArrayTasks];
+//    [self saveArrayTasks];
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -174,7 +174,7 @@
                 [self.dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
-            [self saveArrayTasks];
+//            [self saveArrayTasks];
             return;
         }
     }
@@ -197,7 +197,7 @@
     [self.dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
 
-    [self saveArrayTasks];
+//    [self saveArrayTasks];
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
@@ -209,7 +209,7 @@
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
-    [self saveArrayTasks];
+//    [self saveArrayTasks];
 }
 
 - (void)addGroup:(NSString *)group {
@@ -247,20 +247,20 @@
     self.arrayKeysDate = arrayKeysDate;
 }
 
-#pragma mark - save and load array tasks
-
-- (void)saveArrayTasks {
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tasks];
-    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"tasks"];
-}
-
-- (void)loadArrayTasks {
-    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"tasks"];
-    NSMutableArray *arrayTasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-    for (VAKTask *task in arrayTasks) {
-        [self addTask:task];
-    }
-}
+//#pragma mark - save and load array tasks
+//
+//- (void)saveArrayTasks {
+//    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tasks];
+//    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"tasks"];
+//}
+//
+//- (void)loadArrayTasks {
+//    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"tasks"];
+//    NSMutableArray *arrayTasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+//    for (VAKTask *task in arrayTasks) {
+//        [self addTask:task];
+//    }
+//}
 
 #pragma mark - deallocate
 

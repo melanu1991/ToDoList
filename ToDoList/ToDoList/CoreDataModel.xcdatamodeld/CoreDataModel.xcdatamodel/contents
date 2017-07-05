@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
-    <entity name="VAKTask" representedClassName="VAKTask" syncable="YES">
+    <entity name="VAKTaskCD" representedClassName="VAKTaskCD" syncable="YES">
         <attribute name="completed" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="currentGroup" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="finishedAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -12,6 +12,6 @@
         <attribute name="taskName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="VAKTask" positionX="-4680" positionY="-18" width="128" height="178"/>
+        <element name="VAKTaskCD" positionX="-4680" positionY="-18" width="128" height="178"/>
     </elements>
 </model>
