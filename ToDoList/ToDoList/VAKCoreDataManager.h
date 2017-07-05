@@ -1,5 +1,15 @@
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
 @interface VAKCoreDataManager : NSObject
+
++ (VAKCoreDataManager *)sharedManager;
+
+@property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
+
+- (void)saveContext;
+- (NSURL *)applicationDocumentsDirectory;
 
 @end
