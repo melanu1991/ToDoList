@@ -80,15 +80,7 @@
 
 - (void)addTaskToCoreData:(VAKTask *)task {
     VAKTaskCD *taskCD = [NSEntityDescription insertNewObjectForEntityForName:@"VAKTaskCD" inManagedObjectContext:self.managedObjectContext];
-    taskCD.taskName = task.taskName;
-    taskCD.taskId = task.taskId;
-    taskCD.notes = task.notes;
-    taskCD.startedAt = task.startedAt;
-    taskCD.finishedAt = task.finishedAt;
-    taskCD.completed = task.completed;
-    taskCD.remindMeOnADay = task.remindMeOnADay;
-    taskCD.priority = task.priority;
-    taskCD.currentGroup = task.currentGroup;
+    [self updateFieldsWithTaskCD:taskCD task:task];
     [self.managedObjectContext save:nil];
 }
 
@@ -107,19 +99,23 @@
     NSArray *arrayTasksCD = [self allTasks];
     for (VAKTaskCD *taskCD in arrayTasksCD) {
         if ([taskCD.taskId isEqualToString:task.taskId]) {
-            taskCD.taskName = task.taskName;
-            taskCD.taskId = task.taskId;
-            taskCD.notes = task.notes;
-            taskCD.startedAt = task.startedAt;
-            taskCD.finishedAt = task.finishedAt;
-            taskCD.completed = task.completed;
-            taskCD.remindMeOnADay = task.remindMeOnADay;
-            taskCD.priority = task.priority;
-            taskCD.currentGroup = task.currentGroup;
+            [self updateFieldsWithTaskCD:taskCD task:task];
             [self.managedObjectContext save:nil];
             break;
         }
     }
+}
+
+- (void)updateFieldsWithTaskCD:(VAKTaskCD *)taskCD task:(VAKTask *)task {
+    taskCD.taskName = task.taskName;
+    taskCD.taskId = task.taskId;
+    taskCD.notes = task.notes;
+    taskCD.startedAt = task.startedAt;
+    taskCD.finishedAt = task.finishedAt;
+    taskCD.completed = task.completed;
+    taskCD.remindMeOnADay = task.remindMeOnADay;
+    taskCD.priority = task.priority;
+    taskCD.currentGroup = task.currentGroup;
 }
 
 #pragma mark - Core Data Stack
