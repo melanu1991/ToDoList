@@ -117,9 +117,6 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
-    if (task.remindMeOnADay) {
-        [self.addTaskController remind:task];
-    }
 
     NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     NSString *currentGroup = task.currentGroup;
@@ -161,9 +158,6 @@
 
     for (VAKTask *task in self.tasks) {
         if ([task.taskId isEqualToString:taskId]) {
-            if (task.remindMeOnADay) {
-                [self.addTaskController deleteRemind:task];
-            }
             NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
             [self.tasks removeObject:task];
             NSMutableArray *arrayDate = self.dictionaryDate[currentDate];
