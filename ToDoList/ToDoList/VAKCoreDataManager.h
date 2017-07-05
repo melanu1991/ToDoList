@@ -16,6 +16,8 @@
 
 - (void)addTaskToCoreData:(VAKTask *)task;
 - (void)removeTaskById:(NSString *)taskId;
+- (void)updateTaskWithTask:(VAKTask *)task;
+- (void)removeAllObjects;
 - (NSArray *)loadTasks;
 
 @end

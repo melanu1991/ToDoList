@@ -19,6 +19,14 @@
 
 #pragma mark - helpers methods
 
+- (void)removeAllObjects {
+    NSArray *arrayTasks = [self allTasks];
+    for (VAKTaskCD *taskCD in arrayTasks) {
+        [self.managedObjectContext deleteObject:taskCD];
+    }
+    [self.managedObjectContext save:nil];
+}
+
 - (NSArray *)allTasks {
     NSFetchRequest *request = [[NSFetchRequest alloc] init];
     NSEntityDescription *descriptor = [NSEntityDescription entityForName:@"VAKTaskCD" inManagedObjectContext:self.managedObjectContext];
@@ -34,11 +42,18 @@
 - (NSArray *)loadTasks {
     NSArray *arrayTasksCD = [self allTasks];
     NSMutableArray *arrayTasks = [NSMutableArray array];
-    for (VAKTaskCD *item in arrayTasksCD) {
-        VAKTask *task = [[VAKTask alloc] initTaskWithId:item.taskId taskName:item.taskName];
+    for (VAKTaskCD *taskCD in arrayTasksCD) {
+        VAKTask *task = [[VAKTask alloc] initTaskWithId:taskCD.taskId taskName:taskCD.taskName];
+        task.notes = taskCD.notes;
+        task.startedAt = taskCD.startedAt;
+        task.finishedAt = taskCD.finishedAt;
+        task.completed = taskCD.completed;
+        task.remindMeOnADay = taskCD.remindMeOnADay;
+        task.priority = taskCD.priority;
+        task.currentGroup = taskCD.currentGroup;
         [arrayTasks addObject:task];
     }
-    return arrayTasks;
+    return [arrayTasks copy];
 }
 
 - (void)addTaskToCoreData:(VAKTask *)task {
@@ -52,7 +67,7 @@
     taskCD.remindMeOnADay = task.remindMeOnADay;
     taskCD.priority = task.priority;
     taskCD.currentGroup = task.currentGroup;
-    [taskCD.managedObjectContext save:nil];
+    [self.managedObjectContext save:nil];
 }
 
 - (void)removeTaskById:(NSString *)taskId {
@@ -60,6 +75,25 @@
     for (VAKTaskCD *currentTask in allObjects) {
         if ([currentTask.taskId isEqualToString:taskId]) {
             [self.managedObjectContext deleteObject:currentTask];
+            [self.managedObjectContext save:nil];
+            break;
+        }
+    }
+}
+
+- (void)updateTaskWithTask:(VAKTask *)task {
+    NSArray *arrayTasksCD = [self allTasks];
+    for (VAKTaskCD *taskCD in arrayTasksCD) {
+        if ([taskCD.taskId isEqualToString:task.taskId]) {
+            taskCD.taskName = task.taskName;
+            taskCD.taskId = task.taskId;
+            taskCD.notes = task.notes;
+            taskCD.startedAt = task.startedAt;
+            taskCD.finishedAt = task.finishedAt;
+            taskCD.completed = task.completed;
+            taskCD.remindMeOnADay = task.remindMeOnADay;
+            taskCD.priority = task.priority;
+            taskCD.currentGroup = task.currentGroup;
             [self.managedObjectContext save:nil];
             break;
         }

@@ -25,15 +25,14 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-//        [self loadArrayTasks];
         NSArray *arrayTasks = [[VAKCoreDataManager sharedManager] loadTasks];
-        if (!self.tasks) {
-            self.tasks = [NSMutableArray array];
-        }
-        else {
+        if ([arrayTasks count] > 0) {
             for (VAKTask *task in arrayTasks) {
                 [self addTask:task];
             }
+        }
+        else {
+            self.tasks = [NSMutableArray array];
         }
         self.addTaskController = [[VAKAddTaskController alloc] init];
     }
@@ -60,6 +59,7 @@
     else if (notification.userInfo[VAKAddNewTask]) {
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:currentTask];
+            [[VAKCoreDataManager sharedManager] addTaskToCoreData:currentTask];
         }
     }
     else if (notification.userInfo[VAKDoneTask]) {
@@ -68,6 +68,7 @@
     else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
+            [[VAKCoreDataManager sharedManager] removeTaskById:currentTask.taskId];
         }
     }
 }
@@ -116,7 +117,6 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
-//    [[VAKCoreDataManager sharedManager] addTaskToCoreData:task];
     if (task.remindMeOnADay) {
         [self.addTaskController remind:task];
     }
@@ -155,14 +155,11 @@
     
     [self sortArrayKeysDate:NO];
     [self sortArrayKeysGroup:NO];
-    
-//    [self saveArrayTasks];
 }
 
 - (void)removeTaskById:(NSString *)taskId {
 
     for (VAKTask *task in self.tasks) {
-//        [[VAKCoreDataManager sharedManager] removeTaskById:taskId];
         if ([task.taskId isEqualToString:taskId]) {
             if (task.remindMeOnADay) {
                 [self.addTaskController deleteRemind:task];
@@ -185,7 +182,6 @@
                 [self.dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
-//            [self saveArrayTasks];
             return;
         }
     }
@@ -207,8 +203,6 @@
     }
     [self.dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
-
-//    [self saveArrayTasks];
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
@@ -220,7 +214,6 @@
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
-//    [self saveArrayTasks];
 }
 
 - (void)addGroup:(NSString *)group {
@@ -258,20 +251,20 @@
     self.arrayKeysDate = arrayKeysDate;
 }
 
-//#pragma mark - save and load array tasks
-//
-//- (void)saveArrayTasks {
-//    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tasks];
-//    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"tasks"];
-//}
-//
-//- (void)loadArrayTasks {
-//    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"tasks"];
-//    NSMutableArray *arrayTasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//    for (VAKTask *task in arrayTasks) {
-//        [self addTask:task];
-//    }
-//}
+#pragma mark - save and load array tasks
+
+- (void)saveArrayTasks {
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self.tasks];
+    [[NSUserDefaults standardUserDefaults] setObject:data forKey:@"tasks"];
+}
+
+- (void)loadArrayTasks {
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"tasks"];
+    NSMutableArray *arrayTasks = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    for (VAKTask *task in arrayTasks) {
+        [self addTask:task];
+    }
+}
 
 #pragma mark - deallocate
 
