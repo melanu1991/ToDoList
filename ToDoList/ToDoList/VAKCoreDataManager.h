@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "VAKTaskCD+CoreDataClass.h"
+#import "VAKTask.h"
 
 @interface VAKCoreDataManager : NSObject
 
@@ -11,5 +13,9 @@
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
+
+- (void)addTaskToCoreData:(VAKTask *)task;
+- (void)removeTaskById:(NSString *)taskId;
+- (NSArray *)loadTasks;
 
 @end

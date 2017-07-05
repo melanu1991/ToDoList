@@ -10,6 +10,7 @@
         _priority = @"None";
         _startedAt = [NSDate date];
         _notes = @"";
+        _currentGroup = @"Inbox";
     }
     return self;
 }

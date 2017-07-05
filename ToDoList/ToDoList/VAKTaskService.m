@@ -1,6 +1,7 @@
 #import "VAKTaskService.h"
 #import "VAKAddTaskController.h"
 #import "Constants.h"
+#import "VAKCoreDataManager.h"
 
 @interface VAKTaskService ()
 
@@ -24,8 +25,16 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.tasks = [NSMutableArray array];
-//        [self loadArrayTasks];  
+//        [self loadArrayTasks];
+        NSArray *arrayTasks = [[VAKCoreDataManager sharedManager] loadTasks];
+        if (!self.tasks) {
+            self.tasks = [NSMutableArray array];
+        }
+        else {
+            for (VAKTask *task in arrayTasks) {
+                [self addTask:task];
+            }
+        }
         self.addTaskController = [[VAKAddTaskController alloc] init];
     }
     
@@ -107,6 +116,7 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
+//    [[VAKCoreDataManager sharedManager] addTaskToCoreData:task];
     if (task.remindMeOnADay) {
         [self.addTaskController remind:task];
     }
@@ -152,6 +162,7 @@
 - (void)removeTaskById:(NSString *)taskId {
 
     for (VAKTask *task in self.tasks) {
+//        [[VAKCoreDataManager sharedManager] removeTaskById:taskId];
         if ([task.taskId isEqualToString:taskId]) {
             if (task.remindMeOnADay) {
                 [self.addTaskController deleteRemind:task];
