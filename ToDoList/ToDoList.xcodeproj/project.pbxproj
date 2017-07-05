@@ -39,6 +39,7 @@
 		58C936D51EE44D5800970D40 /* VAKSelectDateController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58C936D31EE44D5800970D40 /* VAKSelectDateController.xib */; };
 		58FB7EDF1F0CEF3A0091144D /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 58FB7EDD1F0CEF3A0091144D /* CoreDataModel.xcdatamodeld */; };
 		58FB7EE41F0CF1C40091144D /* VAKTask+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 58FB7EE11F0CF1C40091144D /* VAKTask+CoreDataClass.m */; };
+		58FB7EEA1F0CF2F90091144D /* VAKCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58FB7EE91F0CF2F90091144D /* VAKCoreDataManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -97,6 +98,8 @@
 		58FB7EDE1F0CEF3A0091144D /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		58FB7EE01F0CF1C40091144D /* VAKTask+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VAKTask+CoreDataClass.h"; sourceTree = "<group>"; };
 		58FB7EE11F0CF1C40091144D /* VAKTask+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VAKTask+CoreDataClass.m"; sourceTree = "<group>"; };
+		58FB7EE81F0CF2F90091144D /* VAKCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKCoreDataManager.h; sourceTree = "<group>"; };
+		58FB7EE91F0CF2F90091144D /* VAKCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKCoreDataManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -129,6 +132,7 @@
 		580037F41EE3E3B200A19465 /* ToDoList */ = {
 			isa = PBXGroup;
 			children = (
+				58FB7EE71F0CF2C40091144D /* CoreDataManager */,
 				58FB7EE61F0CF1CB0091144D /* CoreDataModels */,
 				58B0EC9F1F0503AC0033A4CD /* Delegate */,
 				58D1CF581EFAE9090080F61C /* Helpers */,
@@ -250,6 +254,15 @@
 			name = CoreDataModels;
 			sourceTree = "<group>";
 		};
+		58FB7EE71F0CF2C40091144D /* CoreDataManager */ = {
+			isa = PBXGroup;
+			children = (
+				58FB7EE81F0CF2F90091144D /* VAKCoreDataManager.h */,
+				58FB7EE91F0CF2F90091144D /* VAKCoreDataManager.m */,
+			);
+			name = CoreDataManager;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -333,6 +346,7 @@
 			files = (
 				58FB7EDF1F0CEF3A0091144D /* CoreDataModel.xcdatamodeld in Sources */,
 				58A17CB41EEDC26600C023E2 /* VAKPriorityCell.m in Sources */,
+				58FB7EEA1F0CF2F90091144D /* VAKCoreDataManager.m in Sources */,
 				580038111EE3E59A00A19465 /* VAKTask.m in Sources */,
 				58BFD9021EEA74CA003897F4 /* VAKCustumCell.m in Sources */,
 				5800381C1EE3E65700A19465 /* VAKToDoListViewController.m in Sources */,
