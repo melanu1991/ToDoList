@@ -24,7 +24,7 @@
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
     NSArray *arrayTasks = [self allTasks];
-    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+    if (notification.userInfo[VAKDetailTaskWasChanged] || notification.userInfo[VAKDoneTask]) {
         [self updateTaskWithTask:currentTask];
     }
     else if (notification.userInfo[VAKAddNewTask]) {
