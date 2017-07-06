@@ -29,17 +29,27 @@
     
 }
 
-#pragma mark - work with entity
+#pragma mark - work with entities
 
 - (void)addTaskWithTask:(VAKTask *)task {
     Task *coreDataTask = [NSEntityDescription insertNewObjectForEntityForName:@"Task" inManagedObjectContext:self.managedObjectContext];
     coreDataTask.name = task.taskName;
     coreDataTask.taskId = task.taskId;
-    
+    coreDataTask.completed = task.completed;
+    coreDataTask.remind = task.remindMeOnADay;
+    coreDataTask.notes = task.notes;
+    coreDataTask.startedAt = task.startedAt;
+    coreDataTask.finishedAt = task.finishedAt;
+    coreDataTask.priority = task.priority;
+    coreDataTask.toDoList = [self addToDoListWithToDoList:task.currentToDoList];
 }
 
-- (void)addToDoListWithToDoList:(VAKToDoList *)toDoList {
+- (ToDoList *)addToDoListWithToDoList:(VAKToDoList *)toDoList {
     ToDoList *coreDataToDoList = [NSEntityDescription insertNewObjectForEntityForName:@"ToDoList" inManagedObjectContext:self.managedObjectContext];
+    coreDataToDoList.name = toDoList.toDoListName;
+    coreDataToDoList.toDoListId = toDoList.toDoListId;
+    coreDataToDoList.arrayTasks = [NSSet setWithArray:toDoList.toDoListArrayTasks];
+    return coreDataToDoList;
 }
 
 #pragma mark - save context
