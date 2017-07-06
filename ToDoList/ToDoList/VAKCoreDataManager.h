@@ -7,6 +7,8 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
++ (VAKCoreDataManager *)sharedManager;
+
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
