@@ -44,6 +44,8 @@
     NSString *title = VAKAddTaskTitle;
     if (!self.task) {
         self.selectPriority = VAKNone;
+        self.taskNotes = @"";
+        self.remindMeOnADay = NO;
         self.selectDate = [NSDate date];
         self.doneButton.enabled = NO;
     }

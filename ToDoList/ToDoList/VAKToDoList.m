@@ -21,6 +21,24 @@
     return _privateArrayTasks;
 }
 
+#pragma mark - implemented protocol NSCoding
+
+- (void)encodeWithCoder:(NSCoder *)aCoder {
+    [aCoder encodeObject:self.toDoListId forKey:@"toDoListId"];
+    [aCoder encodeObject:self.toDoListName forKey:@"toDoListName"];
+    [aCoder encodeObject:self.toDoListArrayTasks forKey:@"toDoListArrayTasks"];
+}
+
+- (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
+    self = [super init];
+    if (self) {
+        _toDoListId = [aDecoder decodeObjectForKey:@"toDoListId"];
+        _toDoListName = [aDecoder decodeObjectForKey:@"toDoListName"];
+        _toDoListArrayTasks = [aDecoder decodeObjectForKey:@"toDoListArrayTasks"];
+    }
+    return self;
+}
+
 @end
 
 @implementation VAKToDoList (Additional)
@@ -37,10 +55,6 @@
     if ([arrayCurrentToDoList containsObject:task]) {
         [arrayCurrentToDoList removeObject:task];
     }
-}
-
-- (void)updateTaskByTask:(VAKTask *)task {
-    
 }
 
 @end

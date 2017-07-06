@@ -24,4 +24,7 @@
 - (void)sortArrayKeysDate:(BOOL)isReverseOrder;
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder;
 
+- (void)loadData;
+- (void)saveData;
+
 @end

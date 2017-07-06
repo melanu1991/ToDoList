@@ -2,7 +2,7 @@
 
 @class VAKToDoList;
 
-@interface VAKTask : NSObject
+@interface VAKTask : NSObject <NSCoding>
 
 @property (nonatomic, strong) NSNumber *taskId;
 @property (nonatomic, copy) NSString *taskName;
