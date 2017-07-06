@@ -178,7 +178,7 @@
             </objects>
             <point key="canvasLocation" x="1535" y="-321"/>
         </scene>
-        <!--To Do List View Controller-->
+        <!--ToDoList-->
         <scene sceneID="lLf-M7-eMu">
             <objects>
                 <viewController id="kCv-xM-fEy" customClass="VAKToDoListViewController" sceneMemberID="viewController">
@@ -192,7 +192,7 @@
                             <outlet property="delegate" destination="kCv-xM-fEy" id="7ga-bK-oLa"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="jbR-Jg-xNX">
+                    <navigationItem key="navigationItem" title="ToDoList" id="jbR-Jg-xNX">
                         <barButtonItem key="leftBarButtonItem" title="Edit" id="NiU-Ag-kGc">
                             <connections>
                                 <action selector="editButtonPressed:" destination="kCv-xM-fEy" id="MT8-C2-RKE"/>
@@ -300,7 +300,7 @@
             </objects>
             <point key="canvasLocation" x="750" y="1227"/>
         </scene>
-        <!--Search View Controller-->
+        <!--Search-->
         <scene sceneID="Efn-tg-J1a">
             <objects>
                 <viewController id="MrZ-Fm-iLx" customClass="VAKSearchViewController" sceneMemberID="viewController">
@@ -370,7 +370,7 @@
                             <constraint firstAttribute="trailing" secondItem="yLC-zi-uBz" secondAttribute="trailing" id="yf3-LU-Dit"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Odu-p2-CTq"/>
+                    <navigationItem key="navigationItem" title="Search" id="Odu-p2-CTq"/>
                     <connections>
                         <outlet property="chooseActiveOrCompletedTasks" destination="Bnt-al-kPF" id="HjW-rE-Ld3"/>
                         <outlet property="noResultLabel" destination="j9k-br-55p" id="roA-Gz-WoQ"/>
