@@ -17,6 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     [self arrayTasks];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
@@ -25,19 +26,19 @@
     
     if (self.isSelectedGroup) {
         self.navigationItem.title = self.currentGroup.toDoListName;
-        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
+        self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
-        self.backButton = [[UIBarButtonItem alloc] initWithTitle:VAKBackButton style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
+        self.backButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKBackButton, nil) style:UIBarButtonItemStylePlain target:self action:@selector(backButtonPressed)];
         NSArray *arrayLeftButton = [NSArray arrayWithObjects:self.editButton, self.backButton, nil];
         self.navigationItem.leftBarButtonItems = arrayLeftButton;
     }
     else {
-        self.navigationItem.title = VAKToday;
-        self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
+        self.navigationItem.title = NSLocalizedString(VAKToday, nil);
+        self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
         self.navigationItem.leftBarButtonItem = self.editButton;
     }
     
-    self.addButton = [[UIBarButtonItem alloc] initWithTitle:VAKAddButton style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
+    self.addButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKAddButton, nil) style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
 
     if (self.needToReloadData) {
@@ -125,11 +126,11 @@
 }
 
 - (void)editTaskButtonPressed {
-    if ([self.editButton.title isEqualToString:VAKEditButton]) {
-        self.editButton.title = VAKDoneButton;
+    if ([self.editButton.title isEqualToString:NSLocalizedString(VAKEditButton, nil)]) {
+        self.editButton.title = NSLocalizedString(VAKDoneButton, nil);
     }
     else {
-        self.editButton.title = VAKEditButton;
+        self.editButton.title = NSLocalizedString(VAKEditButton, nil);
     }
     [self.tableView setEditing:!self.tableView.editing];
 }
@@ -148,7 +149,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
@@ -172,7 +172,7 @@
     if (section == VAKZero) {
         return nil;
     }
-    return VAKTitleForHeaderCompleted;
+    return NSLocalizedString(VAKTitleForHeaderCompleted, nil);
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -231,8 +231,8 @@
         currentTask = self.dictionaryTasks[VAKCompletedTask][indexPath.row];
     }
     
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
         if (indexPath.section == VAKZero)
         {
@@ -248,11 +248,11 @@
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
     [alertController addAction:okAction];
     [alertController addAction:cancelAction];
     
-    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDoneButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (indexPath.section == VAKZero) {
             [self.dictionaryTasks[VAKCompletedTask] addObject:self.dictionaryTasks[VAKNotCompletedTask][indexPath.row]];
@@ -274,7 +274,7 @@
         doneAction.backgroundColor = [UIColor blueColor];
     }
     
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         [self presentViewController:alertController animated:YES completion:nil];
     }];
     deleteAction.backgroundColor = [UIColor redColor];

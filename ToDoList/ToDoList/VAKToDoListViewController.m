@@ -62,12 +62,12 @@
 }
 
 - (IBAction)editButtonPressed:(UIBarButtonItem *)sender {
-    if ([self.editButton.title isEqualToString:VAKEditButton]) {
-        self.editButton.title = VAKDoneButton;
+    if ([self.editButton.title isEqualToString:NSLocalizedString(VAKEditButton, nil)]) {
+        self.editButton.title = NSLocalizedString(VAKDoneButton, nil);
         self.tableView.editing = YES;
     }
     else {
-        self.editButton.title = VAKEditButton;
+        self.editButton.title = NSLocalizedString(VAKEditButton, nil);
         self.tableView.editing = NO;
     }
 }
@@ -172,12 +172,13 @@
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKDelete handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (indexPath.row != 0) {
             
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKDeleteTaskTitle message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
-            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
                 for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
                     if (![item.toDoListName isEqualToString:VAKInbox]) {
@@ -202,7 +203,7 @@
             
             }];
             
-            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleCancel handler:nil];
             [alertController addAction:alertActionOk];
             [alertController addAction:alertActionCancel];
             [self presentViewController:alertController animated:YES completion:nil];
@@ -211,14 +212,14 @@
         
     }];
     
-    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:VAKEditButton handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+    UITableViewRowAction *editAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKEditButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
         if (indexPath.row != 0) {
-            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:VAKEditTaskTitle message:nil preferredStyle:UIAlertControllerStyleAlert];
+            UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKEditTaskTitle, nil) message:nil preferredStyle:UIAlertControllerStyleAlert];
             [alertController addTextFieldWithConfigurationHandler:^(UITextField * _Nonnull textField) {
-                textField.placeholder = VAKInputNewNameGroup;
+                textField.placeholder = NSLocalizedString(VAKInputNewNameGroup, nil);
             }];
-            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:VAKOkButton style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
                 NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
                 for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
@@ -233,7 +234,7 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
             }];
-            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleCancel handler:nil];
+            UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleCancel handler:nil];
             [alertController addAction:alertActionOk];
             [alertController addAction:alertActionCancel];
             [self presentViewController:alertController animated:YES completion:nil];
