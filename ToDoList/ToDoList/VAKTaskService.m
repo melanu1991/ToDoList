@@ -28,7 +28,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-//        [self loadData];
+        [self loadData];
         if (!_tasks) {
             _tasks = [NSMutableArray array];
             [self addGroup:VAKInbox];
@@ -56,11 +56,10 @@
     }
     NSData *toDoLists = [[NSUserDefaults standardUserDefaults] objectForKey:@"toDoLists"];
     NSArray *arrayToDoLists = [NSKeyedUnarchiver unarchiveObjectWithData:toDoLists];
+    NSMutableArray *currentArrayToDoLists = (NSMutableArray *)self.toDoListArray;
     for (VAKToDoList *toDoList in arrayToDoLists) {
-        VAKToDoList *oldToDoList = [[VAKToDoList alloc] init];
-        oldToDoList.toDoListName = toDoList.toDoListName;
-        oldToDoList.toDoListId = toDoList.toDoListId;
-        oldToDoList.toDoListArrayTasks = toDoList.toDoListArrayTasks;
+        [currentArrayToDoLists addObject:toDoList];
+        
     }
 }
 
@@ -73,20 +72,24 @@
         NSString *newDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         if (![lastDate isEqualToString:newDate]) {
             [self updateTask:currentTask lastDate:lastDate newDate:newDate];
+            [self saveData];
         }
     }
     else if (notification.userInfo[VAKAddNewTask]) {
         VAKTask *newTask = notification.userInfo[VAKCurrentTask];
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:newTask];
+            [self saveData];
         }
     }
     else if (notification.userInfo[VAKDoneTask]) {
         [self updateTaskForCompleted:currentTask];
+        [self saveData];
     }
     else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
+            [self saveData];
         }
     }
 }
@@ -168,8 +171,6 @@
     
     [self sortArrayKeysDate:self.isReverseOrdered];
     [self sortArrayKeysGroup:self.isReverseOrdered];
-    
-    [self saveData];
 }
 
 - (void)removeTaskById:(NSNumber *)taskId {
@@ -200,8 +201,6 @@
             return;
         }
     }
-    
-    [self saveData];
 }
 
 - (void)updateTask:(VAKTask *)task lastDate:(NSString *)lastDate newDate:(NSString *)newDate {
@@ -222,8 +221,6 @@
     NSMutableDictionary *dictionaryDate = (NSMutableDictionary *)self.dictionaryDate;
     [dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
-
-    [self saveData];
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
@@ -235,8 +232,6 @@
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
-    
-    [self saveData];
 }
 
 //Добавление новой группы ToDoList
@@ -251,8 +246,6 @@
     VAKToDoList *newGroup = [[VAKToDoList alloc] initWithName:groupName];
     NSMutableArray *arrayGroups = (NSMutableArray *)self.toDoListArray;
     [arrayGroups addObject:newGroup];
-    
-    [self saveData];
 }
 
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder {

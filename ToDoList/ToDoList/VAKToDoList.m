@@ -34,7 +34,7 @@
     if (self) {
         _toDoListId = [aDecoder decodeObjectForKey:@"toDoListId"];
         _toDoListName = [aDecoder decodeObjectForKey:@"toDoListName"];
-        _toDoListArrayTasks = [aDecoder decodeObjectForKey:@"toDoListArrayTasks"];
+        _privateArrayTasks = [aDecoder decodeObjectForKey:@"toDoListArrayTasks"];
     }
     return self;
 }
