@@ -107,6 +107,7 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
+  
     NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     NSString *currentGroup = task.currentGroup;
     
