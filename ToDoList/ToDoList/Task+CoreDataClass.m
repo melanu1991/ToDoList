@@ -4,7 +4,7 @@
 @implementation Task
 
 @dynamic name;
-@dynamic id;
+@dynamic taskId;
 @dynamic startedAt;
 @dynamic finishedAt;
 @dynamic completed;

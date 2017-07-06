@@ -5,7 +5,7 @@
 
 @interface ToDoList : NSManagedObject
 
-@property (nullable, nonatomic, copy) NSNumber *id;
+@property (nullable, nonatomic, copy) NSNumber *toDoListId;
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, retain) NSSet<Task *> *arrayTasks;
 

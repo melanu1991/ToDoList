@@ -1,4 +1,9 @@
 #import "VAKCoreDataManager.h"
+#import "Constants.h"
+#import "Task+CoreDataClass.h"
+#import "ToDoList+CoreDataClass.h"
+#import "VAKTask.h"
+#import "VAKToDoList.h"
 
 @implementation VAKCoreDataManager
 
@@ -13,8 +18,28 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(cfg:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     });
     return manager;
+}
+
+#pragma mark - Notification
+
+- (void)cfg:(NSNotification *)notification {
+    
+}
+
+#pragma mark - work with entity
+
+- (void)addTaskWithTask:(VAKTask *)task {
+    Task *coreDataTask = [NSEntityDescription insertNewObjectForEntityForName:@"Task" inManagedObjectContext:self.managedObjectContext];
+    coreDataTask.name = task.taskName;
+    coreDataTask.taskId = task.taskId;
+    
+}
+
+- (void)addToDoListWithToDoList:(VAKToDoList *)toDoList {
+    ToDoList *coreDataToDoList = [NSEntityDescription insertNewObjectForEntityForName:@"ToDoList" inManagedObjectContext:self.managedObjectContext];
 }
 
 #pragma mark - save context

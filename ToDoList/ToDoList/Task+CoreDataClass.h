@@ -6,7 +6,7 @@
 @interface Task : NSManagedObject
 
 @property (nullable, nonatomic, copy) NSString *name;
-@property (nullable, nonatomic, copy) NSNumber *id;
+@property (nullable, nonatomic, copy) NSNumber *taskId;
 @property (nullable, nonatomic, copy) NSDate *startedAt;
 @property (nullable, nonatomic, copy) NSDate *finishedAt;
 @property (nonatomic) BOOL completed;

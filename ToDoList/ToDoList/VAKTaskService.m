@@ -28,7 +28,7 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        [self loadData];
+//        [self loadData];
         if (!_tasks) {
             _tasks = [NSMutableArray array];
             [self addGroup:VAKInbox];
@@ -76,27 +76,27 @@
             currentTask.notes = notification.userInfo[VAKNewNotes];
             currentTask.priority = notification.userInfo[VAKNewPriority];
         }
-        [self saveData];
+//        [self saveData];
     }
     else if (notification.userInfo[VAKAddNewTask]) {
         VAKTask *newTask = notification.userInfo[VAKCurrentTask];
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:newTask];
-            [self saveData];
+//            [self saveData];
         }
     }
     else if (notification.userInfo[VAKDoneTask]) {
         [self updateTaskForCompleted:currentTask];
-        [self saveData];
+//        [self saveData];
     }
     else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
-            [self saveData];
+//            [self saveData];
         }
     }
     else if (notification.userInfo[VAKWasEditNameGroup]) {
-        [self saveData];
+//        [self saveData];
     }
 }
 

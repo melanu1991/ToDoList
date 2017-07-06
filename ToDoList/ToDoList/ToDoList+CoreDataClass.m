@@ -3,7 +3,7 @@
 
 @implementation ToDoList
 
-@dynamic id;
+@dynamic toDoListId;
 @dynamic name;
 @dynamic arrayTasks;
 
