@@ -62,6 +62,9 @@ static NSString * const VAKTaskTitle = @"TASK";
 static NSString * const VAKRemindTitle = @"REMIND";
 static NSString * const VAKPriorityTitle = @"PRIORITY";
 static NSString * const VAKNotesTitle = @"NOTES";
+static NSString * const VAKRemindMeOnADay = @"Remind me On a Day";
+static NSString * const VAKPriority = @"Priority";
+static NSString * const VAKWhatToDo = @"What you have to do...";
 
 static NSString * const VAKAddProject = @"VAKAddProject";
 static NSString * const VAKNameNewProject = @"VAKNameNewProject";

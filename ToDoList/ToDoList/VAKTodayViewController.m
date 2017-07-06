@@ -17,7 +17,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
     if (self.dictionaryTasksForSelectedGroup) {
         self.navigationItem.title = VAKTaskOfSelectedGroup;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];

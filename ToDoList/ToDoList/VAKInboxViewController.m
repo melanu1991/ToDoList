@@ -25,7 +25,6 @@
     [super viewDidLoad];
     
     self.tabBarController.delegate = self;
-
     self.editButton = [[UIBarButtonItem alloc] initWithTitle:VAKEditButton style:UIBarButtonItemStylePlain target:self action:@selector(editButtonPressed)];
     self.navigationItem.leftBarButtonItem = self.editButton;
     

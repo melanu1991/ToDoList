@@ -31,7 +31,6 @@
     
     self.addProjectButton.target = self;
     self.addProjectButton.action = @selector(addProjectButtonPressed:);
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(addNewProject:) name:VAKAddProject object:nil];
 }
@@ -132,7 +131,7 @@
         [self.navigationController pushViewController:todayViewController animated:YES];
     }
     else {
-        if (indexPath.row == VAKOne) {
+        if (indexPath.row == VAKZero) {
             VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
             [self.navigationController pushViewController:addProjectViewController animated:YES];
         }

@@ -44,6 +44,7 @@
     NSString *title = VAKAddTaskTitle;
     if (!self.task) {
         self.selectPriority = VAKNone;
+        self.taskNotes = @"";
         if (!self.currentGroup) {
             self.currentGroup = VAKInbox;
         }
@@ -100,12 +101,14 @@
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
         cell.textField.text = self.task.taskName;
+        cell.textField.placeholder = VAKWhatToDo;
         return cell;
     }
     else if (indexPath.section == VAKOne) {
         if (indexPath.row == VAKZero) {
             VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
             cell.delegate = self;
+            cell.remindLabel.text = VAKRemindMeOnADay;
             if (self.remindMeOnADay) {
                 [cell.remindSwitch setOn:YES animated:YES];
             }
@@ -119,6 +122,7 @@
     }
     else if (indexPath.section == VAKTwo) {
         VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
+        cell.textLabel.text = VAKPriority;
         cell.detailTextLabel.text = self.selectPriority;
         return cell;
     }
@@ -233,7 +237,6 @@
     }
     else {
         NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         self.task.taskName = self.taskName;
         self.task.priority = self.selectPriority;
         self.task.remindMeOnADay = self.remindMeOnADay;
@@ -241,6 +244,7 @@
         if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
             self.task.startedAt = self.selectDate;
         }
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
     [self.navigationController popViewControllerAnimated:YES];

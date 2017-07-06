@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  ToDoList
+
+  Created by melanu1991 on 03.07.17.
+  Copyright © 2017 melanu1991. All rights reserved.
+*/
+
+"Edit" = "Редактирование";
+"Done" = "Завершить";
+"OK" = "Окей";
+"Cancel" = "Отмена";
+"Delete" = "Удалить";
+"Are you sure you want remove this item?" = "Вы уверены что хотите удалить данный элемент?";
+"Delete task" = "Удаление задачи";
+"Input new name group" = "Введите новое имя группы";
+"Edit task" = "Редактирование задачи";
+"TASK" = "Задача";
+"REMIND" = "Напоминание";
+"PRIORITY" = "Приоритет";
+"NOTES" = "Заметка";
+"Remind me On a Day" = "Напомнить мне в день";
+"Priority" = "Приоритет";
+"None" = "Нету";
+"Low" = "Низкий";
+"Medium" = "Средний";
+"High" = "Высокий";
+"What you have to do..." = "Введите название задачи";
+"Add Item" = "Добавление задачи";
+"Back" = "Назад";
+"Add project" = "Добавить группу";
+"Select Priority" = "Выбор приоритета";
+"Inbox" = "Входящие";
+"Today" = "Сегодня";
+"Tasks Of Selected Group" = "Список задач выбранной группы";
+"Choose date" = "Выбор даты";
+"Completed" = "Завершенные";
