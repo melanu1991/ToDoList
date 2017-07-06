@@ -16,12 +16,12 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKDoneButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(setSelectDate)];
+    UIBarButtonItem *doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(setSelectDate)];
     self.navigationItem.rightBarButtonItem = doneButton;
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(cancelSelectDate)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelSelectDate)];
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.datePicker.minimumDate = [NSDate date];
-    [self.navigationItem setTitle:NSLocalizedString(VAKDateTitle, nil)];
+    [self.navigationItem setTitle:VAKDateTitle];
     self.currentDate.text = [NSDate dateStringFromDate:[NSDate date] format:VAKDateFormatWithHourAndMinute];
 }
 
