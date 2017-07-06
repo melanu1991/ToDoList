@@ -68,12 +68,15 @@
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
     if (notification.userInfo[VAKDetailTaskWasChanged]) {
-        NSString *lastDate = notification.userInfo[VAKLastDate];
-        NSString *newDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        if (![lastDate isEqualToString:newDate]) {
+        NSString *newDate = notification.userInfo[VAKNewDate];
+        NSString *lastDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        if (![lastDate isEqualToString:newDate] || ![currentTask.notes isEqualToString:notification.userInfo[VAKNewNotes]] || ![currentTask.priority isEqualToString:notification.userInfo[VAKNewPriority]] || ![currentTask.taskName isEqualToString:notification.userInfo[VAKNewTaskName]]) {
             [self updateTask:currentTask lastDate:lastDate newDate:newDate];
-            [self saveData];
+            currentTask.taskName = notification.userInfo[VAKNewTaskName];
+            currentTask.notes = notification.userInfo[VAKNewNotes];
+            currentTask.priority = notification.userInfo[VAKNewPriority];
         }
+        [self saveData];
     }
     else if (notification.userInfo[VAKAddNewTask]) {
         VAKTask *newTask = notification.userInfo[VAKCurrentTask];
@@ -91,6 +94,9 @@
             [self removeTaskById:currentTask.taskId];
             [self saveData];
         }
+    }
+    else if (notification.userInfo[VAKWasEditNameGroup]) {
+        [self saveData];
     }
 }
 

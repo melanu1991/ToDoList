@@ -238,19 +238,18 @@
         [self.currentGroup addTaskByTask:newTask];
     }
     else {
-        NSString *lastDate = [NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.task.notes, VAKLastNotes, self.task.taskName, VAKLastTaskName, lastDate, VAKLastDate, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
-        self.task.taskName = self.taskName;
-        self.task.priority = self.selectPriority;
+        NSString *newDate = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithoutHourAndMinute];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.taskNotes, VAKNewNotes, self.taskName, VAKNewTaskName, newDate, VAKNewDate, self.selectPriority ,VAKNewPriority, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         if (self.task.remindMeOnADay && !self.remindMeOnADay) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"delete", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
-        self.task.remindMeOnADay = self.remindMeOnADay;
-        self.task.notes = self.taskNotes;
-        if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
-            self.task.startedAt = self.selectDate;
+        else if (![[NSDate dateStringFromDate:self.task.startedAt format:VAKDateFormatWithHourAndMinute] isEqualToString:[NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute]]) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"update", nil];
+            [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
+        }
+        else if (!self.task.remindMeOnADay && self.remindMeOnADay) {
+            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"remind", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
     }
