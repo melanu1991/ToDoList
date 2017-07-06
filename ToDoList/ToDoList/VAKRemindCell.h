@@ -5,5 +5,6 @@
 
 @property (weak, nonatomic) IBOutlet UISwitch *remindSwitch;
 @property (weak, nonatomic) id<VAKRemindDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UILabel *remindLabel;
 
 @end

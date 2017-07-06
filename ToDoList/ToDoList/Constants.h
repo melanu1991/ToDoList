@@ -75,6 +75,8 @@ static NSString * const VAKStoriboardIdentifierTodayViewController = @"VAKStorib
 static NSString * const VAKTaskOfSelectedGroup = @"Tasks Of Selected Group";
 static NSString * const VAKRemindTask = @"VAKRemindTask";
 static NSString * const VAKCurrentGroup = @"VAKCurrentGroup";
+static NSString * const VAKRemindMeOnADay = @"Remind me On a Day";
+static NSString * const VAKWhatYouHaveToDo = @"What you have to do...";
 
 static NSInteger const VAKOne = 1;
 static NSInteger const VAKTwo = 2;

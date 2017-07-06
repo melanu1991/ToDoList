@@ -35,13 +35,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:VAKDoneButton style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
+    self.doneButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKDoneButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(doneButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.doneButton;
     
-    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:VAKCancelButton style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
+    UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc]initWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(cancelButtonPressed)];
     self.navigationItem.leftBarButtonItem = cancelButton;
     
-    NSString *title = VAKAddTaskTitle;
+    NSString *title = NSLocalizedString(VAKAddTaskTitle, nil);
     if (!self.task) {
         self.selectPriority = VAKNone;
         self.taskNotes = @"";
@@ -50,7 +50,7 @@
         self.doneButton.enabled = NO;
     }
     else {
-        title = VAKEditTaskTitle;
+        title = NSLocalizedString(VAKEditTaskTitle, nil);
         self.selectPriority = self.task.priority;
         self.selectDate = self.task.startedAt;
         self.remindMeOnADay = self.task.remindMeOnADay;
@@ -98,6 +98,7 @@
     if (indexPath.section == VAKZero) {
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
+        cell.textField.placeholder = NSLocalizedString(VAKWhatYouHaveToDo, nil);
         cell.textField.text = self.task.taskName;
         return cell;
     }
@@ -105,6 +106,7 @@
         if (indexPath.row == VAKZero) {
             VAKRemindCell *cell = (VAKRemindCell *)[self cellForIdentifier:VAKRemindCellIdentifier tableView:tableView];
             cell.delegate = self;
+            cell.remindLabel.text = NSLocalizedString(VAKRemindMeOnADay, nil);
             if (self.remindMeOnADay) {
                 [cell.remindSwitch setOn:YES animated:YES];
             }
@@ -116,7 +118,8 @@
     }
     else if (indexPath.section == VAKTwo) {
         VAKPriorityCell *cell = (VAKPriorityCell *)[self cellForIdentifier:VAKPriorityCellIdentifier tableView:tableView];
-        cell.detailTextLabel.text = self.selectPriority;
+        cell.detailTextLabel.text = NSLocalizedString(self.selectPriority, nil);
+        cell.textLabel.text = NSLocalizedString(VAKPriorityTitle, nil);
         return cell;
     }
     VAKNotesCell *cell = (VAKNotesCell *)[self cellForIdentifier:VAKNotesCellIdentifier tableView:tableView];
@@ -127,15 +130,15 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if (section == VAKZero) {
-        return VAKTaskTitle;
+        return NSLocalizedString(VAKTaskTitle, nil);
     }
     else if (section == VAKOne) {
-        return VAKRemindTitle;
+        return NSLocalizedString(VAKRemindTitle, nil);
     }
     else if (section == VAKTwo) {
-        return VAKPriorityTitle;
+        return NSLocalizedString(VAKPriorityTitle, nil);
     }
-    return VAKNotesTitle;
+    return NSLocalizedString(VAKNotesTitle, nil);
 }
 
 - (UITableViewCell *)cellForIdentifier:(NSString *)identifier tableView:(UITableView *)tableView {
@@ -161,9 +164,9 @@
         [self.navigationController pushViewController:selectDateController animated:YES];
     }
     else if (indexPath.section == VAKTwo) {
-        UIAlertController *priorityAlertController = [UIAlertController alertControllerWithTitle:VAKSelectPriority message:nil preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *priorityAlertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKSelectPriority, nil) message:nil preferredStyle:UIAlertControllerStyleAlert];
         [self changedPriority:priorityAlertController withIndexPath:indexPath];
-        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:VAKCancelButton style:UIAlertActionStyleDefault handler:nil];
+        UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
         [priorityAlertController addAction:cancelAction];
         [self presentViewController:priorityAlertController animated:YES completion:nil];
     }
@@ -171,8 +174,8 @@
 
 - (void)changedPriority:(UIAlertController *)priorityController withIndexPath:(NSIndexPath *)indexPath {
     for (NSString *priority in self.priorities) {
-        UIAlertAction *action = [UIAlertAction actionWithTitle:priority style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            self.selectPriority = priority;
+        UIAlertAction *action = [UIAlertAction actionWithTitle:NSLocalizedString(priority, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            self.selectPriority = NSLocalizedString(priority, nil);
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         [priorityController addAction:action];

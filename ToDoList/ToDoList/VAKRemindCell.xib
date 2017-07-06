@@ -42,6 +42,7 @@
                 </constraints>
             </tableViewCellContentView>
             <connections>
+                <outlet property="remindLabel" destination="9bp-21-iGw" id="gWR-LC-nMZ"/>
                 <outlet property="remindSwitch" destination="Izy-Ns-kLU" id="xnN-c7-Rcf"/>
             </connections>
         </tableViewCell>
