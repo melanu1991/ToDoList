@@ -30,7 +30,6 @@
 - (instancetype)init {
     if (self = [super init]) {
 //        [self loadData];
-//        [VAKCoreDataManager sharedManager] 
         if (!_tasks) {
             _tasks = [NSMutableArray array];
             [self addGroup:VAKInbox];

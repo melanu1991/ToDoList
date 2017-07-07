@@ -23,5 +23,6 @@
 - (void)updateTaskByTask:(VAKTask *)task;
 - (void)updateToDoListByToDoList:(VAKToDoList *)toDoList;
 - (void)deleteToDoListById:(NSNumber *)toDoListId;
+- (NSArray *)allEntityWithName:(NSString *)name;
 
 @end
