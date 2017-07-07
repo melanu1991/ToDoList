@@ -1,9 +1,4 @@
 #import "VAKCoreDataManager.h"
-#import "Constants.h"
-#import "Task+CoreDataClass.h"
-#import "ToDoList+CoreDataClass.h"
-#import "VAKTask.h"
-#import "VAKToDoList.h"
 
 @implementation VAKCoreDataManager
 
@@ -18,33 +13,8 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(workOnTaskOrToDoList:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
     });
     return manager;
-}
-
-#pragma mark - Notification
-
-- (void)workOnTaskOrToDoList:(NSNotification *)notification {
-    VAKTask *task = notification.userInfo[VAKCurrentTask];
-    if (notification.userInfo[VAKAddNewTask]) {
-        
-    }
-    else if (notification.userInfo[VAKDeleteTask]) {
-        
-    }
-    else if (notification.userInfo[VAKWasEditNameGroup]) {
-        
-    }
-    else if (notification.userInfo[VAKAddProject]) {
-        
-    }
-    else if (notification.userInfo[VAKDetailTaskWasChanged]) {
-        
-    }
-    else if (notification.userInfo[VAKDeleteGroupTask]) {
-        
-    }
 }
 
 #pragma mark - work with entities
@@ -73,6 +43,16 @@
                     [toDoList removeArrayTasksObject:taskCD];
                 }
             }
+        }
+    }
+}
+
+- (void)deleteToDoListById:(NSNumber *)toDoListId {
+    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList"];
+    for (ToDoList *item in arrayToDoLists) {
+        if ([item.toDoListId isEqualToNumber:toDoListId]) {
+            [self.managedObjectContext deleteObject:item];
+            break;
         }
     }
 }

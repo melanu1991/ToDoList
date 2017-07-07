@@ -2,6 +2,7 @@
 #define Constants_h
 
 static NSString * const VAKTaskWasChangedOrAddOrDelete = @"VAKTaskWasChangedOrAddOrDelete";
+static NSString * const VAKTaskOrToDoListModifierCoreData = @"VAKTaskOrToDoListModifierCoreData";
 
 static NSString * const VAKAddTaskTitle = @"Add Item";
 static NSString * const VAKEditTaskTitle = @"Edit task";

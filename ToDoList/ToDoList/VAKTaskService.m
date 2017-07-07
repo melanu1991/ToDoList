@@ -77,6 +77,7 @@
             currentTask.taskName = notification.userInfo[VAKNewTaskName];
             currentTask.notes = notification.userInfo[VAKNewNotes];
             currentTask.priority = notification.userInfo[VAKNewPriority];
+            [[VAKCoreDataManager sharedManager] updateTaskByTask:currentTask];
         }
 //        [self saveData];
     }
@@ -84,6 +85,7 @@
         VAKTask *newTask = notification.userInfo[VAKCurrentTask];
         if (![self.tasks containsObject:currentTask]) {
             [self addTask:newTask];
+            [[VAKCoreDataManager sharedManager] addTaskWithTask:currentTask];
 //            [self saveData];
         }
     }
@@ -94,6 +96,7 @@
     else if (notification.userInfo[VAKDeleteTask]) {
         if ([self.tasks containsObject:currentTask]) {
             [self removeTaskById:currentTask.taskId];
+            [[VAKCoreDataManager sharedManager] deleteTaskByTask:currentTask];
 //            [self saveData];
         }
     }
@@ -275,6 +278,7 @@
     
     NSMutableArray *arrayToDoLists = (NSMutableArray *)self.toDoListArray;
     [arrayToDoLists removeObject:currentToDoList];
+    [[VAKCoreDataManager sharedManager] deleteToDoListById:currentToDoList.toDoListId];
     
     [self sortArrayKeysDate:NO];
     [self sortArrayKeysGroup:NO];
@@ -291,6 +295,7 @@
     }
     VAKToDoList *currentToDoList = arrayGroupWithoutInbox[index.row - VAKOne];
     currentToDoList.toDoListName = newName;
+    [[VAKCoreDataManager sharedManager] updateToDoListByToDoList:currentToDoList];
     
 }
 
