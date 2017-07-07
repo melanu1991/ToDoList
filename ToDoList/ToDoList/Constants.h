@@ -38,6 +38,7 @@ static NSString * const VAKDetailTaskWasChanged = @"VAKDetailTaskWasChanged";
 static NSString * const VAKWasEditNameGroup = @"VAKWasEditNameGroup";
 static NSString * const VAKDeleteGroupTask = @"VAKDeleteGroupTasks";
 static NSString * const VAKDoneTask = @"VAKDoneTask";
+static NSString * const VAKIndex = @"VAKIndex";
 
 static NSString * const VAKAddProjectLabel = @"Add project";
 static NSString * const VAKSelectPriority = @"Select Priority";

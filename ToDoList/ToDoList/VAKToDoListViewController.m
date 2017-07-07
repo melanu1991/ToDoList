@@ -125,18 +125,18 @@
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
-    NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
+//    NSDictionary *dictionaryTasksForSelectedGroup = [NSDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], VAKCompletedTask, [NSMutableArray array], VAKNotCompletedTask, nil];
     if (indexPath.section == VAKZero) {
         for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
             if ([item.toDoListName isEqualToString:VAKInbox]) {
-                for (VAKTask *task in item.toDoListArrayTasks) {
-                    if (!task.isCompleted) {
-                        [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
-                    }
-                    else {
-                        [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
-                    }
-                }
+//                for (VAKTask *task in item.toDoListArrayTasks) {
+//                    if (!task.isCompleted) {
+//                        [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
+//                    }
+//                    else {
+//                        [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
+//                    }
+//                }
                 todayViewController.currentGroup = item;
                 break;
             }
@@ -156,14 +156,14 @@
                 }
             }
             VAKToDoList *currentToDoList = arrayToDoList[indexPath.row - VAKOne];
-            for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
-                if (!task.isCompleted) {
-                    [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
-                }
-                else {
-                    [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
-                }
-            }
+//            for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
+//                if (!task.isCompleted) {
+//                    [dictionaryTasksForSelectedGroup[VAKNotCompletedTask] addObject:task];
+//                }
+//                else {
+//                    [dictionaryTasksForSelectedGroup[VAKCompletedTask] addObject:task];
+//                }
+//            }
             todayViewController.currentGroup = currentToDoList;
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
@@ -179,28 +179,11 @@
             
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-                NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
-                for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
-                    if (![item.toDoListName isEqualToString:VAKInbox]) {
-                        [arrayGroupWithoutInbox addObject:item];
-                    }
-                }
-                VAKToDoList *currentToDoList = arrayGroupWithoutInbox[indexPath.row - 1];
-                for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
-                    [[VAKTaskService sharedVAKTaskService] removeTaskById:task.taskId];
-                }
                 
-                NSMutableArray *arrayToDoLists = (NSMutableArray *)[VAKTaskService sharedVAKTaskService].toDoListArray;
-                [arrayToDoLists removeObject:currentToDoList];
-                
-                [[VAKTaskService sharedVAKTaskService] sortArrayKeysDate:NO];
-                [[VAKTaskService sharedVAKTaskService] sortArrayKeysGroup:NO];
-                
+                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteGroupTask, VAKDeleteGroupTask, indexPath, VAKIndex, nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
                 
-                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKDeleteGroupTask forKey:VAKDeleteGroupTask];
-                [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
-            
             }];
             
             UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleCancel handler:nil];
@@ -221,18 +204,10 @@
             }];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
-                NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
-                for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
-                    if (![item.toDoListName isEqualToString:VAKInbox]) {
-                        [arrayGroupWithoutInbox addObject:item];
-                    }
-                }
-                VAKToDoList *currentToDoList = arrayGroupWithoutInbox[indexPath.row - VAKOne];
-                currentToDoList.toDoListName = alertController.textFields[VAKZero].text;
-                
-                NSDictionary *dic = [NSDictionary dictionaryWithObject:VAKWasEditNameGroup forKey:VAKWasEditNameGroup];
+                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKWasEditNameGroup, VAKWasEditNameGroup, alertController.textFields[VAKZero].text, VAKInputNewNameGroup, indexPath.row, VAKIndex, nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+                
             }];
             UIAlertAction *alertActionCancel = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleCancel handler:nil];
             [alertController addAction:alertActionOk];

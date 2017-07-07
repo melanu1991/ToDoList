@@ -1,5 +1,6 @@
 #import "VAKTaskService.h"
 #import "VAKToDoList.h"
+#import "VAKCoreDataManager.h"
 
 @interface VAKTaskService ()
 
@@ -29,6 +30,7 @@
 - (instancetype)init {
     if (self = [super init]) {
 //        [self loadData];
+//        [VAKCoreDataManager sharedManager] 
         if (!_tasks) {
             _tasks = [NSMutableArray array];
             [self addGroup:VAKInbox];
@@ -96,7 +98,11 @@
         }
     }
     else if (notification.userInfo[VAKWasEditNameGroup]) {
+        [self editNameGroupWithName:notification.userInfo[VAKInputNewNameGroup] index:notification.userInfo[VAKIndex]];
 //        [self saveData];
+    }
+    else if (notification.userInfo[VAKDeleteGroupTask]) {
+        [self deleteGroupWithIndex:notification.userInfo[VAKIndex]];
     }
 }
 
@@ -252,6 +258,40 @@
     VAKToDoList *newGroup = [[VAKToDoList alloc] initWithName:groupName];
     NSMutableArray *arrayGroups = (NSMutableArray *)self.toDoListArray;
     [arrayGroups addObject:newGroup];
+}
+
+- (void)deleteGroupWithIndex:(NSIndexPath *)index {
+    
+    NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
+    for (VAKToDoList *item in self.toDoListArray) {
+        if (![item.toDoListName isEqualToString:VAKInbox]) {
+            [arrayGroupWithoutInbox addObject:item];
+        }
+    }
+    VAKToDoList *currentToDoList = arrayGroupWithoutInbox[index.row - 1];
+    for (VAKTask *task in currentToDoList.toDoListArrayTasks) {
+        [[VAKTaskService sharedVAKTaskService] removeTaskById:task.taskId];
+    }
+    
+    NSMutableArray *arrayToDoLists = (NSMutableArray *)self.toDoListArray;
+    [arrayToDoLists removeObject:currentToDoList];
+    
+    [self sortArrayKeysDate:NO];
+    [self sortArrayKeysGroup:NO];
+    
+}
+
+- (void)editNameGroupWithName:(NSString *)newName index:(NSIndexPath *)index {
+    
+    NSMutableArray *arrayGroupWithoutInbox = [NSMutableArray array];
+    for (VAKToDoList *item in self.toDoListArray) {
+        if (![item.toDoListName isEqualToString:VAKInbox]) {
+            [arrayGroupWithoutInbox addObject:item];
+        }
+    }
+    VAKToDoList *currentToDoList = arrayGroupWithoutInbox[index.row - VAKOne];
+    currentToDoList.toDoListName = newName;
+    
 }
 
 - (void)sortArrayKeysGroup:(BOOL)isReverseOrder {
