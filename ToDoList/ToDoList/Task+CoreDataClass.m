@@ -3,14 +3,14 @@
 
 @implementation Task
 
-@dynamic name;
-@dynamic taskId;
-@dynamic startedAt;
-@dynamic finishedAt;
 @dynamic completed;
+@dynamic finishedAt;
+@dynamic name;
+@dynamic notes;
 @dynamic priority;
 @dynamic remind;
-@dynamic notes;
+@dynamic startedAt;
+@dynamic taskId;
 @dynamic toDoList;
 
 @end

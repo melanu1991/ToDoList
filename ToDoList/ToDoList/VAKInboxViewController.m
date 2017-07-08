@@ -35,11 +35,11 @@
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     if (notification.userInfo[VAKDetailTaskWasChanged]) {
-        VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
+        Task *currentTask = notification.userInfo[VAKCurrentTask];
         NSString *newDate = notification.userInfo[VAKNewDate];
         NSString *newTaskName = notification.userInfo[VAKNewTaskName];
         NSString *newNotes = notification.userInfo[VAKNewNotes];
-        if (![newDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]] || ![newNotes isEqualToString:currentTask.notes] || ![newTaskName isEqualToString:currentTask.taskName]) {
+        if (![newDate isEqualToString:[NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute]] || ![newNotes isEqualToString:currentTask.notes] || ![newTaskName isEqualToString:currentTask.name]) {
             self.needToReloadData = YES;
         }
     }
@@ -67,16 +67,14 @@
 
 - (IBAction)sortDateOrGroup:(UIBarButtonItem *)sender {
     self.reverseOrder = !self.reverseOrder;
-    [[VAKTaskService sharedVAKTaskService] sortArrayKeysDate:self.isReverseOrder];
-    [[VAKTaskService sharedVAKTaskService] sortArrayKeysGroup:self.isReverseOrder];
     [self.tableView reloadData];
 }
 
 - (IBAction)addNewTask:(UIBarButtonItem *)sender {
     VAKAddTaskController *addTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     addTaskController.task = nil;
-    for (VAKToDoList *item in [VAKTaskService sharedVAKTaskService].toDoListArray) {
-        if ([item.toDoListName isEqualToString:VAKInbox]) {
+    for (ToDoList *item in [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList"]) {
+        if ([item.name isEqualToString:VAKInbox]) {
             addTaskController.currentGroup = item;
             break;
         }
@@ -91,50 +89,48 @@
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *arrayCurrentSection = [[VAKTaskService sharedVAKTaskService].dictionaryDate objectForKey:[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
-        VAKTask *task = arrayCurrentSection[indexPath.row];
-        cell.taskNameLabel.text = task.taskName;
-        cell.taskNoteLabel.text = task.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        
     }
     else {
-        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
-        VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
-        cell.taskNameLabel.text = task.taskName;
-        cell.taskNoteLabel.text = task.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        
     }
     
     return cell;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return [VAKTaskService sharedVAKTaskService].arrayKeysDate[section];
-    }
-    else {
-        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
-        return currentProject.toDoListName;
-    }
+//    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+//        return [VAKTaskService sharedVAKTaskService].arrayKeysDate[section];
+//    }
+//    else {
+//        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
+//        return currentProject.toDoListName;
+//    }
+    return nil;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return [[VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[section]] count];
-    }
-    else {
-        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
-        return [currentProject.toDoListArrayTasks count];
-    }
+//    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+//        return [[VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[section]] count];
+//    }
+//    else {
+//        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[section];
+//        return [currentProject.toDoListArrayTasks count];
+//    }
+    return nil;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+//    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+//        return [[VAKTaskService sharedVAKTaskService].dictionaryDate count];
+//    }
+//    else {
+//        return [[VAKTaskService sharedVAKTaskService].toDoListArray count];
+//    }
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        return [[VAKTaskService sharedVAKTaskService].dictionaryDate count];
+        return [[VAKCoreDataManager sharedManager] countOfEntityWithName:@"Task"];
     }
-    else {
-        return [[VAKTaskService sharedVAKTaskService].toDoListArray count];
-    }
+    return [[VAKCoreDataManager sharedManager] countOfEntityWithName:@"ToDoList"];
 }
 
 #pragma mark - implemented UITableViewDelegate
@@ -144,31 +140,32 @@
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *temp = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
-        VAKTask *task = temp[indexPath.row];
-        editTaskController.task = task;
-    }
-    else {
-        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
-        VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
-        editTaskController.task = task;
-    }
+//    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+//        NSArray *temp = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
+//        VAKTask *task = temp[indexPath.row];
+//        editTaskController.task = task;
+//    }
+//    else {
+//        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
+//        VAKTask *task = currentProject.toDoListArrayTasks[indexPath.row];
+//        editTaskController.task = task;
+//    }
     
     [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+//    VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+//    Task *currentTask = [self currentTaskWithIndexPath:indexPath];
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        [[VAKTaskService sharedVAKTaskService] removeTaskById:currentTask.taskId];
-        [currentTask.currentToDoList removeTaskByTask:currentTask];
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+//        [[VAKTaskService sharedVAKTaskService] removeTaskById:currentTask.taskId];
+//        [currentTask.currentToDoList removeTaskByTask:currentTask];
+//        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDeleteTask, VAKDeleteTask, nil];
+//        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [self.tableView reloadData];
         
     }];
@@ -178,21 +175,22 @@
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
-        VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
-        if (!currentTask.isCompleted) {
-            [[VAKTaskService sharedVAKTaskService] updateTaskForCompleted:currentTask];
-            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
-            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
-        }
+//        VAKTask *currentTask = [self currentTaskWithIndexPath:indexPath];
+//        Task *currentTask = [self currentTaskWithIndexPath:indexPath];
+//        if (!currentTask.isCompleted) {
+//            [[VAKTaskService sharedVAKTaskService] updateTaskForCompleted:currentTask];
+//            NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
+//            [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+//        }
         
     }];
     
-    if (currentTask.isCompleted) {
-        doneAction.backgroundColor = [UIColor grayColor];
-    }
-    else {
-        doneAction.backgroundColor = [UIColor blueColor];
-    }
+//    if (currentTask.isCompleted) {
+//        doneAction.backgroundColor = [UIColor grayColor];
+//    }
+//    else {
+//        doneAction.backgroundColor = [UIColor blueColor];
+//    }
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
        [self presentViewController:alertController animated:YES completion:nil];
@@ -204,18 +202,18 @@
 
 #pragma mark - helper methods
 
-- (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
-    VAKTask *currentTask = nil;
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSMutableArray *arrayDate = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
-        currentTask = arrayDate[indexPath.row];
-    }
-    else {
-        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
-        currentTask = currentProject.toDoListArrayTasks[indexPath.row];
-    }
-    return currentTask;
-}
+//- (VAKTask *)currentTaskWithIndexPath:(NSIndexPath *)indexPath {
+//    VAKTask *currentTask = nil;
+//    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
+//        NSMutableArray *arrayDate = [VAKTaskService sharedVAKTaskService].dictionaryDate[[VAKTaskService sharedVAKTaskService].arrayKeysDate[indexPath.section]];
+//        currentTask = arrayDate[indexPath.row];
+//    }
+//    else {
+//        VAKToDoList *currentProject = [VAKTaskService sharedVAKTaskService].toDoListArray[indexPath.section];
+//        currentTask = currentProject.toDoListArrayTasks[indexPath.row];
+//    }
+//    return currentTask;
+//}
 
 #pragma mark - implemented deallocate
 

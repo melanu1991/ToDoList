@@ -3,8 +3,8 @@
 
 @implementation ToDoList
 
-@dynamic toDoListId;
 @dynamic name;
+@dynamic toDoListId;
 @dynamic arrayTasks;
 
 @end

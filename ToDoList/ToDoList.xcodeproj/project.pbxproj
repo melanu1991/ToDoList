@@ -20,6 +20,9 @@
 		580038291EE3EF7D00A19465 /* VAKAddTaskController.m in Sources */ = {isa = PBXBuildFile; fileRef = 580038271EE3EF7D00A19465 /* VAKAddTaskController.m */; };
 		5800382A1EE3EF7D00A19465 /* VAKAddTaskController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 580038281EE3EF7D00A19465 /* VAKAddTaskController.xib */; };
 		580862CF1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m in Sources */ = {isa = PBXBuildFile; fileRef = 580862CE1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m */; };
+		584DF4681F10E67600D27947 /* Task+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 584DF45D1F10E67600D27947 /* Task+CoreDataClass.m */; };
+		584DF46A1F10E67600D27947 /* ToDoList+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 584DF4611F10E67600D27947 /* ToDoList+CoreDataClass.m */; };
+		584DF46C1F10E67600D27947 /* Parent+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 584DF4651F10E67600D27947 /* Parent+CoreDataClass.m */; };
 		5896F3A41EE5327400E64890 /* VAKTaskService.m in Sources */ = {isa = PBXBuildFile; fileRef = 5896F3A31EE5327400E64890 /* VAKTaskService.m */; };
 		5897A5A81EF079DB001905B8 /* VAKAddProjectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5897A5A71EF079DB001905B8 /* VAKAddProjectViewController.m */; };
 		58A17CA01EEDB28E00C023E2 /* VAKTaskNameCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 58A17C9E1EEDB28E00C023E2 /* VAKTaskNameCell.m */; };
@@ -34,8 +37,6 @@
 		58A17CB51EEDC26600C023E2 /* VAKPriorityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58A17CB31EEDC26600C023E2 /* VAKPriorityCell.xib */; };
 		58B694041F0E84F300579413 /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 58B694021F0E84F300579413 /* CoreDataModel.xcdatamodeld */; };
 		58B694151F0E8E9C00579413 /* VAKCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B694141F0E8E9C00579413 /* VAKCoreDataManager.m */; };
-		58B6941D1F0E9B7C00579413 /* Task+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B6941A1F0E9B7C00579413 /* Task+CoreDataClass.m */; };
-		58B694231F0E9BEC00579413 /* ToDoList+CoreDataClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 58B694201F0E9BEC00579413 /* ToDoList+CoreDataClass.m */; };
 		58BD68361F0E55B10076F1D6 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 58BD68381F0E55B10076F1D6 /* Localizable.strings */; };
 		58BFD9021EEA74CA003897F4 /* VAKCustumCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 58BFD9001EEA74CA003897F4 /* VAKCustumCell.m */; };
 		58BFD9031EEA74CA003897F4 /* VAKCustumCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 58BFD9011EEA74CA003897F4 /* VAKCustumCell.xib */; };
@@ -68,6 +69,12 @@
 		580038281EE3EF7D00A19465 /* VAKAddTaskController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = VAKAddTaskController.xib; sourceTree = "<group>"; };
 		580862CD1EFAE9C800FF9E23 /* VAKNSDate+Formatters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "VAKNSDate+Formatters.h"; sourceTree = "<group>"; };
 		580862CE1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "VAKNSDate+Formatters.m"; sourceTree = "<group>"; };
+		584DF45C1F10E67600D27947 /* Task+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Task+CoreDataClass.h"; sourceTree = "<group>"; };
+		584DF45D1F10E67600D27947 /* Task+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Task+CoreDataClass.m"; sourceTree = "<group>"; };
+		584DF4601F10E67600D27947 /* ToDoList+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ToDoList+CoreDataClass.h"; sourceTree = "<group>"; };
+		584DF4611F10E67600D27947 /* ToDoList+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ToDoList+CoreDataClass.m"; sourceTree = "<group>"; };
+		584DF4641F10E67600D27947 /* Parent+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Parent+CoreDataClass.h"; sourceTree = "<group>"; };
+		584DF4651F10E67600D27947 /* Parent+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Parent+CoreDataClass.m"; sourceTree = "<group>"; };
 		5870F2721EE95C31007A69B0 /* Constants.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		5896F3A21EE5327400E64890 /* VAKTaskService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKTaskService.h; sourceTree = "<group>"; };
 		5896F3A31EE5327400E64890 /* VAKTaskService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKTaskService.m; sourceTree = "<group>"; };
@@ -92,10 +99,6 @@
 		58B694031F0E84F300579413 /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
 		58B694131F0E8E9C00579413 /* VAKCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKCoreDataManager.h; sourceTree = "<group>"; };
 		58B694141F0E8E9C00579413 /* VAKCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VAKCoreDataManager.m; sourceTree = "<group>"; };
-		58B694191F0E9B7C00579413 /* Task+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Task+CoreDataClass.h"; sourceTree = "<group>"; };
-		58B6941A1F0E9B7C00579413 /* Task+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Task+CoreDataClass.m"; sourceTree = "<group>"; };
-		58B6941F1F0E9BEC00579413 /* ToDoList+CoreDataClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ToDoList+CoreDataClass.h"; sourceTree = "<group>"; };
-		58B694201F0E9BEC00579413 /* ToDoList+CoreDataClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ToDoList+CoreDataClass.m"; sourceTree = "<group>"; };
 		58BD68311F0E4B5C0076F1D6 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		58BD68371F0E55B10076F1D6 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		58BFD8FF1EEA74CA003897F4 /* VAKCustumCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VAKCustumCell.h; sourceTree = "<group>"; };
@@ -247,10 +250,12 @@
 		58B694111F0E8D0900579413 /* CoreDataModels */ = {
 			isa = PBXGroup;
 			children = (
-				58B6941F1F0E9BEC00579413 /* ToDoList+CoreDataClass.h */,
-				58B694201F0E9BEC00579413 /* ToDoList+CoreDataClass.m */,
-				58B694191F0E9B7C00579413 /* Task+CoreDataClass.h */,
-				58B6941A1F0E9B7C00579413 /* Task+CoreDataClass.m */,
+				584DF45C1F10E67600D27947 /* Task+CoreDataClass.h */,
+				584DF45D1F10E67600D27947 /* Task+CoreDataClass.m */,
+				584DF4601F10E67600D27947 /* ToDoList+CoreDataClass.h */,
+				584DF4611F10E67600D27947 /* ToDoList+CoreDataClass.m */,
+				584DF4641F10E67600D27947 /* Parent+CoreDataClass.h */,
+				584DF4651F10E67600D27947 /* Parent+CoreDataClass.m */,
 			);
 			name = CoreDataModels;
 			sourceTree = "<group>";
@@ -362,18 +367,19 @@
 				5896F3A41EE5327400E64890 /* VAKTaskService.m in Sources */,
 				58A17CAF1EEDB91300C023E2 /* VAKNotesCell.m in Sources */,
 				58A17CA01EEDB28E00C023E2 /* VAKTaskNameCell.m in Sources */,
+				584DF46A1F10E67600D27947 /* ToDoList+CoreDataClass.m in Sources */,
 				5897A5A81EF079DB001905B8 /* VAKAddProjectViewController.m in Sources */,
 				58A17CAA1EEDB44B00C023E2 /* VAKDateCell.m in Sources */,
 				580038291EE3EF7D00A19465 /* VAKAddTaskController.m in Sources */,
 				580037FA1EE3E3B200A19465 /* AppDelegate.m in Sources */,
+				584DF46C1F10E67600D27947 /* Parent+CoreDataClass.m in Sources */,
 				5800381F1EE3E67100A19465 /* VAKSearchViewController.m in Sources */,
-				58B694231F0E9BEC00579413 /* ToDoList+CoreDataClass.m in Sources */,
 				580038221EE3E69400A19465 /* VAKTodayViewController.m in Sources */,
 				580037F71EE3E3B200A19465 /* main.m in Sources */,
 				58B694041F0E84F300579413 /* CoreDataModel.xcdatamodeld in Sources */,
 				58A17CA51EEDB33A00C023E2 /* VAKRemindCell.m in Sources */,
-				58B6941D1F0E9B7C00579413 /* Task+CoreDataClass.m in Sources */,
 				58C936D41EE44D5800970D40 /* VAKSelectDateController.m in Sources */,
+				584DF4681F10E67600D27947 /* Task+CoreDataClass.m in Sources */,
 				580862CF1EFAE9C800FF9E23 /* VAKNSDate+Formatters.m in Sources */,
 				58E8F1E71EFD1F5700E72463 /* VAKToDoList.m in Sources */,
 				580038191EE3E63500A19465 /* VAKInboxViewController.m in Sources */,

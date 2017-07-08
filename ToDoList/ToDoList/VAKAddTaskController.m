@@ -53,8 +53,8 @@
         title = NSLocalizedString(VAKEditTaskTitle, nil);
         self.selectPriority = self.task.priority;
         self.selectDate = self.task.startedAt;
-        self.remindMeOnADay = self.task.remindMeOnADay;
-        self.taskName = self.task.taskName;
+        self.remindMeOnADay = self.task.remind;
+        self.taskName = self.task.name;
         self.taskNotes = self.task.notes;
         self.doneButton.enabled = YES;
     }
@@ -99,7 +99,7 @@
         VAKTaskNameCell *cell = (VAKTaskNameCell *)[self cellForIdentifier:VAKTaskNameCellIdentifier tableView:tableView];
         cell.textField.delegate = self;
         cell.textField.placeholder = NSLocalizedString(VAKWhatYouHaveToDo, nil);
-        cell.textField.text = self.task.taskName;
+        cell.textField.text = self.task.name;
         return cell;
     }
     else if (indexPath.section == VAKOne) {
@@ -223,24 +223,26 @@
 - (void)doneButtonPressed {
     NSDictionary *addOrChangedTask = nil;
     if (!self.task) {
-        NSNumber *taskId = [NSNumber numberWithUnsignedLong:arc4random()%1000];
-        VAKTask *newTask = [[VAKTask alloc] initTaskWithId:taskId taskName:self.taskName];
+        NSNumber *taskId = [NSNumber numberWithUnsignedLong:arc4random_uniform(1000)];
+        Task *newTask = (Task *)[[VAKCoreDataManager sharedManager] createEntityWithName:@"Task"];
+        newTask.name = self.taskName;
+        newTask.taskId = taskId;
         newTask.priority = self.selectPriority;
-        newTask.remindMeOnADay = self.remindMeOnADay;
+        newTask.remind = self.remindMeOnADay;
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
-        if (newTask.remindMeOnADay) {
+        if (newTask.remind) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:newTask, @"task", @"YES", @"remind", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
-        newTask.currentToDoList = self.currentGroup;
-        [self.currentGroup addTaskByTask:newTask];
+        newTask.toDoList = self.currentGroup;
+        [newTask.managedObjectContext save:nil];
     }
     else {
         NSString *newDate = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithoutHourAndMinute];
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.taskNotes, VAKNewNotes, self.taskName, VAKNewTaskName, newDate, VAKNewDate, self.selectPriority ,VAKNewPriority, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
-        if (self.task.remindMeOnADay && !self.remindMeOnADay) {
+        if (self.task.remind && !self.remindMeOnADay) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"delete", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
@@ -248,7 +250,7 @@
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"update", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
-        else if (!self.task.remindMeOnADay && self.remindMeOnADay) {
+        else if (!self.task.remind && self.remindMeOnADay) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"remind", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }

@@ -1,12 +1,12 @@
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "Parent+CoreDataClass.h"
 
 @class Task;
 
-@interface ToDoList : NSManagedObject
+@interface ToDoList : Parent
 
-@property (nullable, nonatomic, copy) NSNumber *toDoListId;
 @property (nullable, nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSNumber *toDoListId;
 @property (nullable, nonatomic, retain) NSSet<Task *> *arrayTasks;
 
 @end
