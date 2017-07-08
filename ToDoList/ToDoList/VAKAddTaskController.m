@@ -237,24 +237,20 @@
         }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
         newTask.toDoList = self.currentGroup;
-        NSArray *arrayEntityDate = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil];
-        if ([arrayEntityDate containsObject:[NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
-            for (Date *date in arrayEntityDate) {
-                if ([date.date isEqualToString:[NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
-                    [date addTasksObject:newTask];
-                }
-            }
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]];
+        NSArray *arrayEntityDate = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
+        if (arrayEntityDate.count > 0) {
+            Date *date = arrayEntityDate[0];
+            [date addTasksObject:newTask];
         }
         else {
             Date *date = (Date *)[[VAKCoreDataManager sharedManager] createEntityWithName:@"Date"];
             date.date = [NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
             [date addTasksObject:newTask];
         }
-        [[VAKCoreDataManager sharedManager] saveContext];
     }
     else {
-        NSString *newDate = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithoutHourAndMinute];
-        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.taskNotes, VAKNewNotes, self.taskName, VAKNewTaskName, newDate, VAKNewDate, self.selectPriority ,VAKNewPriority, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
+        addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:self.taskNotes, VAKNewNotes, self.taskName, VAKNewTaskName, self.selectDate, VAKNewDate, self.selectPriority ,VAKNewPriority, self.task, VAKCurrentTask, VAKDetailTaskWasChanged, VAKDetailTaskWasChanged, nil];
         if (self.task.remind && !self.remindMeOnADay) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"delete", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
@@ -267,8 +263,10 @@
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:self.task, @"task", @"YES", @"remind", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
+        self.task.remind = self.remindMeOnADay;
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:addOrChangedTask];
+    [[VAKCoreDataManager sharedManager].managedObjectContext save:nil];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

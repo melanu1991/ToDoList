@@ -19,11 +19,10 @@
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
 
-- (void)deleteTaskByTask:(Task *)task;
-- (void)updateTaskByTask:(Task *)task;
-- (void)updateToDoListByToDoList:(ToDoList *)toDoList;
-- (void)deleteToDoListById:(NSNumber *)toDoListId;
-- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor;
+- (void)updateTaskByName:(NSString *)name notes:(NSString *)notes newDate:(NSDate *)newDate lastDate:(NSDate *)lastDate priority:(NSString *)priority taskId:(NSNumber *)taskId;
+- (void)deleteEntity:(Parent *)entity;
+- (void)completeTask:(Task *)task;
+- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor predicate:(NSPredicate *)predicate;
 - (NSInteger)countOfEntityWithName:(NSString *)name;
 - (Parent *)createEntityWithName:(NSString *)name;
 

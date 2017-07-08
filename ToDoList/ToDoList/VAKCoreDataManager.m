@@ -17,11 +17,12 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
-        NSArray *arrayToDoList = [manager allEntityWithName:@"ToDoList" sortDescriptor:nil];
+//        [manager deleteAllObjects];
+        NSArray *arrayToDoList = [manager allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
         if (arrayToDoList.count == 0) {
             ToDoList *inbox = (ToDoList *)[manager createEntityWithName:@"ToDoList"];
             inbox.name = VAKInbox;
-            [inbox.managedObjectContext save:nil];
+            [manager.managedObjectContext save:nil];
         }
         [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(remindMeOnADay:) name:VAKRemindTask object:nil];
@@ -32,41 +33,30 @@
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
-//    VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
-//    if (notification.userInfo[VAKDetailTaskWasChanged]) {
-//        NSString *newDate = notification.userInfo[VAKNewDate];
-//        NSString *lastDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-//        if (![lastDate isEqualToString:newDate] || ![currentTask.notes isEqualToString:notification.userInfo[VAKNewNotes]] || ![currentTask.priority isEqualToString:notification.userInfo[VAKNewPriority]] || ![currentTask.taskName isEqualToString:notification.userInfo[VAKNewTaskName]]) {
-//            [self updateTask:currentTask lastDate:lastDate newDate:newDate];
-//            currentTask.taskName = notification.userInfo[VAKNewTaskName];
-//            currentTask.notes = notification.userInfo[VAKNewNotes];
-//            currentTask.priority = notification.userInfo[VAKNewPriority];
-//            [[VAKCoreDataManager sharedManager] updateTaskByTask:currentTask];
-//        }
-//        //        [self saveData];
-//    }
+    Task *currentTask = notification.userInfo[VAKCurrentTask];
+    if (notification.userInfo[VAKDetailTaskWasChanged]) {
+        NSDate *newDate = notification.userInfo[VAKNewDate];
+        NSDate *lastDate = currentTask.startedAt;
+        [self updateTaskByName:notification.userInfo[VAKNewTaskName] notes:notification.userInfo[VAKNewNotes] newDate:newDate lastDate:lastDate priority:notification.userInfo[VAKNewPriority] taskId:currentTask.taskId];
+    }
 //    else if (notification.userInfo[VAKAddNewTask]) {
 //        VAKTask *newTask = notification.userInfo[VAKCurrentTask];
 //        if (![self.tasks containsObject:currentTask]) {
 //            [self addTask:newTask];
 //            [[VAKCoreDataManager sharedManager] addTaskWithTask:currentTask];
-//            //            [self saveData];
 //        }
 //    }
-//    else if (notification.userInfo[VAKDoneTask]) {
-//        [self updateTaskForCompleted:currentTask];
-//        //        [self saveData];
-//    }
+    else if (notification.userInfo[VAKDoneTask]) {
+        [self completeTask:currentTask];
+    }
 //    else if (notification.userInfo[VAKDeleteTask]) {
 //        if ([self.tasks containsObject:currentTask]) {
 //            [self removeTaskById:currentTask.taskId];
 //            [[VAKCoreDataManager sharedManager] deleteTaskByTask:currentTask];
-//            //            [self saveData];
 //        }
 //    }
 //    else if (notification.userInfo[VAKWasEditNameGroup]) {
 //        [self editNameGroupWithName:notification.userInfo[VAKInputNewNameGroup] index:notification.userInfo[VAKIndex]];
-//        //        [self saveData];
 //    }
 //    else if (notification.userInfo[VAKDeleteGroupTask]) {
 //        [self deleteGroupWithIndex:notification.userInfo[VAKIndex]];
@@ -116,54 +106,57 @@
 
 #pragma mark - work with entities
 
+- (void)completeTask:(Task *)task {
+    task.completed = YES;
+    task.finishedAt = [NSDate date];
+}
+
+- (void)deleteEntity:(Parent *)entity {
+    if ([entity isKindOfClass:[Task class]]) {
+        Task *task = (Task *)entity;
+        if (task.date.tasks.count == 1) {
+            Date *currentDate = task.date;
+            [self.managedObjectContext deleteObject:currentDate];
+        }
+        [self.managedObjectContext deleteObject:task];
+    }
+//    else if ([entity isKindOfClass:[ToDoList class]]) {
+//        ToDoList *toDoList = (ToDoList *)entity;
+//    }
+//    else {
+//        Date *date = (Date *)entity;
+//    }
+}
+
 - (NSInteger)countOfEntityWithName:(NSString *)name {
-    NSArray *array = [self allEntityWithName:name sortDescriptor:nil];
+    NSArray *array = [self allEntityWithName:name sortDescriptor:nil predicate:nil];
     return [array count];
 }
 
-- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor {
+- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor predicate:(NSPredicate *)predicate {
     NSFetchRequest *fetchRequests = [[NSFetchRequest alloc] init];
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:name inManagedObjectContext:self.managedObjectContext];
     [fetchRequests setEntity:entityDescription];
     if (sortDescriptor != nil) {
         [fetchRequests setSortDescriptors:@[sortDescriptor]];
     }
+    if (predicate != nil) {
+        [fetchRequests setPredicate:predicate];
+    }
     NSArray *array = [self.managedObjectContext executeFetchRequest:fetchRequests error:nil];
     return array;
 }
 
 - (void)deleteAllObjects {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
+    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
     for (ToDoList *item in arrayToDoLists) {
         [self.managedObjectContext deleteObject:item];
     }
-    NSArray *arrayDate = [self allEntityWithName:@"Date" sortDescriptor:nil];
+    NSArray *arrayDate = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:nil];
     for (Date *date in arrayDate) {
         [self.managedObjectContext deleteObject:date];
     }
-}
-
-- (void)deleteTaskByTask:(Task *)task {
-    NSArray *toDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
-//    for (ToDoList *toDoList in toDoLists) {
-//        if ([toDoList.toDoListId isEqualToNumber:task.currentToDoList.toDoListId]) {
-//            for (Task *taskCD in toDoList.arrayTasks) {
-//                if ([taskCD.taskId isEqualToNumber:task.taskId]) {
-//                    [toDoList removeArrayTasksObject:taskCD];
-//                }
-//            }
-//        }
-//    }
-}
-
-- (void)deleteToDoListById:(NSNumber *)toDoListId {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
-    for (ToDoList *item in arrayToDoLists) {
-        if ([item.toDoListId isEqualToNumber:toDoListId]) {
-            [self.managedObjectContext deleteObject:item];
-            break;
-        }
-    }
+    [self.managedObjectContext save:nil];
 }
 
 - (Parent *)createEntityWithName:(NSString *)name {
@@ -171,72 +164,38 @@
     return entity;
 }
 
-- (void)addEntityWithEntity:(Parent *)entity {
-//    if ([entity isKindOfClass:[Task class]]) {
-//        Task *task = (Task *)entity;
-//        NSString *dateTask = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
-//    }
-//    [self.managedObjectContext save:nil];
-}
-
-
-
-- (ToDoList *)backRightToDoListByToDoList:(ToDoList *)toDoList {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
-    if ([arrayToDoLists containsObject:toDoList]) {
-        for (ToDoList *item in arrayToDoLists) {
-            if ([item.toDoListId isEqualToNumber:toDoList.toDoListId]) {
-                return item;
+- (void)updateTaskByName:(NSString *)name notes:(NSString *)notes newDate:(NSDate *)newDate lastDate:(NSDate *)lastDate priority:(NSString *)priority taskId:(NSNumber *)taskId {
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"taskId == %@", taskId];
+    NSArray *tasks = [self allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+    if (tasks.count > 0) {
+        Task *currentTask = tasks[0];
+        NSString *newDateStr = [NSDate dateStringFromDate:newDate format:VAKDateFormatWithoutHourAndMinute];
+        NSString *lastDateStr = [NSDate dateStringFromDate:lastDate format:VAKDateFormatWithoutHourAndMinute];
+        currentTask.name = name;
+        currentTask.notes = notes;
+        currentTask.priority = priority;
+        currentTask.startedAt = newDate;
+        if (![newDateStr isEqualToString:lastDateStr]) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", lastDateStr];
+            NSArray *lastDateArray = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
+            Date *date = lastDateArray[0];
+            [date removeTasksObject:currentTask];
+            if (date.tasks.count == 0) {
+                [self.managedObjectContext deleteObject:date];
+            }
+            predicate = [NSPredicate predicateWithFormat:@"date == %@", newDateStr];
+            NSArray *newDateArray = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
+            if (newDateArray.count > 0) {
+                Date *date = newDateArray[0];
+                [date addTasksObject:currentTask];
+            }
+            else {
+                Date *date = (Date *)[self createEntityWithName:@"Date"];
+                date.date = newDateStr;
+                [date addTasksObject:currentTask];
             }
         }
     }
-    ToDoList *coreDataToDoList = [NSEntityDescription insertNewObjectForEntityForName:@"ToDoList" inManagedObjectContext:self.managedObjectContext];
-//    coreDataToDoList.name = toDoList.toDoListName;
-//    coreDataToDoList.toDoListId = toDoList.toDoListId;
-//    [coreDataToDoList addArrayTasks:[NSSet setWithArray:toDoList.toDoListArrayTasks]];
-    return coreDataToDoList;
-}
-
-- (void)updateTaskByTask:(Task *)task {
-    NSArray *tasks = [self allEntityWithName:@"Task" sortDescriptor:nil];
-    for (Task *item in tasks) {
-        if ([item.taskId isEqualToNumber:task.taskId]) {
-            item.name = task.name;
-            item.startedAt = task.startedAt;
-            item.finishedAt = task.finishedAt;
-            item.completed = task.completed;
-            item.remind = task.remind;
-            item.priority = task.priority;
-            item.notes = task.notes;
-        }
-    }
-}
-
-- (void)updateToDoListByToDoList:(ToDoList *)toDoList {
-    NSArray *toDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
-    for (ToDoList *item in toDoLists) {
-        if ([item.toDoListId isEqualToNumber:toDoList.toDoListId]) {
-            item.name = toDoList.name;
-        }
-    }
-}
-
-#pragma mark - save context
-
-- (void)saveContext {
-    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
-    if (managedObjectContext != nil) {
-        NSError *error = nil;
-        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
-            NSLog(@"error %@ %@", error, [error localizedDescription]);
-        }
-    }
-}
-
-#pragma mark - get document directory
-
-- (NSURL *)applicationDocumentsDirectory {
-    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 #pragma mark - Core Data Stack
@@ -245,7 +204,7 @@
     if (_managedObjectContext != nil) {
         return _managedObjectContext;
     }
-    NSPersistentStoreCoordinator *coordinator = self.persistentStoreCoordinator;
+    NSPersistentStoreCoordinator *coordinator = [self persistentStoreCoordinator];
     if (coordinator != nil) {
         _managedObjectContext = [[NSManagedObjectContext alloc] init];
         [_managedObjectContext setPersistentStoreCoordinator:coordinator];
@@ -257,8 +216,8 @@
     if (_managedObjectModel != nil) {
         return _managedObjectModel;
     }
-    NSURL *url = [[NSBundle mainBundle] URLForResource:@"CoreDataModel" withExtension:@"momd"];
-    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:url];
+    NSURL *modelURL = [[NSBundle mainBundle] URLForResource:@"CoreDataModel" withExtension:@"momd"];
+    _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:modelURL];
     return _managedObjectModel;
 }
 
@@ -266,13 +225,33 @@
     if (_persistentStoreCoordinator != nil) {
         return _persistentStoreCoordinator;
     }
-    NSURL *url = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreDataModel.sqlite"];
+    NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"CoreDataModel.sqlite"];
     NSError *error = nil;
     _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if ([_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:url options:nil error:&error]) {
-        [[NSFileManager defaultManager] removeItemAtURL:url error:&error];
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+        [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil];
+        [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error];
     }
     return _persistentStoreCoordinator;
+}
+
+#pragma mark - Save Context
+
+- (void)saveContext {
+    NSManagedObjectContext *managedObjectContext = self.managedObjectContext;
+    if (managedObjectContext != nil) {
+        NSError *error = nil;
+        if ([managedObjectContext hasChanges] && ![managedObjectContext save:&error]) {
+            NSLog(@"Unresolved error %@ %@", error, [error userInfo]);
+            abort();
+        }
+    }
+}
+
+#pragma mark - Application Documents Directory
+
+-(NSURL *)applicationDocumentsDirectory {
+    return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
 #pragma mark - deallocate

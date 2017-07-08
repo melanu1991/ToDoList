@@ -15,17 +15,17 @@
         <attribute name="startedAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="taskId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="date" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Date" inverseName="tasks" inverseEntity="Date" syncable="YES"/>
-        <relationship name="toDoList" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ToDoList" inverseName="arrayTasks" inverseEntity="ToDoList" syncable="YES"/>
+        <relationship name="toDoList" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ToDoList" inverseName="arrayTasks" inverseEntity="ToDoList" syncable="YES"/>
     </entity>
     <entity name="ToDoList" representedClassName="ToDoList" parentEntity="Parent" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="toDoListId" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <relationship name="arrayTasks" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Task" inverseName="toDoList" inverseEntity="Task" syncable="YES"/>
+        <relationship name="arrayTasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Task" inverseName="toDoList" inverseEntity="Task" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Date" positionX="-405" positionY="-61" width="128" height="73"/>
         <element name="Parent" positionX="-135" positionY="-151" width="128" height="43"/>
         <element name="Task" positionX="-225" positionY="-63" width="128" height="193"/>
         <element name="ToDoList" positionX="-45" positionY="-9" width="128" height="88"/>
-        <element name="Date" positionX="-405" positionY="-61" width="128" height="73"/>
     </elements>
 </model>
