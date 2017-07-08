@@ -1,8 +1,6 @@
 #import "VAKCoreDataManager.h"
 
-@interface VAKCoreDataManager () {
-    NSMutableDictionary *_privateDictionaryDate;
-}
+@interface VAKCoreDataManager ()
 
 @end
 
@@ -12,15 +10,6 @@
 @synthesize managedObjectModel = _managedObjectModel;
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
-#pragma mark - lazy getters
-
-- (NSDictionary *)dictionatyDate {
-    if (!_dictionatyDate) {
-        _privateDictionaryDate = [NSMutableDictionary dictionary];
-    }
-    return _privateDictionaryDate;
-}
-
 #pragma mark - Singleton Manager
 
 + (VAKCoreDataManager *)sharedManager {
@@ -28,6 +17,12 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
+        NSArray *arrayToDoList = [manager allEntityWithName:@"ToDoList" sortDescriptor:nil];
+        if (arrayToDoList.count == 0) {
+            ToDoList *inbox = (ToDoList *)[manager createEntityWithName:@"ToDoList"];
+            inbox.name = VAKInbox;
+            [inbox.managedObjectContext save:nil];
+        }
         [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:manager selector:@selector(remindMeOnADay:) name:VAKRemindTask object:nil];
     });
@@ -122,27 +117,34 @@
 #pragma mark - work with entities
 
 - (NSInteger)countOfEntityWithName:(NSString *)name {
-    NSArray *array = [self allEntityWithName:name];
+    NSArray *array = [self allEntityWithName:name sortDescriptor:nil];
     return [array count];
 }
 
-- (NSArray *)allEntityWithName:(NSString *)name {
+- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor {
     NSFetchRequest *fetchRequests = [[NSFetchRequest alloc] init];
     NSEntityDescription *entityDescription = [NSEntityDescription entityForName:name inManagedObjectContext:self.managedObjectContext];
     [fetchRequests setEntity:entityDescription];
+    if (sortDescriptor != nil) {
+        [fetchRequests setSortDescriptors:@[sortDescriptor]];
+    }
     NSArray *array = [self.managedObjectContext executeFetchRequest:fetchRequests error:nil];
     return array;
 }
 
 - (void)deleteAllObjects {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList"];
+    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
     for (ToDoList *item in arrayToDoLists) {
         [self.managedObjectContext deleteObject:item];
+    }
+    NSArray *arrayDate = [self allEntityWithName:@"Date" sortDescriptor:nil];
+    for (Date *date in arrayDate) {
+        [self.managedObjectContext deleteObject:date];
     }
 }
 
 - (void)deleteTaskByTask:(Task *)task {
-    NSArray *toDoLists = [self allEntityWithName:@"ToDoList"];
+    NSArray *toDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
 //    for (ToDoList *toDoList in toDoLists) {
 //        if ([toDoList.toDoListId isEqualToNumber:task.currentToDoList.toDoListId]) {
 //            for (Task *taskCD in toDoList.arrayTasks) {
@@ -155,7 +157,7 @@
 }
 
 - (void)deleteToDoListById:(NSNumber *)toDoListId {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList"];
+    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
     for (ToDoList *item in arrayToDoLists) {
         if ([item.toDoListId isEqualToNumber:toDoListId]) {
             [self.managedObjectContext deleteObject:item];
@@ -169,8 +171,18 @@
     return entity;
 }
 
+- (void)addEntityWithEntity:(Parent *)entity {
+//    if ([entity isKindOfClass:[Task class]]) {
+//        Task *task = (Task *)entity;
+//        NSString *dateTask = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
+//    }
+//    [self.managedObjectContext save:nil];
+}
+
+
+
 - (ToDoList *)backRightToDoListByToDoList:(ToDoList *)toDoList {
-    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList"];
+    NSArray *arrayToDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
     if ([arrayToDoLists containsObject:toDoList]) {
         for (ToDoList *item in arrayToDoLists) {
             if ([item.toDoListId isEqualToNumber:toDoList.toDoListId]) {
@@ -185,15 +197,8 @@
     return coreDataToDoList;
 }
 
-- (void)addToDoListWithName:(NSString *)name id:(NSNumber *)toDoListId {
-    ToDoList *coreDataToDoList = [NSEntityDescription insertNewObjectForEntityForName:@"ToDoList" inManagedObjectContext:self.managedObjectContext];
-    coreDataToDoList.name = name;
-    coreDataToDoList.toDoListId = toDoListId;
-    [self.managedObjectContext save:nil];
-}
-
 - (void)updateTaskByTask:(Task *)task {
-    NSArray *tasks = [self allEntityWithName:@"Task"];
+    NSArray *tasks = [self allEntityWithName:@"Task" sortDescriptor:nil];
     for (Task *item in tasks) {
         if ([item.taskId isEqualToNumber:task.taskId]) {
             item.name = task.name;
@@ -208,7 +213,7 @@
 }
 
 - (void)updateToDoListByToDoList:(ToDoList *)toDoList {
-    NSArray *toDoLists = [self allEntityWithName:@"ToDoList"];
+    NSArray *toDoLists = [self allEntityWithName:@"ToDoList" sortDescriptor:nil];
     for (ToDoList *item in toDoLists) {
         if ([item.toDoListId isEqualToNumber:toDoList.toDoListId]) {
             item.name = toDoList.name;

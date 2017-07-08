@@ -237,7 +237,20 @@
         }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
         newTask.toDoList = self.currentGroup;
-        [newTask.managedObjectContext save:nil];
+        NSArray *arrayEntityDate = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil];
+        if ([arrayEntityDate containsObject:[NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
+            for (Date *date in arrayEntityDate) {
+                if ([date.date isEqualToString:[NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]]) {
+                    [date addTasksObject:newTask];
+                }
+            }
+        }
+        else {
+            Date *date = (Date *)[[VAKCoreDataManager sharedManager] createEntityWithName:@"Date"];
+            date.date = [NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+            [date addTasksObject:newTask];
+        }
+        [[VAKCoreDataManager sharedManager] saveContext];
     }
     else {
         NSString *newDate = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithoutHourAndMinute];

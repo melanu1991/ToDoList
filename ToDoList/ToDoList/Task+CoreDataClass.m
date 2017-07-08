@@ -1,4 +1,6 @@
 #import "Task+CoreDataClass.h"
+#import "Date+CoreDataClass.h"
+
 #import "ToDoList+CoreDataClass.h"
 
 @implementation Task
@@ -12,5 +14,6 @@
 @dynamic startedAt;
 @dynamic taskId;
 @dynamic toDoList;
+@dynamic date;
 
 @end

@@ -6,13 +6,13 @@
 #import "ToDoList+CoreDataClass.h"
 #import "Parent+CoreDataClass.h"
 #import "VAKNSDate+Formatters.h"
+#import "Date+CoreDataClass.h"
 
 @interface VAKCoreDataManager : NSObject
 
 @property (readonly, strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property (strong, nonatomic) NSDictionary *dictionatyDate;
 
 + (VAKCoreDataManager *)sharedManager;
 
@@ -20,11 +20,10 @@
 - (NSURL *)applicationDocumentsDirectory;
 
 - (void)deleteTaskByTask:(Task *)task;
-- (void)addToDoListWithName:(NSString *)name id:(NSNumber *)toDoListId;
 - (void)updateTaskByTask:(Task *)task;
 - (void)updateToDoListByToDoList:(ToDoList *)toDoList;
 - (void)deleteToDoListById:(NSNumber *)toDoListId;
-- (NSArray *)allEntityWithName:(NSString *)name;
+- (NSArray *)allEntityWithName:(NSString *)name sortDescriptor:(NSSortDescriptor *)sortDescriptor;
 - (NSInteger)countOfEntityWithName:(NSString *)name;
 - (Parent *)createEntityWithName:(NSString *)name;
 

@@ -1,7 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "Parent+CoreDataClass.h"
 
-@class ToDoList;
+@class Date, ToDoList;
 
 @interface Task : Parent
 
@@ -14,5 +14,6 @@
 @property (nullable, nonatomic, copy) NSDate *startedAt;
 @property (nullable, nonatomic, copy) NSNumber *taskId;
 @property (nullable, nonatomic, retain) ToDoList *toDoList;
+@property (nullable, nonatomic, retain) Date *date;
 
 @end
