@@ -50,18 +50,16 @@
     else if (notification.userInfo[VAKDoneTask]) {
         [self completeTask:currentTask];
     }
-//    else if (notification.userInfo[VAKDeleteTask]) {
-//        if ([self.tasks containsObject:currentTask]) {
-//            [self removeTaskById:currentTask.taskId];
-//            [[VAKCoreDataManager sharedManager] deleteTaskByTask:currentTask];
-//        }
-//    }
+    else if (notification.userInfo[VAKDeleteTask]) {
+        [self deleteEntity:currentTask];
+    }
 //    else if (notification.userInfo[VAKWasEditNameGroup]) {
 //        [self editNameGroupWithName:notification.userInfo[VAKInputNewNameGroup] index:notification.userInfo[VAKIndex]];
 //    }
 //    else if (notification.userInfo[VAKDeleteGroupTask]) {
 //        [self deleteGroupWithIndex:notification.userInfo[VAKIndex]];
 //    }
+    [self.managedObjectContext save:nil];
 }
 
 #pragma mark - remind task

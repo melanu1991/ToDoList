@@ -77,32 +77,11 @@
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
-        Date *date = arrayEntity[indexPath.section];
-        NSArray *arrayTasksCurrentDate = [date.tasks allObjects];
-        Task *currentTask = arrayTasksCurrentDate[indexPath.row];
-        cell.taskNameLabel.text = currentTask.name;
-        cell.taskNoteLabel.text = currentTask.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-    }
-    else {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
-        ToDoList *currentToDoList = arrayEntity[indexPath.section];
-        NSArray *arrayTasks = [currentToDoList.arrayTasks allObjects];
-        arrayTasks = [arrayTasks sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            Task *task1 = (Task *)obj1;
-            Task *task2 = (Task *)obj2;
-            return [task1.startedAt compare:task2.startedAt];
-        }];
-        Task *currentTask = arrayTasks[indexPath.row];
-        cell.taskNameLabel.text = currentTask.name;
-        cell.taskNoteLabel.text = currentTask.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-    }
-    
+    Task *currentTask = [self returnSelectedTaskByIndexPath:indexPath];
+    cell.taskNameLabel.text = currentTask.name;
+    cell.taskNoteLabel.text = currentTask.notes;
+    cell.taskStartDateLabel.text = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+
     return cell;
 }
 
@@ -134,12 +113,10 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
+        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil predicate:nil];
         return arrayEntity.count;
     }
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-    NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
+    NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
     return arrayEntity.count;
 }
 
@@ -150,33 +127,52 @@
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
-    if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
-        Date *date = arrayEntity[indexPath.section];
-        NSArray *arrayTask = [date.tasks allObjects];
-        editTaskController.task = arrayTask[indexPath.row];
-    }
-    else {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
-        ToDoList *toDoList = arrayEntity[indexPath.section];
-        NSArray *arrayTasks = [toDoList.arrayTasks allObjects];
-        arrayTasks = [arrayTasks sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
-            Task *task1 = (Task *)obj1;
-            Task *task2 = (Task *)obj2;
-            return [task1.startedAt compare:task2.startedAt];
-        }];
-        editTaskController.task = arrayTasks[indexPath.row];
-    }
-    
+    editTaskController.task = [self returnSelectedTaskByIndexPath:indexPath];
     [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    Task *task = nil;
+    Task *task = [self returnSelectedTaskByIndexPath:indexPath];
     
+    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+        
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDoneTask, VAKDoneTask, task, VAKCurrentTask, nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+        
+    }];
+    
+    if (task.completed) {
+        doneAction.backgroundColor = [UIColor grayColor];
+    }
+    else {
+        doneAction.backgroundColor = [UIColor blueColor];
+    }
+    
+    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, task, VAKCurrentTask, nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+        [self.tableView reloadData];
+        
+    }];
+    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:okAction];
+    [alertController addAction:cancelAction];
+    
+    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
+       [self presentViewController:alertController animated:YES completion:nil];
+    }];
+    deleteAction.backgroundColor = [UIColor redColor];
+    
+    return @[deleteAction, doneAction];
+}
+
+#pragma mark - helpers
+
+- (Task *)returnSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
+    Task *task = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
         NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
@@ -196,40 +192,7 @@
         }];
         task = arrayTasks[indexPath.row];
     }
-    
-    UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDoneTask, VAKDoneTask, task, VAKCurrentTask, nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
-        [[VAKCoreDataManager sharedManager].managedObjectContext save:nil];
-        
-    }];
-    
-    if (task.completed) {
-        doneAction.backgroundColor = [UIColor grayColor];
-    }
-    else {
-        doneAction.backgroundColor = [UIColor blueColor];
-    }
-    
-    UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
-    UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-        
-        [[VAKCoreDataManager sharedManager] deleteEntity:task];
-        [[VAKCoreDataManager sharedManager].managedObjectContext save:nil];
-        [self.tableView reloadData];
-        
-    }];
-    UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
-    [alertController addAction:okAction];
-    [alertController addAction:cancelAction];
-    
-    UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-       [self presentViewController:alertController animated:YES completion:nil];
-    }];
-    deleteAction.backgroundColor = [UIColor redColor];
-    
-    return @[deleteAction, doneAction];
+    return task;
 }
 
 #pragma mark - implemented deallocate

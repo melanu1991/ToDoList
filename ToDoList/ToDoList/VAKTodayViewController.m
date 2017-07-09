@@ -105,7 +105,7 @@
 - (Task *)returnSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
     if (indexPath.section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
         return arrayNotCompletedTask[indexPath.row];
     }
@@ -122,7 +122,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
     }
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
@@ -157,16 +157,6 @@
     [self.tableView setEditing:editing animated:animated];
 }
 
-- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath {
-    return YES;
-}
-
-- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
-    
-    
-
-}
-
 #pragma mark - implemented UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -182,31 +172,12 @@
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    __block Task *currentTask = nil;
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
-    NSInteger day = [components day];
-    NSInteger month = [components month];
-    NSInteger year = [components year];
-    NSDate *startDate = [NSDate dateFromString:[NSString stringWithFormat:@"%ld.%ld.%ld", day, month, year] format:VAKDateFormatWithoutHourAndMinute];
-    NSDate *finishDate = [NSDate dateFromString:[NSString stringWithFormat:@"%ld.%ld.%ld 23:59", day, month, year] format:@"dd.MM.YYYY H:m"];
-    
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
-    if (indexPath.section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", startDate, finishDate];
-        NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        currentTask = arrayNotCompletedTask[indexPath.row];
-    }
-    else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
-        NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        currentTask = arrayCompletedTask[indexPath.row];
-    }
+    Task *currentTask = [self returnSelectedTaskByIndexPath:indexPath];
     
     UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:VAKWarningDeleteMessage preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *okAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         
-        
-        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, nil];
+        NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, currentTask, VAKCurrentTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
         
@@ -216,10 +187,10 @@
     [alertController addAction:cancelAction];
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
-        
-
+    
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:currentTask, VAKCurrentTask, VAKDoneTask, VAKDoneTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
+        [self.tableView reloadData];
 
     }];
     
