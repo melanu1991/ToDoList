@@ -46,12 +46,12 @@
     else if (notification.userInfo[VAKDeleteTask]) {
         [self deleteEntity:currentTask];
     }
-//    else if (notification.userInfo[VAKWasEditNameGroup]) {
-//        [self editNameGroupWithName:notification.userInfo[VAKInputNewNameGroup] index:notification.userInfo[VAKIndex]];
-//    }
-//    else if (notification.userInfo[VAKDeleteGroupTask]) {
-//        [self deleteGroupWithIndex:notification.userInfo[VAKIndex]];
-//    }
+    else if (notification.userInfo[VAKWasEditNameGroup]) {
+        [self renameGroup:notification.userInfo[VAKCurrentGroup] newName:notification.userInfo[VAKInputNewNameGroup]];
+    }
+    else if (notification.userInfo[VAKDeleteGroupTask]) {
+        [self deleteEntity:notification.userInfo[VAKCurrentGroup]];
+    }
     [self.managedObjectContext save:nil];
 }
 
@@ -98,6 +98,10 @@
 
 #pragma mark - work with entities
 
+- (void)renameGroup:(ToDoList *)toDoList newName:(NSString *)newName{
+    toDoList.name = newName;
+}
+
 - (void)completeTask:(Task *)task {
     task.completed = YES;
     task.finishedAt = [NSDate date];
@@ -112,12 +116,10 @@
         }
         [self.managedObjectContext deleteObject:task];
     }
-//    else if ([entity isKindOfClass:[ToDoList class]]) {
-//        ToDoList *toDoList = (ToDoList *)entity;
-//    }
-//    else {
-//        Date *date = (Date *)entity;
-//    }
+    else if ([entity isKindOfClass:[ToDoList class]]) {
+        ToDoList *toDoList = (ToDoList *)entity;
+        [self.managedObjectContext deleteObject:toDoList];
+    }
 }
 
 - (NSInteger)countOfEntityWithName:(NSString *)name {

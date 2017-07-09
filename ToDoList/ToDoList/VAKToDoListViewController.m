@@ -142,10 +142,21 @@
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
     }
-    todayViewController.selectedGroup = YES;
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    ToDoList *toDoList = nil;
+    if (indexPath.section == VAKZero) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
+        NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
+        toDoList = arr[indexPath.row];
+    }
+    else {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name != %@", VAKInbox];
+        NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
+        toDoList = arr[indexPath.row - 1];
+    }
     
     UITableViewRowAction *deleteAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDelete, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
@@ -154,7 +165,7 @@
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKDeleteTaskTitle, nil) message:NSLocalizedString(VAKWarningDeleteMessage, nil) preferredStyle:UIAlertControllerStyleAlert];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
-                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteGroupTask, VAKDeleteGroupTask, indexPath, VAKIndex, nil];
+                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteGroupTask, VAKDeleteGroupTask, toDoList, VAKCurrentGroup, nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
                 
@@ -178,7 +189,7 @@
             }];
             UIAlertAction *alertActionOk= [UIAlertAction actionWithTitle:NSLocalizedString(VAKOkButton, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
                 
-                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKWasEditNameGroup, VAKWasEditNameGroup, alertController.textFields[VAKZero].text, VAKInputNewNameGroup, indexPath.row, VAKIndex, nil];
+                NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKWasEditNameGroup, VAKWasEditNameGroup, alertController.textFields[VAKZero].text, VAKInputNewNameGroup, toDoList, VAKCurrentGroup, nil];
                 [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
                 [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
                 
