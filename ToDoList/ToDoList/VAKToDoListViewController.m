@@ -123,8 +123,9 @@
     if (indexPath.section == VAKZero) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
         NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
-        ToDoList *toDoList = arr[indexPath.row - 1];
+        ToDoList *toDoList = arr[indexPath.row];
         todayViewController.currentGroup = toDoList;
+        todayViewController.selectedGroup = YES;
         [self.navigationController pushViewController:todayViewController animated:YES];
     }
     else {
@@ -137,6 +138,7 @@
             NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
             ToDoList *toDoList = arr[indexPath.row - 1];
             todayViewController.currentGroup = toDoList;
+            todayViewController.selectedGroup = YES;
             [self.navigationController pushViewController:todayViewController animated:YES];
         }
     }
