@@ -121,6 +121,17 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (self.selectedGroup) {
+        if (section == VAKZero) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
+            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
+            return set.count;
+        }
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
+        NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
+        return set.count;
+    }
+    
     if (section == VAKZero) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
@@ -133,10 +144,32 @@
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
-    Task *notCompletedTask = [self returnSelectedTaskByIndexPath:indexPath];
-    cell.taskNameLabel.text = notCompletedTask.name;
-    cell.taskNoteLabel.text = notCompletedTask.notes;
-    cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+    if (self.selectedGroup) {
+        if (indexPath.section == VAKZero) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
+            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
+            NSArray *arr = [set allObjects];
+            Task *notCompletedTask = arr[indexPath.row];
+            cell.taskNameLabel.text = notCompletedTask.name;
+            cell.taskNoteLabel.text = notCompletedTask.notes;
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        }
+        else {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
+            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
+            NSArray *arr = [set allObjects];
+            Task *completedTask = arr[indexPath.row];
+            cell.taskNameLabel.text = completedTask.name;
+            cell.taskNoteLabel.text = completedTask.notes;
+            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        }
+    }
+    else {
+        Task *notCompletedTask = [self returnSelectedTaskByIndexPath:indexPath];
+        cell.taskNameLabel.text = notCompletedTask.name;
+        cell.taskNoteLabel.text = notCompletedTask.notes;
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+    }
 
     return cell;
 }
