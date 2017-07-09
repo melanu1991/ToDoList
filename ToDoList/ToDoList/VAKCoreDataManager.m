@@ -18,6 +18,7 @@
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
 //        [manager deleteAllObjects];
+        [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
         NSArray *arrayToDoList = [manager allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
         if (arrayToDoList.count == 0) {
             ToDoList *inbox = (ToDoList *)[manager createEntityWithName:@"ToDoList"];
@@ -155,6 +156,10 @@
     NSArray *arrayDate = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:nil];
     for (Date *date in arrayDate) {
         [self.managedObjectContext deleteObject:date];
+    }
+    NSArray *arrayTasks = [self allEntityWithName:@"Task" sortDescriptor:nil predicate:nil];
+    for (Task *task in arrayTasks) {
+        [self.managedObjectContext deleteObject:task];
     }
     [self.managedObjectContext save:nil];
 }

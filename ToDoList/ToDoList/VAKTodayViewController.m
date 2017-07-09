@@ -22,6 +22,11 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     
+    NSArray *array = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:nil];
+    for (Task *task in array) {
+        NSLog(@"name: %@, completed: %d", task.name, task.completed);
+    }
+    
     if (self.isSelectedGroup) {
         self.navigationItem.title = self.currentGroup.name;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
@@ -81,29 +86,42 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if (section == VAKZero) {
-        NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
-        return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate] count];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+        return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
     }
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
-    return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate] count];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+    return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
+}
+
+- (NSDate *)startCurrentDate {
+    NSDate *currentDate = [NSDate date];
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:currentDate];
+    [components setHour:00];
+    [components setMinute:00];
+    [components setSecond:00];
+    NSDate *startDate = [calendar dateFromComponents:components];
+    return startDate;
+}
+
+- (NSDate *)finishCurrentDate {
+    NSDate *currentDate = [NSDate date];
+    NSCalendar* calendar = [NSCalendar currentCalendar];
+    NSDateComponents* components = [calendar components:NSCalendarUnitYear|NSCalendarUnitMonth|NSCalendarUnitDay fromDate:currentDate];
+    [components setHour:23];
+    [components setMinute:59];
+    [components setSecond:59];
+    NSDate *finishDate = [calendar dateFromComponents:components];
+    return finishDate;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
-
-    NSDateComponents *components = [[NSCalendar currentCalendar] components:NSCalendarUnitDay | NSCalendarUnitMonth | NSCalendarUnitYear fromDate:[NSDate date]];
-    NSInteger day = [components day];
-    NSInteger month = [components month];
-    NSInteger year = [components year];
-    NSDate *startDate = [NSDate dateFromString:[NSString stringWithFormat:@"%ld.%ld.%ld", day, month, year] format:VAKDateFormatWithoutHourAndMinute];
-    NSDate *finishDate = [NSDate dateFromString:[NSString stringWithFormat:@"%ld.%ld.%ld 23:59", day, month, year] format:@"dd.MM.YYYY H:m"];
     
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
     if (indexPath.section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", startDate, finishDate];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
         Task *notCompletedTask = arrayNotCompletedTask[indexPath.row];
         cell.taskNameLabel.text = notCompletedTask.name;
@@ -111,7 +129,7 @@
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
     else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
         Task *completedTask = arrayCompletedTask[indexPath.row];
         cell.taskNameLabel.text = completedTask.name;

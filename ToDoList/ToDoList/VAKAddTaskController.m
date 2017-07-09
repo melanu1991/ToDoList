@@ -231,6 +231,7 @@
         newTask.remind = self.remindMeOnADay;
         newTask.notes = self.taskNotes;
         newTask.startedAt = self.selectDate;
+        newTask.completed = NO;
         if (newTask.remind) {
             NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:newTask, @"task", @"YES", @"remind", nil];
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
