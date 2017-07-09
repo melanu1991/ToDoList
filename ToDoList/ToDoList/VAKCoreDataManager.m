@@ -40,13 +40,6 @@
         NSDate *lastDate = currentTask.startedAt;
         [self updateTaskByName:notification.userInfo[VAKNewTaskName] notes:notification.userInfo[VAKNewNotes] newDate:newDate lastDate:lastDate priority:notification.userInfo[VAKNewPriority] taskId:currentTask.taskId];
     }
-//    else if (notification.userInfo[VAKAddNewTask]) {
-//        VAKTask *newTask = notification.userInfo[VAKCurrentTask];
-//        if (![self.tasks containsObject:currentTask]) {
-//            [self addTask:newTask];
-//            [[VAKCoreDataManager sharedManager] addTaskWithTask:currentTask];
-//        }
-//    }
     else if (notification.userInfo[VAKDoneTask]) {
         [self completeTask:currentTask];
     }

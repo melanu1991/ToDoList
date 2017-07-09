@@ -237,7 +237,14 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:VAKRemindTask object:nil userInfo:dic];
         }
         addOrChangedTask = [NSDictionary dictionaryWithObjectsAndKeys:newTask, VAKCurrentTask, VAKAddNewTask, VAKAddNewTask, nil];
-        newTask.toDoList = self.currentGroup;
+        if (self.currentGroup != nil) {
+            newTask.toDoList = self.currentGroup;
+        }
+        else {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
+            NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
+            newTask.toDoList = arr[0];
+        }
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", [NSDate dateStringFromDate:newTask.startedAt format:VAKDateFormatWithoutHourAndMinute]];
         NSArray *arrayEntityDate = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
         if (arrayEntityDate.count > 0) {
