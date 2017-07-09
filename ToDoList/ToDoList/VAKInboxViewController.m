@@ -126,7 +126,6 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
-    
     editTaskController.task = [self returnSelectedTaskByIndexPath:indexPath];
     [self.navigationController pushViewController:editTaskController animated:YES];
 }
