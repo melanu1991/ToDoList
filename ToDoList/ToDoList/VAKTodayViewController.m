@@ -78,20 +78,7 @@
     [self.tableView setEditing:!self.tableView.editing];
 }
 
-#pragma mark - implemented UITableViewDataSource
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return VAKTwo;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
-        return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
-    }
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
-    return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
-}
+#pragma mark - helpers
 
 - (NSDate *)startCurrentDate {
     NSDate *currentDate = [NSDate date];
@@ -115,27 +102,41 @@
     return finishDate;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
-    
+- (Task *)returnSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
     NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
     if (indexPath.section == VAKZero) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
         NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        Task *notCompletedTask = arrayNotCompletedTask[indexPath.row];
-        cell.taskNameLabel.text = notCompletedTask.name;
-        cell.taskNoteLabel.text = notCompletedTask.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        return arrayNotCompletedTask[indexPath.row];
     }
-    else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
-        NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        Task *completedTask = arrayCompletedTask[indexPath.row];
-        cell.taskNameLabel.text = completedTask.name;
-        cell.taskNoteLabel.text = completedTask.notes;
-        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+    NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
+    return arrayCompletedTask[indexPath.row];
+}
+
+#pragma mark - implemented UITableViewDataSource
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return VAKTwo;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if (section == VAKZero) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == nil AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+        return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
     }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startCurrentDate], [self finishCurrentDate]];
+    return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
+    
+    Task *notCompletedTask = [self returnSelectedTaskByIndexPath:indexPath];
+    cell.taskNameLabel.text = notCompletedTask.name;
+    cell.taskNoteLabel.text = notCompletedTask.notes;
+    cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
 
     return cell;
 }
@@ -172,19 +173,8 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
-    Task *currentTask = nil;
     
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
-    if (indexPath.section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
-        NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        currentTask = arrayNotCompletedTask[indexPath.row];
-    }
-    else {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
-        NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        currentTask = arrayCompletedTask[indexPath.row];
-    }
+    Task *currentTask = [self returnSelectedTaskByIndexPath:indexPath];
 
     editTaskController.task = currentTask;
     [self.navigationController pushViewController:editTaskController animated:YES];
