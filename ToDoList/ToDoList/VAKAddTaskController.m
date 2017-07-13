@@ -249,6 +249,35 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
+#pragma mark - remind task
+
+- (void)remind:(VAKTask *)task {
+    NSString *eventInfo = [NSString stringWithFormat:@"Name: %@ and notes: %@", task.taskName, task.notes];
+    NSString *eventDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithHourAndMinute];
+    NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:eventInfo, @"eventInfo", eventDate, @"eventDate", task.taskId, @"taskId", nil];
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    notification.userInfo = dic;
+    notification.timeZone = [NSTimeZone defaultTimeZone];
+    notification.fireDate = task.startedAt;
+    notification.alertBody = eventInfo;
+    notification.applicationIconBadgeNumber = 1;
+    notification.soundName = UILocalNotificationDefaultSoundName;
+    [[UIApplication sharedApplication] scheduleLocalNotification:notification];
+}
+
+- (void)deleteRemind:(VAKTask *)task {
+    for (UILocalNotification *notification in [[UIApplication sharedApplication] scheduledLocalNotifications]) {
+        if ([notification.userInfo[@"taskId"] isEqualToString:task.taskId]) {
+            [[UIApplication sharedApplication] cancelLocalNotification:notification];
+        }
+    }
+}
+
+- (void)updateDateRemind:(VAKTask *)task {
+    [self deleteRemind:task];
+    [self remind:task];
+}
+
 #pragma mark - deallocate
 
 - (void)dealloc {
