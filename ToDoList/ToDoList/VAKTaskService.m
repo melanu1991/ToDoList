@@ -1,6 +1,7 @@
 #import "VAKTaskService.h"
 #import "VAKAddTaskController.h"
 #import "Constants.h"
+#import "VAKCoreDataManager.h"
 
 @interface VAKTaskService ()
 
@@ -24,8 +25,15 @@
 
 - (instancetype)init {
     if (self = [super init]) {
-        self.tasks = [NSMutableArray array];
-        [self loadArrayTasks];
+        NSArray *arrayTasks = [[VAKCoreDataManager sharedManager] loadTasks];
+        if ([arrayTasks count] > 0) {
+            for (VAKTask *task in arrayTasks) {
+                [self addTask:task];
+            }
+        }
+        else {
+            self.tasks = [NSMutableArray array];
+        }
         self.addTaskController = [[VAKAddTaskController alloc] init];
     }
     
@@ -42,8 +50,10 @@
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     VAKTask *currentTask = notification.userInfo[VAKCurrentTask];
     if (notification.userInfo[VAKDetailTaskWasChanged]) {
-        NSString *lastDate = notification.userInfo[VAKLastDate];
-        NSString *newDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+        currentTask.taskName = notification.userInfo[VAKNewTaskName];
+        currentTask.notes = notification.userInfo[VAKNewNotes];
+        NSString *newDate = notification.userInfo[VAKNewDate];
+        NSString *lastDate = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
         if (![lastDate isEqualToString:newDate]) {
             [self updateTask:currentTask lastDate:lastDate newDate:newDate];
         }
@@ -107,7 +117,7 @@
 
 - (void)addTask:(VAKTask *)task {
     [self.tasks addObject:task];
-  
+
     NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
     NSString *currentGroup = task.currentGroup;
     
@@ -142,12 +152,10 @@
     
     [self sortArrayKeysDate:NO];
     [self sortArrayKeysGroup:NO];
-    
-    [self saveArrayTasks];
 }
 
 - (void)removeTaskById:(NSString *)taskId {
-    
+
     for (VAKTask *task in self.tasks) {
         if ([task.taskId isEqualToString:taskId]) {
             NSString *currentDate = [NSDate dateStringFromDate:task.startedAt format:VAKDateFormatWithoutHourAndMinute];
@@ -168,7 +176,6 @@
                 [self.dictionaryDate removeObjectForKey:currentDate];
                 [self sortArrayKeysDate:self.isReverseOrdered];
             }
-            [self saveArrayTasks];
             return;
         }
     }
@@ -190,8 +197,6 @@
     }
     [self.dictionaryDate setObject:arrayDate forKey:newDate];
     [self sortArrayKeysDate:self.isReverseOrdered];
-    
-    [self saveArrayTasks];
 }
 
 - (void)updateTaskForCompleted:(VAKTask *)task {
@@ -203,7 +208,6 @@
         arrayTasks = self.dictionaryCompletedOrNotCompletedTasks[VAKCompletedTask];
         [arrayTasks addObject:task];
     }
-    [self saveArrayTasks];
 }
 
 - (void)addGroup:(NSString *)group {

@@ -30,9 +30,9 @@ static NSString * const VAKAddNewTask = @"VAKAddNewTask";
 static NSString * const VAKDeleteTask = @"VAKDeleteTask";
 static NSString * const VAKSelectedDate = @"VAKSelectedDate";
 static NSString * const VAKCurrentTask = @"VAKCurrentTask";
-static NSString * const VAKLastTaskName = @"VAKLastTaskName";
-static NSString * const VAKLastNotes = @"VAKLastNotes";
-static NSString * const VAKLastDate = @"VAKLastDate";
+static NSString * const VAKNewTaskName = @"VAKLastTaskName";
+static NSString * const VAKNewNotes = @"VAKLastNotes";
+static NSString * const VAKNewDate = @"VAKLastDate";
 static NSString * const VAKDetailTaskWasChanged = @"VAKDetailTaskWasChanged";
 static NSString * const VAKWasEditNameGroup = @"VAKWasEditNameGroup";
 static NSString * const VAKDeleteGroupTask = @"VAKDeleteGroupTasks";
@@ -83,7 +83,7 @@ static NSInteger const VAKTwo = 2;
 static NSInteger const VAKThree = 3;
 static NSInteger const VAKFour = 4;
 
-static CGFloat const VAKHeightBigCell = 200.f;
-static CGFloat const VAKHeightRegularCell = 44.f;
+static float const VAKHeightBigCell = 200.f;
+static float const VAKHeightRegularCell = 44.f;
 
 #endif
