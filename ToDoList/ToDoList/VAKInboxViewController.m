@@ -88,8 +88,8 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
-        Date *date = arrayEntity[section];
+        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
+        VAKManagedData *date = arrayEntity[section];
         return date.date;
     }
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
@@ -101,8 +101,8 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
-        Date *date = arrayEntity[section];
+        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
+        VAKManagedData *date = arrayEntity[section];
         return date.tasks.count;
     }
     NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
@@ -113,7 +113,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:nil predicate:nil];
+        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:nil predicate:nil];
         return arrayEntity.count;
     }
     NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
@@ -174,8 +174,8 @@
     Task *task = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Date" sortDescriptor:descriptor predicate:nil];
-        Date *date = arrayEntity[indexPath.section];
+        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
+        VAKManagedData *date = arrayEntity[indexPath.section];
         NSArray *arrayTask = [date.tasks allObjects];
         task = arrayTask[indexPath.row];
     }

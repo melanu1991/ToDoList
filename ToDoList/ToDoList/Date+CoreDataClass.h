@@ -3,14 +3,14 @@
 
 @class Task;
 
-@interface Date : Parent
+@interface VAKManagedData : Parent
 
 @property (nullable, nonatomic, copy) NSString *date;
 @property (nullable, nonatomic, retain) NSSet<Task *> *tasks;
 
 @end
 
-@interface Date (CoreDataGeneratedAccessors)
+@interface VAKManagedData (CoreDataGeneratedAccessors)
 
 - (void)addTasksObject:(Task *_Nullable)value;
 - (void)removeTasksObject:(Task *_Nullable)value;

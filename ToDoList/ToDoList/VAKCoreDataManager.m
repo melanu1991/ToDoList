@@ -17,7 +17,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         manager = [[VAKCoreDataManager alloc] init];
-//        [manager deleteAllObjects];
         [NSTimeZone setDefaultTimeZone:[NSTimeZone timeZoneWithName:@"GMT"]];
         NSArray *arrayToDoList = [manager allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
         if (arrayToDoList.count == 0) {
@@ -111,7 +110,7 @@
     if ([entity isKindOfClass:[Task class]]) {
         Task *task = (Task *)entity;
         if (task.date.tasks.count == 1) {
-            Date *currentDate = task.date;
+            VAKManagedData *currentDate = task.date;
             [self.managedObjectContext deleteObject:currentDate];
         }
         [self.managedObjectContext deleteObject:task];
@@ -146,8 +145,8 @@
     for (ToDoList *item in arrayToDoLists) {
         [self.managedObjectContext deleteObject:item];
     }
-    NSArray *arrayDate = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:nil];
-    for (Date *date in arrayDate) {
+    NSArray *arrayDate = [self allEntityWithName:@"VAKManagedData" sortDescriptor:nil predicate:nil];
+    for (VAKManagedData *date in arrayDate) {
         [self.managedObjectContext deleteObject:date];
     }
     NSArray *arrayTasks = [self allEntityWithName:@"Task" sortDescriptor:nil predicate:nil];
@@ -175,20 +174,20 @@
         currentTask.startedAt = newDate;
         if (![newDateStr isEqualToString:lastDateStr]) {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"date == %@", lastDateStr];
-            NSArray *lastDateArray = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
-            Date *date = lastDateArray[0];
+            NSArray *lastDateArray = [self allEntityWithName:@"VAKManagedData" sortDescriptor:nil predicate:predicate];
+            VAKManagedData *date = lastDateArray[0];
             [date removeTasksObject:currentTask];
             if (date.tasks.count == 0) {
                 [self.managedObjectContext deleteObject:date];
             }
             predicate = [NSPredicate predicateWithFormat:@"date == %@", newDateStr];
-            NSArray *newDateArray = [self allEntityWithName:@"Date" sortDescriptor:nil predicate:predicate];
+            NSArray *newDateArray = [self allEntityWithName:@"VAKManagedData" sortDescriptor:nil predicate:predicate];
             if (newDateArray.count > 0) {
-                Date *date = newDateArray[0];
+                VAKManagedData *date = newDateArray[0];
                 [date addTasksObject:currentTask];
             }
             else {
-                Date *date = (Date *)[self createEntityWithName:@"Date"];
+                VAKManagedData *date = (VAKManagedData *)[self createEntityWithName:@"VAKManagedData"];
                 date.date = newDateStr;
                 [date addTasksObject:currentTask];
             }

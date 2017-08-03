@@ -17,7 +17,6 @@
 + (VAKCoreDataManager *)sharedManager;
 
 - (void)saveContext;
-- (NSURL *)applicationDocumentsDirectory;
 
 - (void)updateTaskByName:(NSString *)name notes:(NSString *)notes newDate:(NSDate *)newDate lastDate:(NSDate *)lastDate priority:(NSString *)priority taskId:(NSNumber *)taskId;
 - (void)deleteEntity:(Parent *)entity;

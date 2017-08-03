@@ -1,7 +1,7 @@
 #import "Date+CoreDataClass.h"
 #import "Task+CoreDataClass.h"
 
-@implementation Date
+@implementation VAKManagedData
 
 @dynamic date;
 @dynamic tasks;
