@@ -7,6 +7,8 @@
 @property (strong, nonatomic) UIBarButtonItem *addButton;
 @property (strong, nonatomic) UIBarButtonItem *backButton;
 @property (assign, nonatomic, getter=isNeedToReloadData) BOOL needToReloadData;
+@property (strong, nonatomic) NSArray *completedTasks;
+@property (strong, nonatomic) NSArray *notCompletedTasks;
 
 @end
 
@@ -18,15 +20,12 @@
     [super viewDidLoad];
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    [self initializationArraysCompletedAndNotCompletedTasks];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSArray *array = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:nil];
-    for (Task *task in array) {
-        NSLog(@"name: %@, completed: %d", task.name, task.completed);
-    }
-    
+
     if (self.isSelectedGroup) {
         self.navigationItem.title = self.currentGroup.name;
         self.editButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKEditButton, nil) style:UIBarButtonItemStyleDone target:self action:@selector(editTaskButtonPressed)];
@@ -43,16 +42,15 @@
     
     self.addButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(VAKAddButton, nil) style:UIBarButtonItemStylePlain target:self action:@selector(addTaskButtonPressed)];
     self.navigationItem.rightBarButtonItem = self.addButton;
-
-    if (self.isNeedToReloadData) {
-        [self.tableView reloadData];
-    }
 }
 
 #pragma mark - Notification
 
 - (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
     self.needToReloadData = YES;
+    [self initializationArraysCompletedAndNotCompletedTasks];
+    [self.tableView reloadData];
+    self.needToReloadData = NO;
 }
 
 #pragma mark - action
@@ -80,6 +78,21 @@
 
 #pragma mark - helpers
 
+- (void)initializationArraysCompletedAndNotCompletedTasks {
+    if (self.isSelectedGroup) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND toDoList == %@", self.currentGroup];
+        self.notCompletedTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+        predicate = [NSPredicate predicateWithFormat:@"completed == YES AND toDoList == %@", self.currentGroup];
+        self.completedTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+    }
+    else {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
+        self.notCompletedTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+        predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
+        self.completedTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+    }
+}
+
 - (NSDate *)startedCurrentDate {
     NSDate *currentDate = [NSDate date];
     NSCalendar* calendar = [NSCalendar currentCalendar];
@@ -103,15 +116,10 @@
 }
 
 - (Task *)backTaskByIndexPath:(NSIndexPath *)indexPath {
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"startedAt" ascending:YES];
     if (indexPath.section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
-        NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-        return arrayNotCompletedTask[indexPath.row];
+        return self.notCompletedTasks[indexPath.row];
     }
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
-    NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:sortDescriptor predicate:predicate];
-    return arrayCompletedTask[indexPath.row];
+    return self.completedTasks[indexPath.row];
 }
 
 #pragma mark - implemented UITableViewDataSource
@@ -121,54 +129,27 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (self.selectedGroup) {
-        if (section == VAKZero) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
-            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
-            return set.count;
-        }
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
-        NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
-        return set.count;
-    }
-    
     if (section == VAKZero) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
-        return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
+        return self.notCompletedTasks.count;
     }
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES AND startedAt >= %@ AND startedAt <= %@", [self startedCurrentDate], [self finishedCurrentDate]];
-    return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate] count];
+    return self.completedTasks.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
-    if (self.selectedGroup) {
-        if (indexPath.section == VAKZero) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == NO"];
-            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
-            NSArray *arr = [set allObjects];
-            Task *notCompletedTask = arr[indexPath.row];
-            cell.taskNameLabel.text = notCompletedTask.name;
-            cell.taskNoteLabel.text = notCompletedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
-        else {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"completed == YES"];
-            NSSet *set = [self.currentGroup.arrayTasks filteredSetUsingPredicate:predicate];
-            NSArray *arr = [set allObjects];
-            Task *completedTask = arr[indexPath.row];
-            cell.taskNameLabel.text = completedTask.name;
-            cell.taskNoteLabel.text = completedTask.notes;
-            cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
-        }
-    }
-    else {
-        Task *notCompletedTask = [self backTaskByIndexPath:indexPath];
+    if (indexPath.section == VAKZero) {
+        Task *notCompletedTask = self.notCompletedTasks[indexPath.row];
         cell.taskNameLabel.text = notCompletedTask.name;
         cell.taskNoteLabel.text = notCompletedTask.notes;
         cell.taskStartDateLabel.text = [NSDate dateStringFromDate:notCompletedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
+    }
+    else {
+        Task *completedTask = self.completedTasks[indexPath.row];
+        cell.taskNameLabel.text = completedTask.name;
+        cell.taskNoteLabel.text = completedTask.notes;
+        cell.taskStartDateLabel.text = [NSDate dateStringFromDate:completedTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
     }
 
     return cell;
@@ -212,7 +193,7 @@
         
         NSDictionary *dic = [NSDictionary dictionaryWithObjectsAndKeys:VAKDeleteTask, VAKDeleteTask, currentTask, VAKCurrentTask, nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:VAKTaskWasChangedOrAddOrDelete object:nil userInfo:dic];
-        [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
+        [self.tableView reloadData];
         
     }];
     UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];

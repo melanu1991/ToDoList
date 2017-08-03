@@ -178,16 +178,12 @@
 - (Task *)backTaskByIndexPath:(NSIndexPath *)indexPath {
     Task *task = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
-        VAKManagedData *date = arrayEntity[indexPath.section];
+        VAKManagedData *date = self.dates[indexPath.section];
         NSArray *arrayTask = [date.tasks allObjects];
         task = arrayTask[indexPath.row];
     }
     else {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
-        ToDoList *toDoList = arrayEntity[indexPath.section];
+        ToDoList *toDoList = self.groups[indexPath.section];
         NSArray *arrayTasks = [toDoList.arrayTasks allObjects];
         arrayTasks = [arrayTasks sortedArrayUsingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
             Task *task1 = (Task *)obj1;
