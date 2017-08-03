@@ -6,7 +6,7 @@
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseDateOrGroupSorted;
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
-@property (assign, nonatomic) BOOL needToReloadData;
+@property (assign, nonatomic, getter=isNeedToReloadData) BOOL needToReloadData;
 @property (strong, nonatomic) NSArray *dates;
 @property (strong, nonatomic) NSArray *groups;
 
@@ -27,7 +27,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (self.needToReloadData) {
+    if (self.isNeedToReloadData) {
         [self initializationDatesAndGroupsArrays];
         [self.tableView reloadData];
         self.needToReloadData = NO;
@@ -92,7 +92,7 @@
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
-    Task *currentTask = [self backSelectedTaskByIndexPath:indexPath];
+    Task *currentTask = [self backTaskByIndexPath:indexPath];
     cell.taskNameLabel.text = currentTask.name;
     cell.taskNoteLabel.text = currentTask.notes;
     cell.taskStartDateLabel.text = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
@@ -131,13 +131,13 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
-    editTaskController.task = [self backSelectedTaskByIndexPath:indexPath];
+    editTaskController.task = [self backTaskByIndexPath:indexPath];
     [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    Task *task = [self backSelectedTaskByIndexPath:indexPath];
+    Task *task = [self backTaskByIndexPath:indexPath];
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
@@ -175,7 +175,7 @@
 
 #pragma mark - helpers
 
-- (Task *)backSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
+- (Task *)backTaskByIndexPath:(NSIndexPath *)indexPath {
     Task *task = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];

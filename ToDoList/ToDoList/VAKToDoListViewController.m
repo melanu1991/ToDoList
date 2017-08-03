@@ -12,7 +12,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *addProjectButton;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *editButton;
-@property (assign, nonatomic) BOOL needToReloadData;
+@property (assign, nonatomic, getter=isNeedToReloadData) BOOL needToReloadData;
 
 @end
 
@@ -21,7 +21,7 @@
 #pragma mark - life cycle view controller
 
 - (void)viewWillAppear:(BOOL)animated {
-    if (self.needToReloadData) {
+    if (self.isNeedToReloadData) {
         self.needToReloadData = NO;
         [self.tableView reloadData];
     }

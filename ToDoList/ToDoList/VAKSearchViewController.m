@@ -8,7 +8,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *noResultLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *chooseActiveOrCompletedTasks;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
-@property (assign, nonatomic) BOOL needToReloadData;
+@property (assign, nonatomic, getter=isNeedToReloadData) BOOL needToReloadData;
 
 @end
 
@@ -17,7 +17,8 @@
 #pragma mark - life cycle view controller
 
 - (void)viewWillAppear:(BOOL)animated {
-    if (self.needToReloadData) {
+    [super viewWillAppear:animated];
+    if (self.isNeedToReloadData) {
         [self searchBar:self.searchBar textDidChange:self.searchBar.text];
         self.needToReloadData = NO;
     }
@@ -37,7 +38,7 @@
 
 #pragma mark - helpers
 
-- (Task *)returnSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
+- (Task *)backTaskByIndexPath:(NSIndexPath *)indexPath {
     if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@ AND completed == NO", self.searchBar.text];
         NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
@@ -80,7 +81,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
     
-    Task *temp = [self returnSelectedTaskByIndexPath:indexPath];
+    Task *temp = [self backTaskByIndexPath:indexPath];
     cell.taskNameLabel.text = temp.name;
     cell.taskNoteLabel.text = temp.notes;
     cell.taskStartDateLabel.text = [NSDate dateStringFromDate:temp.startedAt format:VAKDateFormatWithHourAndMinute];
@@ -117,7 +118,7 @@
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
     
-    Task *currentTask = [self returnSelectedTaskByIndexPath:indexPath];
+    Task *currentTask = [self backTaskByIndexPath:indexPath];
     editTaskController.task = currentTask;
     
     [self.navigationController pushViewController:editTaskController animated:YES];
