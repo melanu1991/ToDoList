@@ -7,15 +7,28 @@
 @property (strong, nonatomic) UIBarButtonItem *editButton;
 @property (assign, nonatomic, getter=isReverseOrder) BOOL reverseOrder;
 @property (assign, nonatomic) BOOL needToReloadData;
+@property (strong, nonatomic) NSArray *dates;
+@property (strong, nonatomic) NSArray *groups;
 
 @end
 
 @implementation VAKInboxViewController
 
+#pragma mark - helpers
+
+- (void)initializationDatesAndGroupsArrays {
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
+    self.dates = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
+    descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
+    self.groups = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
+}
+
 #pragma mark - life cycle view controller
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     if (self.needToReloadData) {
+        [self initializationDatesAndGroupsArrays];
         [self.tableView reloadData];
         self.needToReloadData = NO;
     }
@@ -29,6 +42,7 @@
     self.navigationItem.leftBarButtonItem = self.editButton;
     [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
+    [self initializationDatesAndGroupsArrays];
 }
 
 #pragma mark - Notification
@@ -56,6 +70,7 @@
 
 - (IBAction)sortDateOrGroup:(UIBarButtonItem *)sender {
     self.reverseOrder = !self.reverseOrder;
+    [self initializationDatesAndGroupsArrays];
     [self.tableView reloadData];
 }
 
@@ -77,7 +92,7 @@
     
     VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
 
-    Task *currentTask = [self returnSelectedTaskByIndexPath:indexPath];
+    Task *currentTask = [self backSelectedTaskByIndexPath:indexPath];
     cell.taskNameLabel.text = currentTask.name;
     cell.taskNoteLabel.text = currentTask.notes;
     cell.taskStartDateLabel.text = [NSDate dateStringFromDate:currentTask.startedAt format:VAKDateFormatWithoutHourAndMinute];
@@ -87,37 +102,27 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
-        VAKManagedData *date = arrayEntity[section];
+        VAKManagedData *date = self.dates[section];
         return date.date;
     }
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-    NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
-    ToDoList *toDoList = arrayEntity[section];
-    return toDoList.name;
+    ToDoList *group = self.groups[section];
+    return group.name;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:descriptor predicate:nil];
-        VAKManagedData *date = arrayEntity[section];
+        VAKManagedData *date = self.dates[section];
         return date.tasks.count;
     }
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:self.reverseOrder];
-    NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:descriptor predicate:nil];
-    ToDoList *toDoList = arrayEntity[section];
+    ToDoList *toDoList = self.groups[section];
     return toDoList.arrayTasks.count;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
-        NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"VAKManagedData" sortDescriptor:nil predicate:nil];
-        return arrayEntity.count;
+        return self.dates.count;
     }
-    NSArray *arrayEntity = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:nil];
-    return arrayEntity.count;
+    return self.groups.count;
 }
 
 #pragma mark - implemented UITableViewDelegate
@@ -126,13 +131,13 @@
     [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
     
     VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
-    editTaskController.task = [self returnSelectedTaskByIndexPath:indexPath];
+    editTaskController.task = [self backSelectedTaskByIndexPath:indexPath];
     [self.navigationController pushViewController:editTaskController animated:YES];
 }
 
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    Task *task = [self returnSelectedTaskByIndexPath:indexPath];
+    Task *task = [self backSelectedTaskByIndexPath:indexPath];
     
     UITableViewRowAction *doneAction = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:NSLocalizedString(VAKDoneButton, nil) handler:^(UITableViewRowAction * _Nonnull action, NSIndexPath * _Nonnull indexPath) {
         
@@ -170,7 +175,7 @@
 
 #pragma mark - helpers
 
-- (Task *)returnSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
+- (Task *)backSelectedTaskByIndexPath:(NSIndexPath *)indexPath {
     Task *task = nil;
     if ([self.chooseDateOrGroupSorted selectedSegmentIndex] == VAKZero) {
         NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"date" ascending:self.reverseOrder];
