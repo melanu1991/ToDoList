@@ -7,7 +7,16 @@ typedef enum : NSUInteger {
     VAKSectionThird,
 } VAKTaskSection;
 
+typedef enum : NSUInteger {
+    VAKNonePriority,
+    VAKLowPriority,
+    VAKMediumPriority,
+    VAKHighPriority,
+} VAKPrioritiesIdentifier;
+
 static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell", @"VAKRemindCell", @"VAKDateCell", @"VAKPriorityCell", @"VAKNotesCell" };
+static NSString * const VAKPriorities[] = { @"None", @"Low", @"Medium", @"High" };
+static NSUInteger const VAKCountSectionInTableView = 4;
 
 @interface VAKAddTaskController () <VAKRemindDelegate>
 
@@ -18,7 +27,6 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 @property (strong, nonatomic) NSString *taskNotes;
 @property (assign, nonatomic, getter=isRemindMeOnADay) BOOL remindMeOnADay;
 @property (strong, nonatomic) UIBarButtonItem *doneButton;
-@property (strong, nonatomic) NSArray *priorities;
 
 @end
 
@@ -28,15 +36,6 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 
 - (void)setRemind:(BOOL)isOn {
     self.remindMeOnADay = isOn;
-}
-
-#pragma mark - Lazy getters
-
-- (NSArray *)priorities {
-    if (!_priorities) {
-        _priorities = [NSArray arrayWithObjects:VAKNone, VAKLow, VAKMedium, VAKHigh, nil];
-    }
-    return _priorities;
 }
 
 #pragma mark - life cycle view controller
@@ -52,7 +51,7 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
     
     NSString *title = NSLocalizedString(VAKAddTaskTitle, nil);
     if (!self.task) {
-        self.selectPriority = VAKNone;
+        self.selectPriority = VAKPriorities[VAKNonePriority];
         self.taskNotes = @"";
         self.remindMeOnADay = NO;
         self.selectDate = [NSDate date];
@@ -81,49 +80,42 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 
 #pragma mark - helpers
 
-- (UITableViewCell *)configurationCellForIndexPath:(NSIndexPath *)indexPath {
-    switch (indexPath.section) {
-        case VAKSectionZero: {
-            VAKTaskNameCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionZero]];
-            cell.textField.delegate = self;
-            cell.textField.placeholder = NSLocalizedString(VAKWhatYouHaveToDo, nil);
-            cell.textField.text = self.task.name;
-            return cell;
-        }
-            break;
-        case VAKSectionFirst: {
-            if (indexPath.row == 0) {
-                VAKRemindCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionFirst]];
-                cell.delegate = self;
-                cell.remindLabel.text = NSLocalizedString(VAKRemindMeOnADay, nil);
-                if (self.remindMeOnADay) {
-                    [cell.remindSwitch setOn:YES animated:YES];
-                }
-                return cell;
-            }
-            VAKDateCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionFirst + 1]];
-            cell.textLabel.text = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute];
-            return cell;
-        }
-            break;
-        case VAKSectionSecond: {
-            VAKPriorityCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionSecond + 1]];
-            cell.detailTextLabel.text = NSLocalizedString(self.selectPriority, nil);
-            cell.textLabel.text = NSLocalizedString(VAKPriorityTitle, nil);
-            return cell;
-        }
-            break;
-        case VAKSectionThird: {
-            VAKNotesCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionThird + 1]];
-            cell.notes.text = self.task.notes;
-            cell.notes.delegate = self;
-            return cell;
-        }
-            break;
-        default:
-            return nil;
-            break;
+- (UITableViewCell *)taskNameCellForIndexPath:(NSIndexPath *)indexPath {
+    VAKTaskNameCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionZero]];
+    cell.textField.delegate = self;
+    cell.textField.placeholder = NSLocalizedString(VAKWhatYouHaveToDo, nil);
+    cell.textField.text = self.task.name;
+    return cell;
+}
+
+- (UITableViewCell *)remindCellForIndexPath:(NSIndexPath *)indexPath {
+    VAKRemindCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionFirst]];
+    cell.delegate = self;
+    cell.remindLabel.text = NSLocalizedString(VAKRemindMeOnADay, nil);
+    if (self.remindMeOnADay) {
+        [cell.remindSwitch setOn:YES animated:YES];
     }
+    return cell;
+}
+
+- (UITableViewCell *)dateCellForIndexPath:(NSIndexPath *)indexPath {
+    VAKDateCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionFirst + 1]];
+    cell.textLabel.text = [NSDate dateStringFromDate:self.selectDate format:VAKDateFormatWithHourAndMinute];
+    return cell;
+}
+
+- (UITableViewCell *)priorityCellForIndexPath:(NSIndexPath *)indexPath {
+    VAKPriorityCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionSecond + 1]];
+    cell.detailTextLabel.text = NSLocalizedString(self.selectPriority, nil);
+    cell.textLabel.text = NSLocalizedString(VAKPriorityTitle, nil);
+    return cell;
+}
+
+- (UITableViewCell *)notesCellForIndexPath:(NSIndexPath *)indexPath {
+    VAKNotesCell *cell = [self.tableView dequeueReusableCellWithIdentifier:VAKTaskRowIdentifierForSection[VAKSectionThird + 1]];
+    cell.notes.text = self.task.notes;
+    cell.notes.delegate = self;
+    return cell;
 }
 
 #pragma mark - Notification
@@ -139,18 +131,35 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return VAKFour;
+    return VAKCountSectionInTableView;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == VAKOne) {
+    if (section == VAKOneSection) {
         return VAKTwo;
     }
     return VAKOne;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [self configurationCellForIndexPath:indexPath];
+    UITableViewCell *cell = nil;
+    if (indexPath.section == VAKSectionZero) {
+        cell = [self taskNameCellForIndexPath:indexPath];
+    }
+    else if (indexPath.section == VAKSectionFirst) {
+        if (indexPath.row == VAKOne) {
+            cell = [self remindCellForIndexPath:indexPath];
+        }
+        else {
+            cell = [self dateCellForIndexPath:indexPath];   
+        }
+    }
+    else if (indexPath.section == VAKSectionSecond) {
+        cell = [self priorityCellForIndexPath:indexPath];
+    }
+    else {
+        cell = [self notesCellForIndexPath:indexPath];
+    }
     return cell;
 }
 
@@ -177,7 +186,7 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 #pragma mark - implemented UITableViewDelegate
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == VAKThree) {
+    if (indexPath.section == VAKThreeSection) {
         return VAKHeightBigCell;
     }
     return VAKHeightRegularCell;
@@ -185,23 +194,23 @@ static NSString * const VAKTaskRowIdentifierForSection[] = { @"VAKTaskNameCell",
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-    if (indexPath.section == VAKOne && indexPath.row == VAKOne) {
+    if (indexPath.section == VAKSectionFirst && indexPath.row == VAKOne) {
         VAKSelectDateController *selectDateController = [[VAKSelectDateController alloc] init];
         [self.navigationController pushViewController:selectDateController animated:YES];
     }
-    else if (indexPath.section == VAKTwo) {
+    else if (indexPath.section == VAKSectionSecond) {
         UIAlertController *priorityAlertController = [UIAlertController alertControllerWithTitle:NSLocalizedString(VAKSelectPriority, nil) message:nil preferredStyle:UIAlertControllerStyleAlert];
-        [self changedPriority:priorityAlertController withIndexPath:indexPath];
+        [self changedPriority:priorityAlertController indexPath:indexPath];
         UIAlertAction *cancelAction = [UIAlertAction actionWithTitle:NSLocalizedString(VAKCancelButton, nil) style:UIAlertActionStyleDefault handler:nil];
         [priorityAlertController addAction:cancelAction];
         [self presentViewController:priorityAlertController animated:YES completion:nil];
     }
 }
 
-- (void)changedPriority:(UIAlertController *)priorityController withIndexPath:(NSIndexPath *)indexPath {
-    for (NSString *priority in self.priorities) {
-        UIAlertAction *action = [UIAlertAction actionWithTitle:NSLocalizedString(priority, nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
-            self.selectPriority = NSLocalizedString(priority, nil);
+- (void)changedPriority:(UIAlertController *)priorityController indexPath:(NSIndexPath *)indexPath {
+    for (int i = 0; i < 4; i++) {
+        UIAlertAction *action = [UIAlertAction actionWithTitle:NSLocalizedString(VAKPriorities[i], nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+            self.selectPriority = NSLocalizedString(VAKPriorities[i], nil);
             [self.tableView reloadRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationTop];
         }];
         [priorityController addAction:action];

@@ -44,11 +44,6 @@ static NSString * const VAKIndex = @"VAKIndex";
 static NSString * const VAKAddProjectLabel = @"Add project";
 static NSString * const VAKSelectPriority = @"Select Priority";
 
-static NSString * const VAKNone = @"None";
-static NSString * const VAKLow = @"Low";
-static NSString * const VAKMedium = @"Medium";
-static NSString * const VAKHigh = @"High";
-
 static NSString * const VAKCompletedTask = @"VAKCompletedTasks";
 static NSString * const VAKNotCompletedTask = @"VAKNotCompletedTasks";
 
@@ -81,11 +76,14 @@ static NSString * const VAKCurrentGroup = @"VAKCurrentGroup";
 static NSString * const VAKRemindMeOnADay = @"Remind me On a Day";
 static NSString * const VAKWhatYouHaveToDo = @"What you have to do...";
 
+static NSInteger const VAKOneSection = 1;
+static NSInteger const VAKTwoSection = 2;
+static NSInteger const VAKThreeSection = 3;
+static NSInteger const VAKFourSection = 4;
+static NSInteger const VAKZeroSection = 0;
+static NSInteger const VAKZero = 0;
 static NSInteger const VAKOne = 1;
 static NSInteger const VAKTwo = 2;
-static NSInteger const VAKThree = 3;
-static NSInteger const VAKFour = 4;
-static NSInteger const VAKZero = 0;
 
 static float const VAKHeightBigCell = 200.f;
 static float const VAKHeightRegularCell = 44.f;

@@ -74,12 +74,12 @@
 #pragma mark - implemented UITableViewDataSource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return VAKTwo;
+    return VAKTwoSection;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    if (section == VAKZero) {
-        return VAKOne;
+    if (section == VAKZeroSection) {
+        return VAKOneSection;
     }
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name != %@", VAKInbox];
     return [[[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate] count] + 1;
@@ -89,7 +89,7 @@
     
     VAKPriorityCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKPriorityCellIdentifier];
     
-    if (indexPath.section == VAKZero) {
+    if (indexPath.section == VAKZeroSection) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
         NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
         ToDoList *inbox = arr[0];
@@ -97,7 +97,7 @@
         cell.textLabel.text = inbox.name;
     }
     else {
-        if (indexPath.row == VAKZero) {
+        if (indexPath.row == VAKZeroSection) {
             cell.textLabel.text = VAKAddProjectLabel;
             cell.detailTextLabel.text = nil;
         }
@@ -120,7 +120,7 @@
     
     VAKTodayViewController *todayViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKStoriboardIdentifierTodayViewController];
 
-    if (indexPath.section == VAKZero) {
+    if (indexPath.section == VAKZeroSection) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
         NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
         ToDoList *toDoList = arr[indexPath.row];
@@ -129,7 +129,7 @@
         [self.navigationController pushViewController:todayViewController animated:YES];
     }
     else {
-        if (indexPath.row == VAKZero) {
+        if (indexPath.row == VAKZeroSection) {
             VAKAddProjectViewController *addProjectViewController = [self.storyboard instantiateViewControllerWithIdentifier:VAKAddProject];
             [self.navigationController pushViewController:addProjectViewController animated:YES];
         }
@@ -147,7 +147,7 @@
 - (NSArray<UITableViewRowAction *> *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     ToDoList *toDoList = nil;
-    if (indexPath.section == VAKZero) {
+    if (indexPath.section == VAKZeroSection) {
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name == %@", VAKInbox];
         NSArray *arr = [[VAKCoreDataManager sharedManager] allEntityWithName:@"ToDoList" sortDescriptor:nil predicate:predicate];
         toDoList = arr[indexPath.row];
