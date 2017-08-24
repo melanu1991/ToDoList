@@ -1,0 +1,48 @@
+
+/* Class = "UITabBarItem"; title = "Search"; ObjectID = "1k0-gC-6sH"; */
+"1k0-gC-6sH.title" = "Поиск";
+
+/* Class = "UITabBarItem"; title = "Today"; ObjectID = "4Jy-wp-geM"; */
+"4Jy-wp-geM.title" = "Сегодня";
+
+/* Class = "UISegmentedControl"; Bnt-al-kPF.segmentTitles[0] = "Active Tasks"; ObjectID = "Bnt-al-kPF"; */
+"Bnt-al-kPF.segmentTitles[0]" = "Активные задачи";
+
+/* Class = "UISegmentedControl"; Bnt-al-kPF.segmentTitles[1] = "Complited"; ObjectID = "Bnt-al-kPF"; */
+"Bnt-al-kPF.segmentTitles[1]" = "Завершенные задачи";
+
+/* Class = "UILabel"; text = "  Project"; ObjectID = "F8Q-fx-hyW"; */
+"F8Q-fx-hyW.text" = "  Группа";
+
+/* Class = "UIViewController"; title = "Today"; ObjectID = "JDv-1Y-BrH"; */
+"JDv-1Y-BrH.title" = "Сегодня";
+
+/* Class = "UIBarButtonItem"; title = "Edit"; ObjectID = "NiU-Ag-kGc"; */
+"NiU-Ag-kGc.title" = "Редактирование";
+
+/* Class = "UITabBarItem"; title = "Inbox"; ObjectID = "acW-dT-cKf"; */
+"acW-dT-cKf.title" = "Входящие";
+
+/* Class = "UITabBarItem"; title = "ToDoList"; ObjectID = "cPa-gy-q4n"; */
+"cPa-gy-q4n.title" = "Группы";
+
+/* Class = "UILabel"; text = "No Result"; ObjectID = "j9k-br-55p"; */
+"j9k-br-55p.text" = "Нет результатов";
+
+/* Class = "UINavigationItem"; title = "Inbox"; ObjectID = "kG4-kJ-4eU"; */
+"kG4-kJ-4eU.title" = "Входящие";
+
+/* Class = "UITextField"; placeholder = "Enter the name of the group"; ObjectID = "mL4-Hx-qpe"; */
+"mL4-Hx-qpe.placeholder" = "Введите название группы";
+
+/* Class = "UISegmentedControl"; py2-Pc-ZVE.segmentTitles[0] = "Date"; ObjectID = "py2-Pc-ZVE"; */
+"py2-Pc-ZVE.segmentTitles[0]" = "Дата";
+
+/* Class = "UISegmentedControl"; py2-Pc-ZVE.segmentTitles[1] = "Group"; ObjectID = "py2-Pc-ZVE"; */
+"py2-Pc-ZVE.segmentTitles[1]" = "Группа";
+
+/* Class = "UINavigationItem"; title = "Add Project"; ObjectID = "sOZ-2E-xYf"; */
+"sOZ-2E-xYf.title" = "Добавить проект";
+
+"Odu-p2-CTq.title" = "Поиск";
+"jbR-Jg-xNX.title" = "Группы";

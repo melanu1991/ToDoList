@@ -1,13 +1,15 @@
-//
-//  VAKTodayViewController.h
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
+#import "VAKCustumCell.h"
+#import "Constants.h"
+#import "VAKAddTaskController.h"
+#import "VAKNSDate+Formatters.h"
+#import "ToDoList+CoreDataClass.h"
+#import "Task+CoreDataClass.h"
+#import "VAKCoreDataManager.h"
 
-@interface VAKTodayViewController : UIViewController
+@interface VAKTodayViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+
+@property (strong, nonatomic) ToDoList *currentGroup;
+@property (assign, nonatomic, getter=isSelectedGroup) BOOL selectedGroup;
 
 @end

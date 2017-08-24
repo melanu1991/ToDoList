@@ -1,13 +1,9 @@
-//
-//  VAKSearchViewController.h
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
+#import "VAKAddTaskController.h"
+#import "VAKNSDate+Formatters.h"
+#import "Task+CoreDataClass.h"
+#import "VAKCoreDataManager.h"
 
-@interface VAKSearchViewController : UIViewController
+@interface VAKSearchViewController : UIViewController<UITableViewDataSource, UISearchBarDelegate, UITableViewDelegate>
 
 @end

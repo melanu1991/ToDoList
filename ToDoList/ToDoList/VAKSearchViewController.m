@@ -1,37 +1,139 @@
-//
-//  VAKSearchViewController.m
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import "VAKSearchViewController.h"
+#import "Constants.h"
+#import "VAKCustumCell.h"
 
 @interface VAKSearchViewController ()
+
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UILabel *noResultLabel;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *chooseActiveOrCompletedTasks;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
+@property (assign, nonatomic, getter=isNeedToReloadData) BOOL needToReloadData;
 
 @end
 
 @implementation VAKSearchViewController
 
+#pragma mark - life cycle view controller
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (self.isNeedToReloadData) {
+        [self searchBar:self.searchBar textDidChange:self.searchBar.text];
+        self.needToReloadData = NO;
+    }
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.tableView registerNib:[UINib nibWithNibName:VAKCustumCellNib bundle:nil] forCellReuseIdentifier:VAKCustumCellIdentifier];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskWasChangedOrAddOrDelete:) name:VAKTaskWasChangedOrAddOrDelete object:nil];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+#pragma mark - Notification
+
+- (void)taskWasChangedOrAddOrDelete:(NSNotification *)notification {
+    self.needToReloadData = YES;
 }
 
-/*
-#pragma mark - Navigation
+#pragma mark - helpers
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (Task *)backTaskByIndexPath:(NSIndexPath *)indexPath {
+    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@ AND completed == NO", self.searchBar.text];
+        NSArray *arrayNotCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+        return arrayNotCompletedTask[indexPath.row];
+    }
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@ AND completed == YES", self.searchBar.text];
+    NSArray *arrayCompletedTask = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+    return arrayCompletedTask[indexPath.row];
 }
-*/
+
+#pragma mark - implemented UITableViewDataSource
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    if ([self.chooseActiveOrCompletedTasks selectedSegmentIndex] == VAKZero) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@ AND completed == NO", self.searchBar.text];
+        NSArray *arrayActiveTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+        if (arrayActiveTasks.count > 0) {
+            self.tableView.hidden = NO;
+            return arrayActiveTasks.count;
+        }
+        else {
+            self.tableView.hidden = YES;
+            return VAKZero;
+        }
+    }
+    else {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name contains[cd] %@ AND completed == YES", self.searchBar.text];
+        NSArray *arrayCompletedTasks = [[VAKCoreDataManager sharedManager] allEntityWithName:@"Task" sortDescriptor:nil predicate:predicate];
+        if (arrayCompletedTasks.count > 0) {
+            self.tableView.hidden = NO;
+            return arrayCompletedTasks.count;
+        }
+        else {
+            self.tableView.hidden = YES;
+            return VAKZero;
+        }
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    VAKCustumCell *cell = [tableView dequeueReusableCellWithIdentifier:VAKCustumCellIdentifier];
+    
+    Task *temp = [self backTaskByIndexPath:indexPath];
+    cell.taskNameLabel.text = temp.name;
+    cell.taskNoteLabel.text = temp.notes;
+    cell.taskStartDateLabel.text = [NSDate dateStringFromDate:temp.startedAt format:VAKDateFormatWithHourAndMinute];
+    
+    return cell;
+}
+
+#pragma mark - search bar delegate
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    [searchBar setShowsCancelButton:YES];
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
+    [searchBar setShowsCancelButton:YES animated:YES];
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    [self.tableView reloadData];
+}
+
+#pragma mark - action
+
+- (IBAction)segmentedControlPressed:(UISegmentedControl *)sender {
+    [self searchBar:self.searchBar textDidChange:self.searchBar.text];
+    [self.tableView reloadData];
+}
+
+#pragma mark - implemented UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    
+    VAKAddTaskController *editTaskController = [[VAKAddTaskController alloc] initWithNibName:VAKAddController bundle:nil];
+    
+    Task *currentTask = [self backTaskByIndexPath:indexPath];
+    editTaskController.task = currentTask;
+    
+    [self.navigationController pushViewController:editTaskController animated:YES];
+}
+
+#pragma mark - processing button search UISearchBarDelegate
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar {
+    [searchBar resignFirstResponder];
+}
+
+#pragma mark - deallocate
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
 
 @end

@@ -1,13 +1,12 @@
-//
-//  VAKInboxViewController.h
-//  ToDoList
-//
-//  Created by melanu1991 on 04.06.17.
-//  Copyright © 2017 melanu1991. All rights reserved.
-//
-
 #import <UIKit/UIKit.h>
+#import "VAKAddTaskController.h"
+#import "Constants.h"
+#import "VAKCustumCell.h"
+#import "VAKNSDate+Formatters.h"
+#import "ToDoList+CoreDataClass.h"
+#import "Task+CoreDataClass.h"
+#import "VAKCoreDataManager.h"
 
-@interface VAKInboxViewController : UIViewController
+@interface VAKInboxViewController : UIViewController <UITableViewDataSource, UITabBarControllerDelegate, UITableViewDelegate>
 
 @end
